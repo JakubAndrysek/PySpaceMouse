@@ -5,7 +5,7 @@ import copy
 from typing import Callable, Union, List
 
 # current version number
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 # clock for timing
 high_acc_clock = timeit.default_timer
@@ -280,7 +280,8 @@ class DeviceSpec(object):
                         elif axis_val < -block_dof_callback.filter:
                             block_dof_callback.callback_minus(self.tuple_state, axis_val)
                     else:
-                        block_dof_callback.callback(self.tuple_state, axis_val)
+                        if axis_val > block_dof_callback.filter or axis_val < -block_dof_callback.filter:
+                            block_dof_callback.callback(self.tuple_state, axis_val)
                     self.dict_state_last[axis_name] = now
 
         # only call the button callback if the button state actually changed
