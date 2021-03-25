@@ -5,7 +5,7 @@ import copy
 from typing import Callable, Union, List
 
 # current version number
-__version__ = "0.1.3"
+__version__ = "1.0.1"
 
 # clock for timing
 high_acc_clock = timeit.default_timer
@@ -58,11 +58,18 @@ class DofCallback:
     """Register new DoF callback"""
 
     def __init__(
-            self, axis: str, callback: Callable[[int], None], sleep: float = 0.0
+            self,
+            axis: str,
+            callback: Callable[[int], None],
+            sleep: float = 0.0,
+            callback_minus: Callable[[int], None] = None,
+            filter: float = 0.0
     ):
         self.axis = axis
         self.callback = callback
         self.sleep = sleep
+        self.callback_minus = callback_minus
+        self.filter = filter
 
 
 class Config:
@@ -262,11 +269,19 @@ class DeviceSpec(object):
             # foreach all callbacks (ButtonCallback)
             for block_dof_callback in self.dof_callback_arr:
                 now = high_acc_clock()
-                axis = block_dof_callback.axis
-                if now >= self.dict_state_last[axis] + block_dof_callback.sleep:
-                    # if True:
-                    block_dof_callback.callback(self.tuple_state, self.dict_state[axis])
-                    self.dict_state_last[axis] = now
+                axis_name = block_dof_callback.axis
+                if now >= self.dict_state_last[axis_name] + block_dof_callback.sleep:
+                    axis_val = self.dict_state[axis_name]
+                    # is minus callback defined
+                    if block_dof_callback.callback_minus:
+                        # is axis value greater than filter
+                        if axis_val > block_dof_callback.filter:
+                            block_dof_callback.callback(self.tuple_state, axis_val)
+                        elif axis_val < -block_dof_callback.filter:
+                            block_dof_callback.callback_minus(self.tuple_state, axis_val)
+                    else:
+                        block_dof_callback.callback(self.tuple_state, axis_val)
+                    self.dict_state_last[axis_name] = now
 
         # only call the button callback if the button state actually changed
         if self.button_callback and button_changed:
@@ -289,7 +304,8 @@ class DeviceSpec(object):
                         run = False
                 # call callback
                 if run:
-                    block_button_callback.callback(self.tuple_state, self.tuple_state.buttons, block_button_callback.buttons)
+                    block_button_callback.callback(self.tuple_state, self.tuple_state.buttons,
+                                                   block_button_callback.buttons)
 
     def config_set(self, config: Config):
         """Set new configuration of mouse from Config class"""
@@ -693,7 +709,7 @@ def open(
 
 
 def check_config(callback=None, dof_callback=None, dof_callback_arr=None, button_callback=None,
-                     button_callback_arr=None):
+                 button_callback_arr=None):
     """Check that the input configuration has the correct components.
     Raise an exception if it encounters incorrect component.
     """
