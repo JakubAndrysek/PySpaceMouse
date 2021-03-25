@@ -5,7 +5,7 @@ import copy
 from typing import Callable, Union, List
 
 # current version number
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 # clock for timing
 high_acc_clock = timeit.default_timer
@@ -753,6 +753,22 @@ def check_button_callback_arr(button_callback_arr: List[ButtonCallback]) -> List
             raise Exception(f"'ButtonCallback[{num}]' is not instance of 'ButtonCallback'")
     return button_callback_arr
 
+class DofCallback:
+    """Register new DoF callback"""
+
+    def __init__(
+            self,
+            axis: str,
+            callback: Callable[[int], None],
+            sleep: float = 0.0,
+            callback_minus: Callable[[int], None] = None,
+            filter: float = 0.0
+    ):
+        self.axis = axis
+        self.callback = callback
+        self.sleep = sleep
+        self.callback_minus = callback_minus
+        self.filter = filter
 
 def check_dof_callback_arr(dof_callback_arr: List[DofCallback]) -> List[DofCallback]:
     """Check that the dof_callback_arr has the correct components.
@@ -780,6 +796,18 @@ def check_dof_callback_arr(dof_callback_arr: List[DofCallback]) -> List[DofCallb
                 pass
             else:
                 raise Exception(f"'DofCallback[{num}]:sleep' is not type float")
+
+            # is callback_minus callable
+            if dof_call.callback_minus and callable(dof_call.callback_minus):
+                pass
+            else:
+                raise Exception(f"'DofCallback[{num}]:callback_minus' is not callable")
+
+            # is filter type float
+            if dof_call.filter and type(dof_call.filter) is float:
+                pass
+            else:
+                raise Exception(f"'DofCallback[{num}]:filter' is not type float")
         else:
             raise Exception(f"'DofCallback[{num}]' is not instance of 'DofCallback'")
     return dof_callback_arr

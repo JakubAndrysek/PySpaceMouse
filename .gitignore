@@ -59,5 +59,6 @@ docs/_build/
 # PyBuilder
 target/
 
-Release.md
+release.md
+release.sh
 html
