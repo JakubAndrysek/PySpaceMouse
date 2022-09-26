@@ -1,7 +1,7 @@
 # pyspacemouse
 3Dconnexion Space Mouse in Python using raw HID.
 Note: you **don't** need to install or use any of the drivers or 3Dconnexion software to use this package.
-It interfaces with the controller directly with `hidapi` and python library `easyhid`.
+It interfaces with the controller directly with `hidapi` and python wrapper library `easyhid`.
 
 Connected project [pySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC with SpaceMouse.
 
@@ -151,3 +151,15 @@ Print all axis states
 Print all buttons states
 
     [ 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, ]
+
+## Troubleshooting
+
+### `ModuleNotFoundError: No module named 'easyhid'`
+- Install `easyhid` by `pip install easyhid`
+
+### `AttributeError: function/symbol 'hid_enumerate' not found in library '<None>': python3: undefined symbol: hid_enumerate`
+- HID library for your computer is not installed
+- Follow the instructions in [requirements](#requirements)
+
+### `Exception: No device connected/supported!`
+- 
