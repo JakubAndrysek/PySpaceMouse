@@ -28,8 +28,16 @@ Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dc
   - `sudo apt-get install libhidapi-dev` (Debian/Ubuntu)
   - Compile and install [hidapi](https://github.com/libusb/hidapi/#build-from-source)  (other Linux distributions)
 
+- add rules for permission
+```bash
+sudo echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' > /etc/udev/rules.d/99-hidraw-permissions.rules
+sudo usermod -aG plugdev $USER
+newgrp plugdev
+```
+
 ### Windows
 - Install the latest release of hidapi.dll and hidapi.lib from the [hidapi releases](https://github.com/libusb/hidapi/releases) page (not tested)
+- Set system environment: add absolute path for `x64` or `x86` folder in Path.
 
 ### Mac OS X
 - [hidapi](https://formulae.brew.sh/formula/hidapi)
