@@ -23,7 +23,6 @@ setuptools.setup(
     packages=['pyspacemouse'],
     install_requires=[
         "easyhid",
-        "typing",
     ],
     zip_safe=False,
     include_package_data=True,
