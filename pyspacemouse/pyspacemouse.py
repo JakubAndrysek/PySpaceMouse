@@ -500,6 +500,45 @@ device_specs = {
         ],
         axis_scale=350.0,
     ),
+    "SpacePilot": DeviceSpec(
+        name="SpacePilot",
+        # vendor ID and product ID
+        hid_id=[0x46D, 0xC625],
+        # LED HID usage code pair
+        led_id=None,
+        mappings={
+            "x": AxisSpec(channel=1, byte1=1, byte2=2, scale=1),
+            "y": AxisSpec(channel=1, byte1=3, byte2=4, scale=-1),
+            "z": AxisSpec(channel=1, byte1=5, byte2=6, scale=-1),
+            "pitch": AxisSpec(channel=2, byte1=1, byte2=2, scale=-1),
+            "roll": AxisSpec(channel=2, byte1=3, byte2=4, scale=-1),
+            "yaw": AxisSpec(channel=2, byte1=5, byte2=6, scale=1),
+        },
+        button_mapping=[
+            ButtonSpec(channel=3, byte=1, bit=0), # 1
+            ButtonSpec(channel=3, byte=1, bit=1), # 2
+            ButtonSpec(channel=3, byte=1, bit=2), # 3
+            ButtonSpec(channel=3, byte=1, bit=3), # 4
+            ButtonSpec(channel=3, byte=1, bit=4), # 5
+            ButtonSpec(channel=3, byte=1, bit=5), # 6
+            ButtonSpec(channel=3, byte=1, bit=6), # T
+            ButtonSpec(channel=3, byte=1, bit=7), # L
+            ButtonSpec(channel=3, byte=2, bit=0), # R
+            ButtonSpec(channel=3, byte=2, bit=1), # F
+            ButtonSpec(channel=3, byte=2, bit=2), # Esc
+            ButtonSpec(channel=3, byte=2, bit=3), # Alt
+            ButtonSpec(channel=3, byte=2, bit=4), # Shift
+            ButtonSpec(channel=3, byte=2, bit=5), # Ctrl
+            ButtonSpec(channel=3, byte=2, bit=6), # Fit
+            ButtonSpec(channel=3, byte=2, bit=7), # Panel
+            ButtonSpec(channel=3, byte=3, bit=0), # Zoom -
+            ButtonSpec(channel=3, byte=3, bit=1), # Zoom +
+            ButtonSpec(channel=3, byte=3, bit=2), # Dom
+            ButtonSpec(channel=3, byte=3, bit=3), # 3D Lock
+            ButtonSpec(channel=3, byte=3, bit=4), # Config
+        ],
+        axis_scale=350.0,
+    ),
     "SpacePilot Pro": DeviceSpec(
         name="SpacePilot Pro",
         # vendor ID and product ID
