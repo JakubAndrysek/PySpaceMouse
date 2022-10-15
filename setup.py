@@ -11,7 +11,7 @@ long_description = (HERE / "README.md").read_text()
 
 setuptools.setup(
     name='pyspacemouse',
-    version='1.0.4',
+    version='1.0.5',
     author='Jakub Andrýsek',
     author_email='email@kubaandrysek.cz',
     description='Multiplatform Python interface to the 3DConnexion Space Mouse - forked from pyspacenavigator',

@@ -23,6 +23,7 @@ Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 * SpaceMouse Wireless
 * 3Dconnexion Universal Receiver
 * SpaceMouse Compact
+* SpacePilot
 * SpacePilot Pro
 * [Add more devices](https://github.com/johnhw/pyspacenavigator/issues/1)
 
