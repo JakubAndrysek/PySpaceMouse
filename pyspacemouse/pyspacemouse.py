@@ -237,9 +237,13 @@ class DeviceSpec(object):
         for name, (chan, b1, b2, flip) in self.mappings.items():
             if data[0] == chan:
                 dof_changed = True
-                self.dict_state[name] = (
-                        flip * to_int16(data[b1], data[b2]) / float(self.axis_scale)
-                )
+                #check if b1 or b2 is over the length of the data
+                if b1 >= len(data) or b2 >= len(data):
+                    pass
+                else:
+                    self.dict_state[name] = (
+                            flip * to_int16(data[b1], data[b2]) / float(self.axis_scale)
+                    )
 
         for button_index, (chan, byte, bit) in enumerate(self.button_mapping):
             if data[0] == chan:
