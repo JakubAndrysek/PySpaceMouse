@@ -4,6 +4,12 @@
 Note: you **don't** need to install or use any of the drivers or 3Dconnexion software to use this package.
 It interfaces with the controller directly with `hidapi` and python wrapper library `easyhid`.
 
+<p align="center">
+<a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FJakubAndrysek%2Fpyspacemouse&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=true"/></a>
+<img src="https://img.shields.io/github/license/JakubAndrysek/pyspacemouse?style=flat-square">
+</p>
+
+
 Connected project [pySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC
 with SpaceMouse.
 
