@@ -101,9 +101,10 @@ class DeviceSpec(object):
         self.name = name
         self.hid_id = hid_id
         self.led_id = led_id
-        self.mappings = mappings
+        self.__mappings = mappings
         self.button_mapping = button_mapping
         self.axis_scale = axis_scale
+        self.__bytes_to_read = self.__get_num_bytes_to_read()
 
         # self.led_usage = hid.get_full_usage_id(led_id[0], led_id[1])
         # initialise to a vector of 0s for each state
@@ -136,6 +137,13 @@ class DeviceSpec(object):
         self.button_callback = None
         self.button_callback_arr = None
         self.set_nonblocking_loop = True
+        
+    def __get_num_bytes_to_read(self):
+        byte_indices = []
+        for value in self.__mappings.values():
+            byte_indices.extend([value.byte1, value.byte2])
+
+        return max(byte_indices) + 1
 
     def describe_connection(self):
         """Return string representation of the device, including
@@ -150,6 +158,15 @@ class DeviceSpec(object):
                 self.version_number,
                 self.serial_number,
             )
+
+    @property
+    def mappings(self):
+        return self.__mappings
+    
+    @mappings.setter
+    def mappings(self, val):
+        self.__mappings = val
+        self.__bytes_to_read = self.__get_num_bytes_to_read()
 
     @property
     def connected(self):
@@ -202,8 +219,8 @@ class DeviceSpec(object):
             None if the device is not open.
         """
         if self.connected:
-            # read seven bytes from SpaceMouse
-            ret = self.device.read(7)
+            # read bytes from SpaceMouse
+            ret = self.device.read(self.__bytes_to_read)
             # test for nonblocking read
             if (ret):
                 self.process(ret)
@@ -234,7 +251,7 @@ class DeviceSpec(object):
         button_changed = False
         dof_changed = False
 
-        for name, (chan, b1, b2, flip) in self.mappings.items():
+        for name, (chan, b1, b2, flip) in self.__mappings.items():
             if data[0] == chan:
                 dof_changed = True
                 #check if b1 or b2 is over the length of the data
