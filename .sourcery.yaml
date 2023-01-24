@@ -1,0 +1,3 @@
+refactor:
+  skip:
+    - use-named-expression  # Python 3.8+
