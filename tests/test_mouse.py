@@ -140,10 +140,10 @@ def mouse(state, axis):
     val = axis*4
     if axis > 0.0:
         # pyautogui.hotkey("up")
-        for x in range(0, int(val)):
+        for _ in range(int(val)):
             pyautogui.press("up")
     elif axis < -0.0:
-        for y in range(0, int(-val)):
+        for _ in range(int(-val)):
             pyautogui.press("down")
 
 def mouse_side(state, axis):
@@ -151,10 +151,10 @@ def mouse_side(state, axis):
     print(val)
     if axis > 0.0:
         # pyautogui.hotkey("up")
-        for x in range(1, int(val**3)):
+        for _ in range(1, int(val**3)):
             pyautogui.press("right")
     elif axis < -0.0:
-        for y in range(1, int(-val**3)):
+        for _ in range(1, int(-val**3)):
             pyautogui.press("left")
 
 def success_dof_callback_set_mouse():

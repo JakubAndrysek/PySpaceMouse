@@ -1,8 +1,7 @@
 import pyspacemouse
 import time
 
-success = pyspacemouse.open()
-if success:
+if success := pyspacemouse.open():
     while 1:
         state = pyspacemouse.read()
         print(state.x, state.y, state.z)

@@ -148,16 +148,10 @@ class DeviceSpec(object):
     def describe_connection(self):
         """Return string representation of the device, including
         the connection state"""
-        if self.device == None:
-            return "%s [disconnected]" % (self.name)
+        if self.device is None:
+            return f"{self.name} [disconnected]"
         else:
-            return "%s connected to %s %s version: %s [serial: %s]" % (
-                self.name,
-                self.vendor_name,
-                self.product_name,
-                self.version_number,
-                self.serial_number,
-            )
+            return f"{self.name} connected to {self.vendor_name} {self.product_name} version: {self.version_number} [serial: {self.serial_number}]"
 
     @property
     def mappings(self):
@@ -218,15 +212,11 @@ class DeviceSpec(object):
             state: {t,x,y,z,pitch,yaw,roll,button} namedtuple
             None if the device is not open.
         """
-        if self.connected:
-            # read bytes from SpaceMouse
-            ret = self.device.read(self.__bytes_to_read)
-            # test for nonblocking read
-            if (ret):
-                self.process(ret)
-            return self.tuple_state
-        else:
+        if not self.connected:
             return None
+        if ret := self.device.read(self.__bytes_to_read):
+            self.process(ret)
+        return self.tuple_state
 
     def process(self, data):
         """
@@ -255,9 +245,7 @@ class DeviceSpec(object):
             if data[0] == chan:
                 dof_changed = True
                 #check if b1 or b2 is over the length of the data
-                if b1 >= len(data) or b2 >= len(data):
-                    pass
-                else:
+                if b1 < len(data) and b2 < len(data):
                     self.dict_state[name] = (
                             flip * to_int16(data[b1], data[b2]) / float(self.axis_scale)
                     )
@@ -300,9 +288,8 @@ class DeviceSpec(object):
                             block_dof_callback.callback(self.tuple_state, axis_val)
                         elif axis_val < -block_dof_callback.filter:
                             block_dof_callback.callback_minus(self.tuple_state, axis_val)
-                    else:
-                        if axis_val > block_dof_callback.filter or axis_val < -block_dof_callback.filter:
-                            block_dof_callback.callback(self.tuple_state, axis_val)
+                    elif axis_val > block_dof_callback.filter or axis_val < -block_dof_callback.filter:
+                        block_dof_callback.callback(self.tuple_state, axis_val)
                     self.dict_state_last[axis_name] = now
 
         # only call the button callback if the button state actually changed
@@ -640,12 +627,7 @@ def read():
         state: {t,x,y,z,pitch,yaw,roll,button} namedtuple
         None if the device is not open.
     """
-    if _active_device is not None:
-
-        # return _active_device.tuple_state
-        return _active_device.read()
-    else:
-        return None
+    return _active_device.read() if _active_device is not None else None
 
 
 def list_devices():
@@ -656,16 +638,16 @@ def list_devices():
     """
     devices = []
     hid = Enumeration()
-    all_hids = hid.find()
-
-    if all_hids:
-        for index, device in enumerate(all_hids):
-            for device_name, spec in device_specs.items():
+    if all_hids := hid.find():
+        for device in all_hids:
+            devices.extend(
+                device_name
+                for device_name, spec in device_specs.items()
                 if (
-                        device.vendor_id == spec.hid_id[0]
-                        and device.product_id == spec.hid_id[1]
-                ):
-                    devices.append(device_name)
+                    device.vendor_id == spec.hid_id[0]
+                    and device.product_id == spec.hid_id[1]
+                )
+            )
     return devices
 
 
@@ -712,7 +694,7 @@ def open(
     global _active_device
 
     # if no device name specified, look for any matching device and choose the first
-    if device == None:
+    if device is None:
         all_devices = list_devices()
         if len(all_devices) > 0:
             device = all_devices[0]
@@ -721,19 +703,18 @@ def open(
 
     found_devices = []
     hid = Enumeration()
-    all_hids = hid.find()
-    if all_hids:
-        for index, dev in enumerate(all_hids):
+    if all_hids := hid.find():
+        for dev in all_hids:
             spec = device_specs[device]
             if dev.vendor_id == spec.hid_id[0] and dev.product_id == spec.hid_id[1]:
                 found_devices.append({"Spec": spec, "HIDDevice": dev})
-                print("%s found" % device)
+                print(f"{device} found")
 
     else:
         print("No HID devices detected")
         return None
 
-    if len(found_devices) == 0:
+    if not found_devices:
         print("No supported devices found")
         return None
     else:
@@ -774,13 +755,7 @@ def check_config(callback=None, dof_callback=None, dof_callback_arr=None, button
     """Check that the input configuration has the correct components.
     Raise an exception if it encounters incorrect component.
     """
-    if callback and callable(callback):
-        pass
-    if dof_callback and callable(dof_callback):
-        pass
     if dof_callback_arr and check_dof_callback_arr(dof_callback_arr):
-        pass
-    if button_callback and callable(button_callback):
         pass
     if button_callback_arr and check_button_callback_arr(button_callback_arr):
         pass
@@ -793,24 +768,18 @@ def check_button_callback_arr(button_callback_arr: List[ButtonCallback]) -> List
 
     # foreach ButtonCallback
     for num, butt_call in enumerate(button_callback_arr):
-        # is instance of ButtonCallback
-        if isinstance(butt_call, ButtonCallback):
-            if type(butt_call.buttons) is int:
-                pass
-            elif type(butt_call.buttons) is list:
-                for xnum, butt in enumerate(butt_call.buttons):
-                    if type(butt) is int:
-                        pass
-                    else:
-                        raise Exception(f"'ButtonCallback[{num}]:buttons[{xnum}]' is not type int or list of int")
-            else:
-                raise Exception(f"'ButtonCallback[{num}]:buttons' is not type int or list of int")
-            if callable(butt_call.callback):
-                pass
-            else:
-                raise Exception(f"'ButtonCallback[{num}]:callback' is not callable")
-        else:
+        if not isinstance(butt_call, ButtonCallback):
             raise Exception(f"'ButtonCallback[{num}]' is not instance of 'ButtonCallback'")
+        if type(butt_call.buttons) is int:
+            pass
+        elif type(butt_call.buttons) is list:
+            for xnum, butt in enumerate(butt_call.buttons):
+                if type(butt) is not int:
+                    raise Exception(f"'ButtonCallback[{num}]:buttons[{xnum}]' is not type int or list of int")
+        else:
+            raise Exception(f"'ButtonCallback[{num}]:buttons' is not type int or list of int")
+        if not callable(butt_call.callback):
+            raise Exception(f"'ButtonCallback[{num}]:callback' is not callable")
     return button_callback_arr
 
 class DofCallback:
@@ -836,40 +805,30 @@ def check_dof_callback_arr(dof_callback_arr: List[DofCallback]) -> List[DofCallb
 
     # foreach DofCallback
     for num, dof_call in enumerate(dof_callback_arr):
-        # is instance of DofCallback
-        if isinstance(dof_call, DofCallback):
+        if not isinstance(dof_call, DofCallback):
+            raise Exception(f"'DofCallback[{num}]' is not instance of 'DofCallback'")
             # has the correct axis name
-            if dof_call.axis in ["x", "y", "z", "roll", "pitch", "yaw"]:
-                pass
-            else:
-                raise Exception(
-                    f"'DofCallback[{num}]:axis' is not string from ['x', 'y', 'z', 'roll', 'pitch', 'yaw']")
+        if dof_call.axis not in ["x", "y", "z", "roll", "pitch", "yaw"]:
+            raise Exception(
+                f"'DofCallback[{num}]:axis' is not string from ['x', 'y', 'z', 'roll', 'pitch', 'yaw']")
 
             # is callback callable
-            if callable(dof_call.callback):
-                pass
-            else:
-                raise Exception(f"'DofCallback[{num}]:callback' is not callable")
+        if not callable(dof_call.callback):
+            raise Exception(f"'DofCallback[{num}]:callback' is not callable")
 
             # is sleep type float
-            if type(dof_call.sleep) is float:
-                pass
-            else:
-                raise Exception(f"'DofCallback[{num}]:sleep' is not type float")
+        if type(dof_call.sleep) is not float:
+            raise Exception(f"'DofCallback[{num}]:sleep' is not type float")
 
             # is callback_minus callable
-            if dof_call.callback_minus and callable(dof_call.callback_minus):
-                pass
-            else:
-                raise Exception(f"'DofCallback[{num}]:callback_minus' is not callable")
+        if not dof_call.callback_minus or not callable(
+            dof_call.callback_minus
+        ):
+            raise Exception(f"'DofCallback[{num}]:callback_minus' is not callable")
 
             # is filter type float
-            if dof_call.filter and type(dof_call.filter) is float:
-                pass
-            else:
-                raise Exception(f"'DofCallback[{num}]:filter' is not type float")
-        else:
-            raise Exception(f"'DofCallback[{num}]' is not instance of 'DofCallback'")
+        if not dof_call.filter or type(dof_call.filter) is not float:
+            raise Exception(f"'DofCallback[{num}]:filter' is not type float")
     return dof_callback_arr
 
 
@@ -916,12 +875,13 @@ def print_buttons(state, buttons):
     """
     # simple default button callback
     print(
-        "[" + " ".join(
-            [
-                "%2d, " % buttons[k]
-                for k in range(0, len(buttons))
-            ]
-        ) + "]"
+        (
+            (
+                "["
+                + " ".join(["%2d, " % buttons[k] for k in range(len(buttons))])
+            )
+            + "]"
+        )
     )
 
 
