@@ -17,3 +17,6 @@ release-test: package
 
 clean:
 	rm -rf dist build
+
+reviewCode:
+	sourcery review pyspacemouse --in-place
