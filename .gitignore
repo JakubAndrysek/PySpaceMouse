@@ -63,3 +63,5 @@ release.md
 release.sh
 html
 .DS_Store
+.mkdoxy
+site/

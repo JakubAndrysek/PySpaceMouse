@@ -1,0 +1,95 @@
+site_name: PySpaceMouse
+site_url: https://jakubandrysek.github.io/pyspacemouse/
+site_author: Jakub Andrýsek
+site_description: >-
+    PySpaceMouse is a Python library for 3DConnexion SpaceMouse devices.
+    The library is cross-platform and works on Linux, Windows and macOS.
+
+# Repository
+repo_name: JakubAndrysek/mkdoxy
+repo_url: https://github.com/JakubAndrysek/pyspacemouse/
+
+# Copyright
+copyright: Copyright © 2023 Jakub Andrýsek
+
+theme:
+  name: material
+  language: en
+  # logo: assets/logo.png
+  # favicon: images/favicon.png
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.top
+
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+    - scheme: slate
+      primary: green
+      accent: green
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/JakubAndrysek
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/KubaAndrysek
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/jakub-andrysek/
+#    analytics:
+#        provider: google
+#        property: G-XXXXXXXXXX
+
+use_directory_urls: True
+#use_directory_urls: False
+
+plugins:
+  - mkdoxy:
+      projects:
+        mouseApi:
+          src-dirs: pyspacemouse
+          full-doc: True
+          doxy-cfg:
+            FILE_PATTERNS: "*.py"
+            EXAMPLE_PATH: ""
+            RECURSIVE: True
+            OPTIMIZE_OUTPUT_JAVA: True
+            JAVADOC_AUTOBRIEF: True
+            EXTRACT_ALL: True
+      save-api: .mkdoxy
+      full-doc: True
+      debug: False
+      ignore-errors: False
+
+
+markdown_extensions:
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+nav:
+  - Home: 'README.md'
+  - API:
+      - mouseApi/index.md
+      - 'Links': 'mouseApi/links.md'
+      - 'Classes':
+          - 'Class List': 'mouseApi/annotated.md'
+          - 'Class Index': 'mouseApi/classes.md'
+          - 'Class Hierarchy': 'mouseApi/hierarchy.md'
+          - 'Class Members': 'mouseApi/class_members.md'
+          - 'Class Member Functions': 'mouseApi/class_member_functions.md'
+          - 'Class Member Variables': 'mouseApi/class_member_variables.md'
+          - 'Class Member Typedefs': 'mouseApi/class_member_typedefs.md'
+          - 'Class Member Enumerations': 'mouseApi/class_member_enums.md'
+      - 'Namespaces':
+          - 'Namespace List': 'mouseApi/namespaces.md'
+          - 'Namespace Members': 'mouseApi/namespace_members.md'
+          - 'Namespace Member Functions': 'mouseApi/namespace_member_functions.md'
+          - 'Namespace Member Variables': 'mouseApi/namespace_member_variables.md'
+          - 'Namespace Member Typedefs': 'mouseApi/namespace_member_typedefs.md'
+          - 'Namespace Member Enumerations': 'mouseApi/namespace_member_enums.md'
+      - 'Functions': 'mouseApi/functions.md'
+      - 'Variables': 'mouseApi/variables.md'
+      - 'Macros': 'mouseApi/macros.md'
+      - 'Files': 'mouseApi/files.md'

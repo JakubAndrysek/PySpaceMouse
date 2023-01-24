@@ -1,4 +1,6 @@
-# pyspacemouse
+# PySpaceMouse 
+
+A Python library for 3Dconnexion SpaceMouse devices
 
 3Dconnexion Space Mouse in Python using raw HID.
 Note: you **don't** need to install or use any of the drivers or 3Dconnexion software to use this package.
@@ -9,16 +11,14 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 <img src="https://img.shields.io/github/license/JakubAndrysek/pyspacemouse?style=flat-square">
 </p>
 
+[PySpaceMouse](https://github.com/JakubAndrysek/pyspacemouse) is forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
 
-Connected project [pySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC
-with SpaceMouse.
-
-Forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
+Connected project [PySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC with SpaceMouse.
 
 Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse) device as
 well as similar devices.
 
-![](media/spacemouse-robot.jpg)
+![](https://github.com/JakubAndrysek/pyspacemouse/raw/master/media/spacemouse-robot.jpg)
 Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 
 ## Supported 3Dconnexion devices

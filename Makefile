@@ -1,14 +1,19 @@
-all: release
+.PHONY: package release
 
-release:
-	echo "Package build + upload to pypi.org"
+all: package
+
+package:
+	rm -f dist/*
 	python3 setup.py sdist bdist_wheel
 
-	twine check dist/*
+install: package
+	python3 -m pip install --no-deps --force dist/*.whl
 
+release: package
 	twine upload --repository pypi dist/*
 
-delete:
-	rm -rf dist/*
-	rm -rf build/*
-	rm -rf *.egg-info
+release-test: package
+	twine upload --repository testpypi dist/*
+
+clean:
+	rm -rf dist build

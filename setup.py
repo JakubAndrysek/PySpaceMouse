@@ -11,7 +11,7 @@ long_description = (HERE / "README.md").read_text()
 
 setuptools.setup(
     name='pyspacemouse',
-    version='1.0.6',
+    version='1.0.7',
     author='Jakub Andrýsek',
     author_email='email@kubaandrysek.cz',
     description='Multiplatform Python interface to the 3DConnexion Space Mouse - forked from pyspacenavigator',
@@ -27,9 +27,12 @@ setuptools.setup(
     zip_safe=False,
     include_package_data=True,
     classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Operating System :: OS Independent',
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
 )
