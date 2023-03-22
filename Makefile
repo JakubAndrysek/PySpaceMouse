@@ -20,3 +20,6 @@ clean:
 
 reviewCode:
 	sourcery review pyspacemouse --in-place
+
+run-demo:
+	python3 ./examples/basicExample.py

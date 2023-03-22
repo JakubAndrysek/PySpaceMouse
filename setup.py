@@ -22,7 +22,7 @@ setuptools.setup(
     license='MIT',
     packages=['pyspacemouse'],
     install_requires=[
-        "easyhid",
+        "easyhid@https://github.com/bglopez/python-easyhid/archive/refs/heads/master.zip",
     ],
     zip_safe=False,
     include_package_data=True,

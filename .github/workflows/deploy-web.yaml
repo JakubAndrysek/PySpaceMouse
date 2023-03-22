@@ -1,0 +1,25 @@
+name: Build and deploy docs to GitHub Pages
+on:
+  push:
+    branches:
+      - master
+      - main
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+      - uses: actions/cache@v2
+        with:
+          key: ${{ github.ref }}
+          path: .cache
+      - run: pip install mkdocs
+      - run: pip install mkdocs-material # not in requirements.txt because it's not needed for the build
+      - run: pip install mkdoxy
+      - run: sudo apt-get install doxygen
+      - run: mkdocs gh-deploy --force

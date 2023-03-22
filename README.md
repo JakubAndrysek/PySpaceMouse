@@ -1,4 +1,4 @@
-# PySpaceMouse 
+# PySpaceMouse
 
 A Python library for 3Dconnexion SpaceMouse devices
 
@@ -9,6 +9,7 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 <p align="center">
 <a href="https://hits.seeyoufarm.com"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FJakubAndrysek%2Fpyspacemouse&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=true"/></a>
 <img src="https://img.shields.io/github/license/JakubAndrysek/pyspacemouse?style=flat-square">
+<a href='https://coveralls.io/github/JakubAndrysek/PySpaceMouse'><img src='https://coveralls.io/repos/github/JakubAndrysek/PySpaceMouse/badge.svg' alt='Coverage Status' /></a>
 </p>
 
 [PySpaceMouse](https://github.com/JakubAndrysek/pyspacemouse) is forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
