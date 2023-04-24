@@ -784,13 +784,7 @@ def check_config(callback=None, dof_callback=None, dof_callback_arr=None, button
     """Check that the input configuration has the correct components.
     Raise an exception if it encounters incorrect component.
     """
-    if callback and callable(callback):
-        pass
-    if dof_callback and callable(dof_callback):
-        pass
     if dof_callback_arr and check_dof_callback_arr(dof_callback_arr):
-        pass
-    if button_callback and callable(button_callback):
         pass
     if button_callback_arr and check_button_callback_arr(button_callback_arr):
         pass
