@@ -372,6 +372,25 @@ device_specs = {
             ButtonSpec(channel=3, byte=1, bit=1),  # RIGHT
         ],
         axis_scale=350.0,
+    ),        
+    "SpaceMouse USB": DeviceSpec(
+        name="SpaceMouseUSB",
+        # vendor ID and product ID
+        hid_id=[0x256f, 0xc641],
+        # LED HID usage code pair
+        led_id=None,
+        mappings={
+            "x": AxisSpec(channel=1, byte1=1, byte2=2, scale=1),
+            "y": AxisSpec(channel=1, byte1=3, byte2=4, scale=-1),
+            "z": AxisSpec(channel=1, byte1=5, byte2=6, scale=-1),
+            "pitch": AxisSpec(channel=2, byte1=1, byte2=2, scale=-1),
+            "roll": AxisSpec(channel=2, byte1=3, byte2=4, scale=-1),
+            "yaw": AxisSpec(channel=2, byte1=5, byte2=6, scale=1),
+        },
+        button_mapping=[
+            ButtonSpec(channel=None, byte=None, bit=None),  # No buttons
+            ],
+        axis_scale=350.0,
     ),
     "SpaceMouse Compact": DeviceSpec(
         name="SpaceMouse Compact",
@@ -677,6 +696,7 @@ def open(
         button_callback_arr: List[ButtonCallback] = None,
         set_nonblocking_loop=True,
         device: str = None,
+        path: str = None,
         DeviceNumber=0) -> Union[None, DeviceSpec]:
     """
     Open a 3D space navigator device. Makes this device the current active device, which enables the module-level read() and close()
@@ -690,6 +710,7 @@ def open(
         button_callback_arr: If button_callbacks_arr is provided, it is called only on specific button state true with the argument (state, buttons, pressed_buttons).
         set_nonblocking_loop: Disable waiting for input from SpaceMouse. It is required for using callbacks
         device: name of device to open. Must be one of the values in supported_devices. If None, chooses the first supported device found.
+        path: path of the device to open. If path is specified it will try to open at that path regardless of what is connected to it
         DeviceNumber: use the first (DeviceNumber=0) device you find. (for universal wireless receiver)
     Returns:
         Device object if the device was opened successfully
@@ -711,6 +732,8 @@ def open(
     all_hids = hid.find()
     if all_hids:
         for dev in all_hids:
+            if path:
+                dev.path = path
             spec = device_specs[device]
             if dev.vendor_id == spec.hid_id[0] and dev.product_id == spec.hid_id[1]:
                 found_devices.append({"Spec": spec, "HIDDevice": dev})
@@ -880,6 +903,11 @@ def print_state(state):
             )
         )
 
+def silent_callback(state):
+    """Silent callback
+    Does nothing
+    """
+    pass
 
 def print_buttons(state, buttons):
     """Simple default button callback
