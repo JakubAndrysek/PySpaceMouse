@@ -1,4 +1,4 @@
-from easyhid import Enumeration
+from easyhid import Enumeration, HIDException
 from collections import namedtuple
 import timeit
 import copy
@@ -137,7 +137,7 @@ class DeviceSpec(object):
         self.button_callback = None
         self.button_callback_arr = None
         self.set_nonblocking_loop = True
-        
+
     def __get_num_bytes_to_read(self):
         byte_indices = []
         for value in self.__mappings.values():
@@ -156,7 +156,7 @@ class DeviceSpec(object):
     @property
     def mappings(self):
         return self.__mappings
-    
+
     @mappings.setter
     def mappings(self, val):
         self.__mappings = val
@@ -179,7 +179,11 @@ class DeviceSpec(object):
     def open(self):
         """Open a connection to the device, if possible"""
         if self.device:
-            self.device.open()
+            try:
+                self.device.open()
+            except HIDException as e:
+                raise Exception("Failed to open device") from e
+
         # copy in product details
         self.product_name = self.device.product_string
         self.vendor_name = self.device.manufacturer_string
@@ -292,7 +296,7 @@ class DeviceSpec(object):
                         elif axis_val < -block_dof_callback.filter:
                             block_dof_callback.callback_minus(self.tuple_state, axis_val)
                     elif axis_val > block_dof_callback.filter or axis_val < -block_dof_callback.filter:
-                        block_dof_callback.callback(self.tuple_state, axis_val)
+                        block_dof_callback.cafllback(self.tuple_state, axis_val)
                     self.dict_state_last[axis_name] = now
 
         # only call the button callback if the button state actually changed
@@ -372,7 +376,7 @@ device_specs = {
             ButtonSpec(channel=3, byte=1, bit=1),  # RIGHT
         ],
         axis_scale=350.0,
-    ),        
+    ),
     "SpaceMouse USB": DeviceSpec(
         name="SpaceMouseUSB",
         # vendor ID and product ID
@@ -659,7 +663,11 @@ def list_devices():
         A list of string names of the devices supported which were found. Empty if no supported devices found
     """
     devices = []
-    hid = Enumeration()
+    try:
+        hid = Enumeration()
+    except AttributeError:
+        raise Exception("HID API is probably not installed. See README.md for details.")
+
     all_hids = hid.find()
 
     if all_hids:

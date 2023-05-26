@@ -10,6 +10,9 @@ package:
 install: package
 	python3 -m pip install --no-deps --force dist/*.whl
 
+install-dev: package
+	python3 -m pip install --no-deps --force --editable .
+
 release: package
 	twine upload --repository pypi dist/*
 

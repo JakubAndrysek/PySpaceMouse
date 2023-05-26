@@ -11,14 +11,14 @@ long_description = (HERE / "README.md").read_text()
 
 setuptools.setup(
     name='pyspacemouse',
-    version='1.0.8',
+    version='1.0.9',
     author='Jakub Andrýsek',
     author_email='email@kubaandrysek.cz',
     description='Multiplatform Python interface to the 3DConnexion Space Mouse - forked from pyspacenavigator',
     url='https://github.com/JakubAndrysek/pyspacemouse',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    keywords='pyspacemouse, 3d, 6 DoF, HID',
+    keywords='pyspacemouse, 3d, 6 DoF, HID, python, open-source, spacemouse, spacenavigator, 3dconnection, 3d-mouse',
     license='MIT',
     packages=['pyspacemouse'],
     install_requires=[
