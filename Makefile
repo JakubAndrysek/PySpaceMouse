@@ -23,7 +23,7 @@ clean:
 
 # Testing
 reviewCode:
-	sourcery review mkdoxy --in-place
+	sourcery review pyspacemouse --in-place
 
 install-dev:
 	python3 -m pip install --force --editable .
