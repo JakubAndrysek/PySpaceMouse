@@ -19,7 +19,7 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 
 Connected project [PySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC with SpaceMouse.
 
-Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse) device as
+Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse/) device as
 well as similar devices.
 
 ![](https://github.com/JakubAndrysek/pyspacemouse/raw/master/media/spacemouse-robot.jpg)
@@ -38,6 +38,14 @@ Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 * [Add more devices](https://github.com/johnhw/pyspacenavigator/issues/1)
 
 ## Installation
+
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/).
+
+```bash
+pip install pyspacemouse
+```
+
+## Dependencies
 
 - [hidapi](https://github.com/libusb/hidapi) is `C` library for direct communication with HID devices
     - ### Linux

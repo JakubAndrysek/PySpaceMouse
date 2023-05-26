@@ -10,9 +10,6 @@ package:
 install: package
 	python3 -m pip install --no-deps --force dist/*.whl
 
-install-dev: package
-	python3 -m pip install --no-deps --force --editable .
-
 release: package
 	twine upload --repository pypi dist/*
 
@@ -36,12 +33,19 @@ run-demo:
 
 
 
-# Documentation
-docs-serve:
-	mkdocs serve
+fixRelativeLinkDocs:
+	sed  's/\.\/docs/\./g'  README.md > docs/README.md
+	sed  's/\.\/docs/\./g'  CONTRIBUTING.md > docs/CONTRIBUTING.md
 
-docs-build: # results in site directory
+# Docs
+docs-build: fixRelativeLinkDocs
+	@echo "Building docs..."
 	mkdocs build
 
+docs-serve: fixRelativeLinkDocs
+	@echo "Serving docs..."
+	mkdocs serve
 
-
+docs-deploy: fixRelativeLinkDocs
+	@echo "Deploying docs..."
+	mkdocs gh-deploy --force

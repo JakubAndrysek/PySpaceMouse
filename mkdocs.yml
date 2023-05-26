@@ -6,7 +6,7 @@ site_description: >-
     The library is cross-platform and works on Linux, Windows and macOS.
 
 # Repository
-repo_name: JakubAndrysek/mkdoxy
+repo_name: JakubAndrysek/pyspacemouse/
 repo_url: https://github.com/JakubAndrysek/pyspacemouse/
 
 # Copyright
@@ -15,20 +15,38 @@ copyright: Copyright © 2023 Jakub Andrýsek
 theme:
   name: material
   language: en
-  # logo: assets/logo.png
-  # favicon: images/favicon.png
+  logo: assets/logo.png
+  favicon: assets/logo.png
   features:
     - navigation.tabs
     - navigation.indexes
     - navigation.top
-
+    - content.action.edit
+    - content.action.view
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.expand
   icon:
     repo: fontawesome/brands/github
 
   palette:
-    - scheme: slate
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
       primary: green
       accent: green
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: green
+      accent: green
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
 
 extra:
   social:
@@ -38,14 +56,17 @@ extra:
       link: https://twitter.com/KubaAndrysek
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/in/jakub-andrysek/
-#    analytics:
-#        provider: google
-#        property: G-XXXXXXXXXX
+  analytics:
+      provider: google
+      property: G-P82VYYEZW9
 
 use_directory_urls: True
 #use_directory_urls: False
 
 plugins:
+  - search
+  - glightbox
+  - open-in-new-tab
   - mkdoxy:
       projects:
         mouseApi:
@@ -63,13 +84,20 @@ plugins:
       debug: False
       ignore-errors: False
 
+  - git-revision-date-localized
+
 
 markdown_extensions:
   - pymdownx.highlight
   - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
 
 nav:
   - Home: 'README.md'
+  - Contributing: 'CONTRIBUTING.md'
   - API:
       - mouseApi/index.md
       - 'Links': 'mouseApi/links.md'

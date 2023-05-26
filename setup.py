@@ -22,8 +22,19 @@ setuptools.setup(
     license='MIT',
     packages=['pyspacemouse'],
     install_requires=[
-        "easyhid@https://github.com/bglopez/python-easyhid/archive/refs/heads/master.zip",
+        "easyhid",
     ],
+    extras_require={
+        'develop': [
+            'mkdocs',
+            'mkdocs-material',
+            'mkdocs-glightbox',
+            'mkdocs-redirects',
+            'mkdoxy',
+            'mkdocs-open-in-new-tab',
+            'mkdocs-git-revision-date-localized-plugin'],
+    },
+
     zip_safe=False,
     include_package_data=True,
     classifiers=[

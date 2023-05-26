@@ -18,8 +18,7 @@ jobs:
         with:
           key: ${{ github.ref }}
           path: .cache
-      - run: pip install mkdocs
-      - run: pip install mkdocs-material # not in requirements.txt because it's not needed for the build
+      - run: pip install pyspacemouse[develop]
       - run: pip install mkdoxy
       - run: sudo apt-get install doxygen
       - run: mkdocs gh-deploy --force
