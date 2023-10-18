@@ -357,6 +357,39 @@ class DeviceSpec(object):
 # the IDs for the supported devices
 # Each ID maps a device name to a DeviceSpec object
 device_specs = {
+    "SpaceExplorer": DeviceSpec(
+        name="SpaceExplorer",
+        # vendor ID and product ID
+        hid_id=[0x46D, 0xc627],
+        # LED HID usage code pair
+        led_id=[0x8, 0x4B],
+        mappings={
+            "x": AxisSpec(channel=1, byte1=1, byte2=2, scale=1),
+            "y": AxisSpec(channel=1, byte1=3, byte2=4, scale=-1),
+            "z": AxisSpec(channel=1, byte1=5, byte2=6, scale=-1),
+            "pitch": AxisSpec(channel=2, byte1=1, byte2=2, scale=-1),
+            "roll": AxisSpec(channel=2, byte1=3, byte2=4, scale=-1),
+            "yaw": AxisSpec(channel=2, byte1=5, byte2=6, scale=1),
+        },
+        button_mapping=[
+            ButtonSpec(channel=3, byte=2, bit=0),  # SHIFT
+            ButtonSpec(channel=3, byte=1, bit=6),  # ESC
+            ButtonSpec(channel=3, byte=2, bit=1),  # CTRL
+            ButtonSpec(channel=3, byte=1, bit=7),  # ALT
+            ButtonSpec(channel=3, byte=1, bit=0),  # 1
+            ButtonSpec(channel=3, byte=1, bit=1),  # 2
+            ButtonSpec(channel=3, byte=2, bit=3),  # PANEL
+            ButtonSpec(channel=3, byte=2, bit=2),  # FIT
+            ButtonSpec(channel=3, byte=2, bit=5),  # -
+            ButtonSpec(channel=3, byte=2, bit=4),  # +
+            ButtonSpec(channel=3, byte=1, bit=2),  # T
+            ButtonSpec(channel=3, byte=1, bit=3),  # L
+            ButtonSpec(channel=3, byte=1, bit=5),  # F
+            ButtonSpec(channel=3, byte=2, bit=6),  # 2D
+            ButtonSpec(channel=3, byte=1, bit=4),  # R
+        ],
+        axis_scale=350.0,
+    ),
     "SpaceNavigator": DeviceSpec(
         name="SpaceNavigator",
         # vendor ID and product ID
