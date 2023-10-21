@@ -18,7 +18,7 @@ jobs:
         with:
           key: ${{ github.ref }}
           path: .cache
-      - run: pip install pyspacemouse[develop]
+      - run: pip install -e ".[develop]"
       - run: pip install mkdoxy
       - run: sudo apt-get install doxygen
       - run: mkdocs gh-deploy --force
