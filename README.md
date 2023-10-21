@@ -66,9 +66,20 @@ pip install pyspacemouse
           the [hidapi releases](https://github.com/libusb/hidapi/releases) page.
         - Set system environment: add absolute path for `x64` or `x86` folder in Path.
 
-    - ### Mac OS X
+    - ### Mac OS X (M1)
         - Install from [Homebrew](https://formulae.brew.sh/formula/hidapi)
         - `brew install hidapi`
+        - Add hidapi to your `DYLD_LIBRARY_PATH` directory.
+            ```bash
+            export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/0.14.0/lib:$DYLD_LIBRARY_PATH
+            ```
+        - On MacOS M1 you will need patched version of easyhid
+            ```bash
+            pip install git+https://github.com/bglopez/python-easyhid.git
+            ```
+        - In case of problem with M1 chip, try to run you code with Rosseta 2
+            - How to use Rosseta 2 - [Setup Rosetta](https://apple.stackexchange.com/questions/428768/on-apple-m1-with-rosetta-how-to-open-entire-terminal-iterm-in-x86-64-architec)
+        - Tested and developed by [consi](https://github.com/JakubAndrysek/PySpaceMouse/issues/10#issuecomment-1768362007) - thanks!
 
 - [easyhid](https://github.com/bglopez/python-easyhid) is `hidapi` interface for Python - required on all platforms
     - `pip install git+https://github.com/bglopez/python-easyhid.git`
@@ -76,7 +87,7 @@ pip install pyspacemouse
     - on other platforms it possible works with original package `pip install easyhid`
 
 ## Basic Usage:
-[basicExample.py](examples/basicExample.py)
+[basicExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/basicExample.py)
 ````py
 import pyspacemouse
 import time
@@ -91,7 +102,7 @@ if success:
 
 ## State objects
 
-State objects returned from read() have 7 attributes: [t,x,y,z,roll,pitch,yaw,button].
+State objects returned from `read()` have 7 attributes: [t,x,y,z,roll,pitch,yaw,button].
 
 * t: timestamp in seconds since the script started.
 * x,y,z: translations in the range [-1.0, 1.0]
@@ -99,7 +110,7 @@ State objects returned from read() have 7 attributes: [t,x,y,z,roll,pitch,yaw,bu
 * button: list of button states (0 or 1), in order specified in the device specifier
 
 ## Usage with callback
-[callbackExample.py](examples/callbackExample.py)
+[callbackExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/callbackExample.py)
 ````py
 import pyspacemouse
 import time
