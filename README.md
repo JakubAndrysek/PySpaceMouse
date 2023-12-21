@@ -60,6 +60,15 @@ pip install pyspacemouse
             sudo usermod -aG plugdev $USER
             newgrp plugdev
             ```
+            <details>
+            <summary>Aleternative option - with tee (RPi)</summary>
+            <pre>
+            echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
+            sudo usermod -aG plugdev $USER
+            newgrp plugdev
+            </pre>          
+            </details>          
+
 
     - ### Windows
         - Install the latest release of hidapi.dll and hidapi.lib from
