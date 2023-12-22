@@ -1,1 +1,1 @@
-from .pyspacemouse import *
+from .spacemouse import *
