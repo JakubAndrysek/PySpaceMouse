@@ -357,6 +357,62 @@ class DeviceSpec(object):
 # the IDs for the supported devices
 # Each ID maps a device name to a DeviceSpec object
 device_specs = {
+     "SpaceMouse Enterprise": DeviceSpec(
+        name="SpaceMouse Enterprise",
+        # vendor ID and product ID
+        hid_id=[0x256f, 0xc633],
+        led_id=[0x8, 0x4B],
+        mappings={
+            "x": AxisSpec(channel=1, byte1=1, byte2=2, scale=1),
+            "y": AxisSpec(channel=1, byte1=3, byte2=4, scale=-1),
+            "z": AxisSpec(channel=1, byte1=5, byte2=6, scale=-1),
+            "pitch": AxisSpec(channel=1, byte1=7, byte2=8, scale=-1),
+            "roll": AxisSpec(channel=1, byte1=9, byte2=10, scale=-1),
+            "yaw": AxisSpec(channel=1, byte1=11, byte2=12, scale=1),
+        },
+        button_mapping=[
+
+            # ButtonSpec(channel=3, byte=5, bit=0),
+            # ButtonSpec(channel=3, byte=5, bit=1),
+            # ButtonSpec(channel=3, byte=5, bit=2),
+            # ButtonSpec(channel=3, byte=5, bit=3),
+            # ButtonSpec(channel=3, byte=5, bit=4),
+            # ButtonSpec(channel=3, byte=5, bit=5),
+            # ButtonSpec(channel=3, byte=5, bit=6),
+            # ButtonSpec(channel=3, byte=5, bit=7),
+        
+            ButtonSpec(channel=3, byte=2, bit=4), # 1
+            ButtonSpec(channel=3, byte=2, bit=5), # 2
+            ButtonSpec(channel=3, byte=2, bit=6), # 3
+            ButtonSpec(channel=3, byte=2, bit=7), # 4
+
+            ButtonSpec(channel=3, byte=3, bit=0), # 5
+            ButtonSpec(channel=3, byte=3, bit=1), # 6
+            ButtonSpec(channel=3, byte=3, bit=2), # 7
+            ButtonSpec(channel=3, byte=3, bit=3), # 8
+            ButtonSpec(channel=3, byte=3, bit=4), # 9
+            ButtonSpec(channel=3, byte=3, bit=5), # 10
+
+            ButtonSpec(channel=3, byte=1, bit=0), # MENU
+            ButtonSpec(channel=3, byte=1, bit=1), # FIT
+            ButtonSpec(channel=3, byte=1, bit=2), # T IN SQUARE
+            ButtonSpec(channel=3, byte=1, bit=4), # R IN SQUARE
+            ButtonSpec(channel=3, byte=1, bit=5), # F IN SQUARE
+
+            ButtonSpec(channel=3, byte=2, bit=0), # SQUARE WITH ROTATING ARROWS
+            ButtonSpec(channel=3, byte=2, bit=2), # ISO1
+            ButtonSpec(channel=3, byte=3, bit=6), # ESC
+            ButtonSpec(channel=3, byte=3, bit=7), # ALT
+
+            ButtonSpec(channel=3, byte=4, bit=0), # SHIFT
+            ButtonSpec(channel=3, byte=4, bit=1), # CTRL
+            ButtonSpec(channel=3, byte=4, bit=2), # LOCK
+
+            
+
+        ],
+        axis_scale=350.0,
+    ),
     "SpaceExplorer": DeviceSpec(
         name="SpaceExplorer",
         # vendor ID and product ID
