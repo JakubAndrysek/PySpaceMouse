@@ -35,6 +35,7 @@ Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 * SpaceMouse Compact
 * SpacePilot
 * SpacePilot Pro
+* SpaceMouse Enterprise
 * [Add more devices](https://github.com/johnhw/pyspacenavigator/issues/1)
 
 ## Installation
@@ -66,8 +67,8 @@ pip install pyspacemouse
             echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
             sudo usermod -aG plugdev $USER
             newgrp plugdev
-            </pre>          
-            </details>          
+            </pre>
+            </details>
 
 
     - ### Windows
