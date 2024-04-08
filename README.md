@@ -12,7 +12,7 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 <img src="https://img.shields.io/github/stars/JakubAndrysek/pyspacemouse?style=flat-square">
 <img src="https://img.shields.io/github/forks/JakubAndrysek/pyspacemouse?style=flat-square">
 <img src="https://img.shields.io/github/issues/JakubAndrysek/pyspacemouse?style=flat-square">
-<img src="https://static.pepy.tech/personalized-badge/pyspacemouse?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads">
+<a href="https://www.pepy.tech/projects/pyspacemouse" target="_blank"><img src="https://static.pepy.tech/badge/pyspacemouse"></a>
 </p>
 
 [PySpaceMouse](https://github.com/JakubAndrysek/pyspacemouse) is forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
