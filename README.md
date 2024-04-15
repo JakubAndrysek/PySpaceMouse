@@ -40,9 +40,13 @@ Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/).
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/). If you are using a Mac with an ARM processor, you'll need a patched version of `easyhid`.
 
 ```bash
+# Only needed for ARM Macs
+pip install git+https://github.com/bglopez/python-easyhid.git
+
+# Install package
 pip install pyspacemouse
 ```
 
@@ -70,7 +74,6 @@ pip install pyspacemouse
             </pre>
             </details>
 
-
     - ### Windows
         - Install the latest release of hidapi.dll and hidapi.lib from
           the [hidapi releases](https://github.com/libusb/hidapi/releases) page.
@@ -83,7 +86,7 @@ pip install pyspacemouse
             ```bash
             export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/0.14.0/lib:$DYLD_LIBRARY_PATH
             ```
-        - On MacOS M1 you will need patched version of easyhid
+        - On MacOS M1 you will need patched version of easyhid. If easyhid is already installed, please uninstall it first.
             ```bash
             pip install git+https://github.com/bglopez/python-easyhid.git
             ```
@@ -97,6 +100,9 @@ pip install pyspacemouse
     - on other platforms it possible works with original package `pip install easyhid`
 
 ## Basic Usage:
+
+If the 3Dconnexion driver is installed, please ensure to stop `3DconnexionHelper` before running your python scripts.
+
 [basicExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/basicExample.py)
 ````py
 import pyspacemouse
