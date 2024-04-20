@@ -36,6 +36,7 @@ run-demo:
 fixRelativeLinkDocs:
 	sed  's/\.\/docs/\./g'  README.md > docs/README.md
 	sed  's/\.\/docs/\./g'  CONTRIBUTING.md > docs/CONTRIBUTING.md
+	sed  's/\.\/docs/\./g'  troubleshooting.md > docs/troubleshooting.md
 
 # Docs
 docs-build: fixRelativeLinkDocs

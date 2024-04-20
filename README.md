@@ -93,6 +93,7 @@ pip install pyspacemouse
         - In case of problem with M1 chip, try to run you code with Rosseta 2
             - How to use Rosseta 2 - [Setup Rosetta](https://apple.stackexchange.com/questions/428768/on-apple-m1-with-rosetta-how-to-open-entire-terminal-iterm-in-x86-64-architec)
         - Tested and developed by [consi](https://github.com/JakubAndrysek/PySpaceMouse/issues/10#issuecomment-1768362007) - thanks!
+        - More info in [Troubleshooting - Mac OS (M1)](./troubleshooting.md#mac-os-m1) page.
 
 - [easyhid](https://github.com/bglopez/python-easyhid) is `hidapi` interface for Python - required on all platforms
     - `pip install git+https://github.com/bglopez/python-easyhid.git`
@@ -163,6 +164,8 @@ if __name__ == '__main__':
 
 ## API
 
+The module-level API is as follows:
+
     open(callback=None, button_callback=None, button_callback_arr=None, set_nonblocking_loop=True, device=None)
         Open a 3D space navigator device. Makes this device the current active device, which enables the module-level read() and close()
         calls. For multiple devices, use the read() and close() calls on the returned object instead, and don't use the module-level calls.
@@ -181,8 +184,8 @@ if __name__ == '__main__':
     close()             Close the connection to the current device, if it is open
     list_devices()      Return a list of supported devices found, or an empty list if none found
 
-open() returns a DeviceSpec object. If you have multiple 3Dconnexion devices, you can use the object-oriented API to
-access them individually.
+`open()` returns a DeviceSpec object.
+If you have multiple 3Dconnexion devices, you can use the object-oriented API to access them individually.
 Each object has the following API, which functions exactly as the above API, but on a per-device basis:
 
     dev.open()          Opens the connection (this is always called by the module-level open command,
@@ -222,11 +225,4 @@ Print all buttons states
 
 ## Troubleshooting
 
-### ModuleNotFoundError: No module named 'easyhid'
-
-- Install `easyhid` by `pip install easyhid`.
-
-### AttributeError: function/symbol 'hid_enumerate' not found in library '<None>': python3: undefined symbol: hid_enumerate
-
-- HID library for your computer is not installed.
-- Follow the instructions in [requirements](#requirements).
+Look at the [Troubleshooting](./troubleshooting.md) page for help with common issues.

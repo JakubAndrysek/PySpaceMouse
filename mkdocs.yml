@@ -98,6 +98,8 @@ markdown_extensions:
 nav:
   - Home: 'README.md'
   - Contributing: 'CONTRIBUTING.md'
+  - Troubleshooting: 'troubleshooting.md'
+
   - API:
       - mouseApi/index.md
       - 'Links': 'mouseApi/links.md'
