@@ -39,6 +39,7 @@ pip install git+https://github.com/bglopez/python-easyhid.git
 
 After this setup everything works correctly directly on MacOS M1.
 Tested on:
+
 - MacBook Pro 14 (M1 Pro, 2021)
 - ??? (add your device and feedback)
 

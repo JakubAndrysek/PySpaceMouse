@@ -102,6 +102,7 @@ nav:
 
   - API:
       - mouseApi/index.md
+      - 'Examples': 'mouseApi/examples.md'
       - 'Links': 'mouseApi/links.md'
       - 'Classes':
           - 'Class List': 'mouseApi/annotated.md'

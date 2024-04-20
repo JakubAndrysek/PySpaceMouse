@@ -1,6 +1,6 @@
 # PySpaceMouse
 
-A Python library for 3Dconnexion SpaceMouse devices
+🎮 Multiplatform Python library for 3Dconnexion SpaceMouse devices using raw HID.
 
 3Dconnexion Space Mouse in Python using raw HID.
 Note: you **don't** need to install or use any of the drivers or 3Dconnexion software to use this package.
@@ -17,11 +17,11 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 
 [PySpaceMouse](https://github.com/JakubAndrysek/pyspacemouse) is forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
 
-Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse/) device as
+Implements a simple interface for 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse/) device as
 well as similar devices.
 
 ![](https://github.com/JakubAndrysek/pyspacemouse/raw/master/media/spacemouse-robot.jpg)
-Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
+Control [Robo Arm](https://roboruka.robotickytabor.cz/) with a Space Mouse.
 
 ## Supported 3Dconnexion devices
 
@@ -41,17 +41,19 @@ Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/). If you are using a Mac with an ARM processor, you'll need a patched version of `easyhid`.
 
 ```bash
-# Only needed for ARM Macs
-pip install git+https://github.com/bglopez/python-easyhid.git
-
 # Install package
 pip install pyspacemouse
+
+# Only needed for ARM MacOs
+pip install git+https://github.com/bglopez/python-easyhid.git
 ```
 
-## Dependencies
+## Dependencies (required)
 
-- [hidapi](https://github.com/libusb/hidapi) is `C` library for direct communication with HID devices
-    - ### Linux
+The library uses `hidapi` as low-level interface to the device and `easyhid` as a Python abstraction for easier use.
+
+- ### [hidapi](https://github.com/libusb/hidapi) is `C` library for direct communication with HID devices
+    - #### Linux
         - [libhidapi-dev]() to access HID data
         - `sudo apt-get install libhidapi-dev` (Debian/Ubuntu)
         - Compile and install [hidapi](https://github.com/libusb/hidapi/#build-from-source).  (other Linux
@@ -93,7 +95,7 @@ pip install pyspacemouse
         - Tested and developed by [consi](https://github.com/JakubAndrysek/PySpaceMouse/issues/10#issuecomment-1768362007) - thanks!
         - More info in [Troubleshooting - Mac OS (M1)](./troubleshooting.md#mac-os-m1) page.
 
-- [easyhid](https://github.com/bglopez/python-easyhid) is `hidapi` interface for Python - required on all platforms
+- ### [easyhid](https://github.com/bglopez/python-easyhid) is `hidapi` interface for Python - required on all platforms
     - `pip install git+https://github.com/bglopez/python-easyhid.git`
     - this fork fix problems with `hidapi` on MacOS.
     - on other platforms it possible works with original package `pip install easyhid`
@@ -102,101 +104,9 @@ pip install pyspacemouse
 
 If the 3Dconnexion driver is installed, please ensure to stop `3DconnexionHelper` before running your python scripts.
 
-[basicExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/basicExample.py)
-````py
-import pyspacemouse
-import time
-
-success = pyspacemouse.open()
-if success:
-    while 1:
-        state = pyspacemouse.read()
-        print(state.x, state.y, state.z)
-        time.sleep(0.01)
-````
-
-## State objects
-
-State objects returned from `read()` have 7 attributes: [t,x,y,z,roll,pitch,yaw,button].
-
-* t: timestamp in seconds since the script started.
-* x,y,z: translations in the range [-1.0, 1.0]
-* roll, pitch, yaw: rotations in the range [-1.0, 1.0].
-* button: list of button states (0 or 1), in order specified in the device specifier
-
-## Usage with callback
-[callbackExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/callbackExample.py)
-````py
-import pyspacemouse
-import time
 
 
-def button_0(state, buttons, pressed_buttons):
-    print("Button:", pressed_buttons)
-
-
-def button_0_1(state, buttons, pressed_buttons):
-    print("Buttons:", pressed_buttons)
-
-
-def someButton(state, buttons):
-    print("Some button")
-
-
-def callback():
-    button_arr = [pyspacemouse.ButtonCallback(0, button_0),
-                  pyspacemouse.ButtonCallback([1], lambda state, buttons, pressed_buttons: print("Button: 1")),
-                  pyspacemouse.ButtonCallback([0, 1], button_0_1), ]
-
-    success = pyspacemouse.open(dof_callback=pyspacemouse.print_state, button_callback=someButton,
-                                button_callback_arr=button_arr)
-    if success:
-        while True:
-            pyspacemouse.read()
-            time.sleep(0.01)
-
-
-if __name__ == '__main__':
-    callback()
-````
-
-## API
-
-The module-level API is as follows:
-
-    open(callback=None, button_callback=None, button_callback_arr=None, set_nonblocking_loop=True, device=None)
-        Open a 3D space navigator device. Makes this device the current active device, which enables the module-level read() and close()
-        calls. For multiple devices, use the read() and close() calls on the returned object instead, and don't use the module-level calls.
-
-        Parameters:
-            callback: If callback is provided, it is called on each HID update with a copy of the current state namedtuple
-            dof_callback: If dof_callback is provided, it is called only on DOF state changes with the argument (state).
-            button_callback: If button_callback is provided, it is called on each button push, with the arguments (state_tuple, button_state)
-            device: name of device to open, as a string like "SpaceNavigator". Must be one of the values in `supported_devices`.
-                    If `None`, chooses the first supported device found.
-        Returns:
-            Device object if the device was opened successfully
-            None if the device could not be opened
-
-    read()              Return a namedtuple giving the current device state (t,x,y,z,roll,pitch,yaw,button)
-    close()             Close the connection to the current device, if it is open
-    list_devices()      Return a list of supported devices found, or an empty list if none found
-
-`open()` returns a DeviceSpec object.
-If you have multiple 3Dconnexion devices, you can use the object-oriented API to access them individually.
-Each object has the following API, which functions exactly as the above API, but on a per-device basis:
-
-    dev.open()          Opens the connection (this is always called by the module-level open command,
-                        so you should not need to use it unless you have called close())
-    dev.read()          Return the state of the device as namedtuple [t,x,y,z,roll,pitch,yaw,button]
-    dev.close()         Close this device
-
-There are also attributes:
-
-    dev.connected       True if the device is connected, False otherwise
-    dev.state           Convenience property which returns the same value as read()
-
-## Predefined callbacks
+## Basic example
 
 ````py
 import pyspacemouse
@@ -208,18 +118,8 @@ if success:
         state = pyspacemouse.read()
         time.sleep(0.01)
 ````
+More examples can be found in the [/examples](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/examples) directory or in page with [Examples](https://spacemouse.kubaandrysek.cz/mouseApi/examples/).
 
-### Callback: print_state
-
-Print all axis states
-
-    x +0.00    y +0.00    z +0.00 roll +0.00 pitch +0.00  yaw +0.00    t +0.0
-
-### Callback: print_buttons
-
-Print all buttons states
-
-    [ 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, ]
 
 ## Troubleshooting
 
