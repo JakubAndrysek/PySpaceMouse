@@ -17,8 +17,6 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 
 [PySpaceMouse](https://github.com/JakubAndrysek/pyspacemouse) is forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
 
-Connected project [PySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC with SpaceMouse.
-
 Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse/) device as
 well as similar devices.
 
@@ -226,3 +224,17 @@ Print all buttons states
 ## Troubleshooting
 
 Look at the [Troubleshooting](./troubleshooting.md) page for help with common issues.
+
+## References
+
+PySpaceMouse is used in the following projects:
+
+- [PySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) - Control your PC with SpaceMouse (basic hotkeys, mouse control, and more)
+- [TeleMoMa](https://github.com/UT-Austin-RobIn/telemoma) - A Modular and Versatile Teleoperation System for Mobile Manipulation
+- [SERL](https://github.com/rail-berkeley/serl) - SERL: A Software Suite for Sample-Efficient Robotic Reinforcement Learning
+    - ![](https://github.com/rail-berkeley/serl/raw/e59dc0d2721399af2e629d7bcad678fa2ffce9ae/docs/images/tasks-banner.gif)
+- [Pancake Robot](https://github.com/pauldw/pancake-robot)- An integration of the Ufactory Lite 6 robot arm with kitchenware to make pancakes.
+- [GELLO](https://github.com/wuphilipp/gello_software) - GELLO: A General, Low-Cost, and Intuitive Teleoperation Framework for Robot Manipulators
+    - ![image](https://github.com/wuphilipp/gello_software/assets/33494544/229d90b5-c758-4c14-ab37-d4b2ed7ad50b)
+- [spacepad](https://github.com/brianpeiris/spacepad) - A simple python script that turns a spacemouse device into a standard gamepad
+- [arm_xarm](https://github.com/johnrso/arm_xarm)

@@ -12,12 +12,10 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 <img src="https://img.shields.io/github/stars/JakubAndrysek/pyspacemouse?style=flat-square">
 <img src="https://img.shields.io/github/forks/JakubAndrysek/pyspacemouse?style=flat-square">
 <img src="https://img.shields.io/github/issues/JakubAndrysek/pyspacemouse?style=flat-square">
-<img src="https://static.pepy.tech/personalized-badge/pyspacemouse?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads">
+<a href="https://www.pepy.tech/projects/pyspacemouse" target="_blank"><img src="https://static.pepy.tech/badge/pyspacemouse"></a>
 </p>
 
 [PySpaceMouse](https://github.com/JakubAndrysek/pyspacemouse) is forked from: [johnhw/pyspacenavigator](https://github.com/johnhw/pyspacenavigator)
-
-Connected project [PySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) is a simple example of how controll your PC with SpaceMouse.
 
 Implements a simple interface to the 6 DoF 3Dconnexion [Space Mouse](https://3dconnexion.com/uk/spacemouse/) device as
 well as similar devices.
@@ -40,9 +38,13 @@ Control a [robot](https://roboruka.robotickytabor.cz/) with a Space Mouse
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/).
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/). If you are using a Mac with an ARM processor, you'll need a patched version of `easyhid`.
 
 ```bash
+# Only needed for ARM Macs
+pip install git+https://github.com/bglopez/python-easyhid.git
+
+# Install package
 pip install pyspacemouse
 ```
 
@@ -70,7 +72,6 @@ pip install pyspacemouse
             </pre>
             </details>
 
-
     - ### Windows
         - Install the latest release of hidapi.dll and hidapi.lib from
           the [hidapi releases](https://github.com/libusb/hidapi/releases) page.
@@ -83,7 +84,7 @@ pip install pyspacemouse
             ```bash
             export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/0.14.0/lib:$DYLD_LIBRARY_PATH
             ```
-        - On MacOS M1 you will need patched version of easyhid
+        - On MacOS M1 you will need patched version of easyhid. If easyhid is already installed, please uninstall it first.
             ```bash
             pip install git+https://github.com/bglopez/python-easyhid.git
             ```
@@ -98,6 +99,9 @@ pip install pyspacemouse
     - on other platforms it possible works with original package `pip install easyhid`
 
 ## Basic Usage:
+
+If the 3Dconnexion driver is installed, please ensure to stop `3DconnexionHelper` before running your python scripts.
+
 [basicExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/basicExample.py)
 ````py
 import pyspacemouse
@@ -178,7 +182,7 @@ The module-level API is as follows:
     close()             Close the connection to the current device, if it is open
     list_devices()      Return a list of supported devices found, or an empty list if none found
 
-`open()` returns a DeviceSpec object. 
+`open()` returns a DeviceSpec object.
 If you have multiple 3Dconnexion devices, you can use the object-oriented API to access them individually.
 Each object has the following API, which functions exactly as the above API, but on a per-device basis:
 
@@ -220,3 +224,17 @@ Print all buttons states
 ## Troubleshooting
 
 Look at the [Troubleshooting](./troubleshooting.md) page for help with common issues.
+
+## References
+
+PySpaceMouse is used in the following projects:
+
+- [PySpaceApp](https://github.com/JakubAndrysek/pyspaceapp) - Control your PC with SpaceMouse (basic hotkeys, mouse control, and more)
+- [TeleMoMa](https://github.com/UT-Austin-RobIn/telemoma) - A Modular and Versatile Teleoperation System for Mobile Manipulation
+- [SERL](https://github.com/rail-berkeley/serl) - SERL: A Software Suite for Sample-Efficient Robotic Reinforcement Learning
+    - ![](https://github.com/rail-berkeley/serl/raw/e59dc0d2721399af2e629d7bcad678fa2ffce9ae/docs/images/tasks-banner.gif)
+- [Pancake Robot](https://github.com/pauldw/pancake-robot)- An integration of the Ufactory Lite 6 robot arm with kitchenware to make pancakes.
+- [GELLO](https://github.com/wuphilipp/gello_software) - GELLO: A General, Low-Cost, and Intuitive Teleoperation Framework for Robot Manipulators
+    - ![image](https://github.com/wuphilipp/gello_software/assets/33494544/229d90b5-c758-4c14-ab37-d4b2ed7ad50b)
+- [spacepad](https://github.com/brianpeiris/spacepad) - A simple python script that turns a spacemouse device into a standard gamepad
+- [arm_xarm](https://github.com/johnrso/arm_xarm)
