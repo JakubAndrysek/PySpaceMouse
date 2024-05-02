@@ -78,6 +78,7 @@ The library uses `hidapi` as low-level interface to the device and `easyhid` as 
         - Install the latest release of hidapi.dll and hidapi.lib from
           the [hidapi releases](https://github.com/libusb/hidapi/releases) page.
         - Set system environment: add absolute path for `x64` or `x86` folder in Path.
+        - More info on [Troubleshooting - WIndows](./troubleshooting.md#windows) page.
 
     - ### Mac OS X (M1)
         - Install from [Homebrew](https://formulae.brew.sh/formula/hidapi)
@@ -93,7 +94,7 @@ The library uses `hidapi` as low-level interface to the device and `easyhid` as 
         - In case of problem with M1 chip, try to run you code with Rosseta 2
             - How to use Rosseta 2 - [Setup Rosetta](https://apple.stackexchange.com/questions/428768/on-apple-m1-with-rosetta-how-to-open-entire-terminal-iterm-in-x86-64-architec)
         - Tested and developed by [consi](https://github.com/JakubAndrysek/PySpaceMouse/issues/10#issuecomment-1768362007) - thanks!
-        - More info in [Troubleshooting - Mac OS (M1)](./troubleshooting.md#mac-os-m1) page.
+        - More info on [Troubleshooting - Mac OS (M1)](./troubleshooting.md#mac-os-m1) page.
 
 - ### [easyhid](https://github.com/bglopez/python-easyhid) is `hidapi` interface for Python - required on all platforms
     - `pip install git+https://github.com/bglopez/python-easyhid.git`

@@ -95,3 +95,61 @@ Read descriptor from the device (replace `<VID/PID>` with the VID/PID of your de
     ...
     Closing device
     ```
+
+## Windows
+
+!!! info "Error message - OSError: cannot load library 'hidapi.dll'"
+    ```bash
+    Traceback (most recent call last):
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\easyhid.py", line 53, in <module>
+        hidapi = ffi.dlopen('hidapi.dll')
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 150, in dlopen
+        lib, function_cache = _make_ffi_library(self, name, flags)
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 832, in _make_ffi_library
+        backendlib = _load_backend_lib(backend, libname, flags)
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 827, in _load_backend_lib
+        raise OSError(msg)
+    OSError: cannot load library 'hidapi.dll': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'hidapi.dll
+    ```
+
+??? info "Other error message - OSError: dlopen(None) cannot work on Windows for Python 3"
+    ```bash
+    File "C:\Users\Student\Downloads\basicExample.py", line 1, in <module>
+        import pyspacemouse
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pyspacemouse\__init__.py", line 1, in <module>
+        from .pyspacemouse import *
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pyspacemouse\pyspacemouse.py", line 1, in <module>
+        from easyhid import Enumeration, HIDException
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\__init__.py", line 8, in <module>
+        from easyhid.easyhid import *
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\easyhid.py", line 55, in <module>
+        hidapi = ffi.dlopen(ctypes.util.find_library('hidapi.dll'))
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 150, in dlopen
+        lib, function_cache = _make_ffi_library(self, name, flags)
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 832, in _make_ffi_library
+        backendlib = _load_backend_lib(backend, libname, flags)
+    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 821, in _load_backend_lib
+        raise OSError("dlopen(None) cannot work on Windows for Python 3 "
+    OSError: dlopen(None) cannot work on Windows for Python 3 (see http://bugs.python.org/issue23606)
+    ```
+
+
+If you are using Windows, you may encounter issues with the `hidapi` library.
+The library is not included in the system, so you have to install it manually.
+
+Go to [hidapi GitHub](https://github.com/libusb/hidapi/releases/latest) and download the latest version of the library in zip format.
+Extract the zip file and copy the x64/x86 folder with `hidapi.dll` to the static location where will be found by the system.
+
+To make it work, you have to add the folder to the system `PATH` variable.
+
+Go to Windows settings and search for `enviroment`.
+![image](https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce7ba2b3-8e40-48bb-8348-5a1f932146c3)
+
+Click on the `Environment variables`.
+![image](https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce22bae7-a0c8-4f19-9204-7f1a12f28782)
+
+Append the path to the folder with `hidapi.dll` to the `Path` variable.
+![image](https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/0ddefada-b595-49f3-bf0f-d11567cf887f)
+
+After this setup, you have to restart (maybe log out) your computer to apply the changes.
+Let's start using this library in your Python code.
