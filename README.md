@@ -121,6 +121,27 @@ if success:
 ````
 More examples can be found in the [/examples](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/examples) directory or in page with [Examples](https://spacemouse.kubaandrysek.cz/mouseApi/examples/).
 
+## Available CLI test commands
+```bash
+usage: pyspacemouse [-h] [--version] [--list-spacemouse]
+                    [--list-supported-devices] [--list-all-hid-devices]
+                    [--test-connect]
+
+PySpaceMouse CLI
+
+options:
+  -h, --help            show this help message and exit
+  --version             Version of pyspacemouse
+  --list-spacemouse     List connected SpaceMouse devices
+  --list-supported-devices
+                        List supported SpaceMouse devices
+  --list-all-hid-devices
+                        List all connected HID devices
+  --test-connect        Test connect to the first available device
+
+For more information, visit https://spacemouse.kubaandrysek.cz
+```
+
 
 ## Troubleshooting
 

@@ -380,7 +380,7 @@ device_specs = {
             # ButtonSpec(channel=3, byte=5, bit=5),
             # ButtonSpec(channel=3, byte=5, bit=6),
             # ButtonSpec(channel=3, byte=5, bit=7),
-        
+
             ButtonSpec(channel=3, byte=2, bit=4), # 1
             ButtonSpec(channel=3, byte=2, bit=5), # 2
             ButtonSpec(channel=3, byte=2, bit=6), # 3
@@ -408,7 +408,7 @@ device_specs = {
             ButtonSpec(channel=3, byte=4, bit=1), # CTRL
             ButtonSpec(channel=3, byte=4, bit=2), # LOCK
 
-            
+
 
         ],
         axis_scale=350.0,
@@ -756,7 +756,8 @@ def list_devices():
         hid = Enumeration()
     except AttributeError as e:
         raise Exception(
-            "HID API is probably not installed. See README.md for details."
+            "HID API is probably not installed. "
+            "Look at https://spacemouse.kubaandrysek.cz for details."
         ) from e
 
     all_hids = hid.find()
@@ -773,6 +774,35 @@ def list_devices():
             )
     return devices
 
+def list_available_devices():
+    """Return a list of all supported devices from config
+
+    Returns:
+        A list of string names of the devices supported (device_name, vid_id, pid_id)
+    """
+    return [
+        (device_name, spec.hid_id[0], spec.hid_id[1])
+        for device_name, spec in device_specs.items()
+    ]
+
+def list_all_hid_devices():
+    """Return a list of all HID devices connected
+
+    Returns:
+        A list of HID devices (product_string, manufacturer_string, vendor_id, product_id)
+    """
+    try:
+        hid = Enumeration()
+    except AttributeError as e:
+        raise Exception(
+            "HID API is probably not installed."
+            "Look at https://spacemouse.kubaandrysek.cz for details."
+        ) from e
+
+    return [
+        (device.product_string, device.manufacturer_string, device.vendor_id, device.product_id)
+        for device in hid.find()
+    ]
 
 def openCfg(config: Config, set_nonblocking_loop: bool = True, device=None, DeviceNumber=0):
     """
@@ -824,7 +854,7 @@ def open(
         if len(all_devices) > 0:
             device = all_devices[0]
         else:
-            raise Exception("No device connected/supported!")
+            raise Exception("No found any connected or supported devices.")
 
     found_devices = []
     hid = Enumeration()
