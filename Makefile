@@ -5,7 +5,7 @@ all: package
 # Packaging
 package:
 	rm -f dist/*
-	python3 setup.py sdist bdist_wheel
+	python3 -m build
 
 install: package
 	python3 -m pip install --no-deps --force dist/*.whl

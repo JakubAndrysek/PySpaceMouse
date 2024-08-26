@@ -26,6 +26,8 @@ setuptools.setup(
     ],
     extras_require={
         "develop": [
+            "build",
+            "twine",
             "mkdocs",
             "mkdocs-material",
             "mkdocs-glightbox",
