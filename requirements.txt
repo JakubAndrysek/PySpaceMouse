@@ -1,1 +1,2 @@
 git+https://github.com/bglopez/python-easyhid.git
+setuptools~=73.0.1
