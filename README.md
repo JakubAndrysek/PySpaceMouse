@@ -61,12 +61,12 @@ The library uses `hidapi` as low-level interface to the device and `easyhid` as 
 
         - add rules for permissions
             ```bash
-            sudo echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' > /etc/udev/rules.d/99-hidraw-permissions.rules
+            echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
             sudo usermod -aG plugdev $USER
             newgrp plugdev
             ```
             <details>
-            <summary>Aleternative option - with tee (RPi)</summary>
+            <summary>Alternative option - with tee (RPi)</summary>
             <pre>
             echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
             sudo usermod -aG plugdev $USER
