@@ -73,6 +73,8 @@ The library uses `hidapi` as low-level interface to the device and `easyhid` as 
             </pre>
             </details>
 
+        - **Note:** If you encounter "Failed to open device" errors, see the [Troubleshooting - Linux](./troubleshooting.md#linux) section for device-specific permission setup.
+
     - ### Windows
         - Install the latest release of hidapi.dll and hidapi.lib from
           the [hidapi releases](https://github.com/libusb/hidapi/releases) page.
