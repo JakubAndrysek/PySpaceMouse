@@ -1,10 +1,13 @@
-import pyspacemouse
 import time
+
 import pyautogui
+
+import pyspacemouse
 
 pyautogui.PAUSE = 0
 pyautogui.MINIMUM_SLEEP = 0
 pyautogui.MINIMUM_DURATION = 0
+
 
 def test(info):
     print(f"Test: {info}")
@@ -26,7 +29,7 @@ def success():
     ]
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_arr_arr_string():
@@ -37,7 +40,7 @@ def err_arr_arr_string():
     ]
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_arr_num_string():
@@ -48,7 +51,7 @@ def err_arr_num_string():
     ]
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_obj_arr_string():
@@ -57,7 +60,7 @@ def err_obj_arr_string():
 
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_obj_num_string():
@@ -66,28 +69,29 @@ def err_obj_num_string():
 
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
+
 
 def success_dof_callback():
     test("Move X axis")
     arr_success = [
-        pyspacemouse.DofCallback("x", lambda axis: print("x:",axis), 0.05),
+        pyspacemouse.DofCallback("x", lambda axis: print("x:", axis), 0.05),
         # pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll((axis*2)**3), 0.08),
-        pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll((axis*5)), 0.09),
+        pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll(axis * 5), 0.09),
         # pyspacemouse.ButtonCallback([1], call2),
     ]
     dev = pyspacemouse.open(dof_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
         time.sleep(0.0001)
 
 
 def success_dof_callback_cfg():
     test("Move X axis")
     arr_success = [
-        pyspacemouse.DofCallback("x", lambda axis: print("x:",axis), 0.05),
+        pyspacemouse.DofCallback("x", lambda axis: print("x:", axis), 0.05),
         # pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll((axis*2)**3), 0.08),
-        pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll((axis*5)), 0.09),
+        pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll(axis * 5), 0.09),
         # pyspacemouse.ButtonCallback([1], call2),
     ]
 
@@ -95,16 +99,16 @@ def success_dof_callback_cfg():
 
     dev = pyspacemouse.openCfg(cfg)
     while True:
-        state = dev.read()
+        dev.read()
         time.sleep(0.0001)
 
 
 def success_dof_callback_set():
     test("Move X axis")
     arr_success = [
-        pyspacemouse.DofCallback("x", lambda axis: print("x:",axis), 0.05),
+        pyspacemouse.DofCallback("x", lambda axis: print("x:", axis), 0.05),
         # pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll((axis*2)**3), 0.08),
-        pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll((axis*5)), 0.09),
+        pyspacemouse.DofCallback("pitch", lambda axis: pyautogui.scroll(axis * 5), 0.09),
         # pyspacemouse.ButtonCallback([1], call2),
     ]
 
@@ -114,16 +118,16 @@ def success_dof_callback_set():
     dev.config_set(cfg)
     # dev.config_remove()
     while True:
-        state = dev.read()
+        dev.read()
         time.sleep(0.0001)
 
 
 def success_dof_callback_set_p():
     test("Move X axis")
     arr_success = [
-        pyspacemouse.DofCallback("x", lambda state, axis: print("x:",axis), 0.05),
+        pyspacemouse.DofCallback("x", lambda state, axis: print("x:", axis), 0.05),
         # pyspacemouse.DofCallback("pitch", lambda state, axis: pyautogui.scroll((axis*2)**3), 0.08),
-        pyspacemouse.DofCallback("pitch", lambda state, axis: pyautogui.scroll((axis*5)), 0.09),
+        pyspacemouse.DofCallback("pitch", lambda state, axis: pyautogui.scroll(axis * 5), 0.09),
         # pyspacemouse.ButtonCallback([1], call2),
     ]
 
@@ -133,11 +137,12 @@ def success_dof_callback_set_p():
     pyspacemouse.config_set(cfg)
     # pyspacemouse.config_remove()
     while True:
-        state = pyspacemouse.read()
+        pyspacemouse.read()
         time.sleep(0.0001)
 
+
 def mouse(state, axis):
-    val = axis*4
+    val = axis * 4
     if axis > 0.0:
         # pyautogui.hotkey("up")
         for x in range(0, int(val)):
@@ -146,16 +151,18 @@ def mouse(state, axis):
         for y in range(0, int(-val)):
             pyautogui.press("down")
 
+
 def mouse_side(state, axis):
-    val = axis*2
+    val = axis * 2
     print(val)
     if axis > 0.0:
         # pyautogui.hotkey("up")
         for x in range(1, int(val**3)):
             pyautogui.press("right")
     elif axis < -0.0:
-        for y in range(1, int(-val**3)):
+        for y in range(1, int(-(val**3))):
             pyautogui.press("left")
+
 
 def success_dof_callback_set_mouse():
     test("Move X axis")
@@ -174,10 +181,11 @@ def success_dof_callback_set_mouse():
     pyspacemouse.config_set(cfg)
     # pyspacemouse.config_remove()
     while True:
-        state = pyspacemouse.read()
+        pyspacemouse.read()
         time.sleep(0.0001)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     print("Start testing")
     # success()
     # err_arr_arr_string() #y
@@ -185,7 +193,6 @@ if __name__ == '__main__':
     # err_obj_arr_string() #y
     # err_obj_num_string()
     # success_dof_callback()
-
 
     # success_dof_callback_set()
     # success_dof_callback_set_p()

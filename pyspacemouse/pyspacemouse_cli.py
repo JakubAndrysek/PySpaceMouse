@@ -1,14 +1,25 @@
 import argparse
 import time
 
-from pyspacemouse import list_devices, list_available_devices, open as open_mouse, read as read_mouse, \
-    close as close_mouse, list_all_hid_devices
-from pkg_resources import get_distribution
+from pyspacemouse import (
+    __version__,
+    list_all_hid_devices,
+    list_available_devices,
+    list_devices,
+)
+from pyspacemouse import (
+    close as close_mouse,
+)
+from pyspacemouse import (
+    open as open_mouse,
+)
+from pyspacemouse import (
+    read as read_mouse,
+)
 
 
 def print_version_cli():
-    distribution = get_distribution("pyspacemouse")
-    print(f"pyspacemouse version {distribution.version}")
+    print(f"pyspacemouse version {__version__}")
 
 
 def list_spacemouse_cli():
@@ -20,27 +31,32 @@ def list_spacemouse_cli():
     else:
         print("Error: No connected SpaceMouse devices found.")
 
+
 def list_all_hid_devices_cli():
     devices = list_all_hid_devices()
     if devices:
         print("All HID devices:")
-        for (product_string, manufacturer_string, vendor_id, product_id) in devices:
+        for product_string, manufacturer_string, vendor_id, product_id in devices:
             if product_string == "":
                 product_string = "Unknown"
             if manufacturer_string == "":
                 manufacturer_string = "Unknown"
-            print(f"- {product_string} by {manufacturer_string} [VID: {hex(vendor_id)}, PID: {hex(product_id)}]")
+            print(
+                f"- {product_string} by {manufacturer_string} [VID: {hex(vendor_id)}, PID: {hex(product_id)}]"
+            )
     else:
         print("Error: No HID devices found.")
+
 
 def list_supported_devices_cli():
     available_devices = list_available_devices()
     if available_devices:
         print("Available SpaceMouse devices:")
-        for (device_name, vid_id, pid_id) in available_devices:
+        for device_name, vid_id, pid_id in available_devices:
             print(f"- {device_name} [VID: {hex(vid_id)}, PID: {hex(pid_id)}]")
     else:
         print("Error: No available SpaceMouse devices found.")
+
 
 def test_connect_cli():
     try:
@@ -66,12 +82,13 @@ def test_connect_cli():
     finally:
         close_mouse()
 
+
 def main():
-    parser = argparse.ArgumentParser(description="PySpaceMouse CLI",
-                                     epilog="For more information, visit https://spacemouse.kubaandrysek.cz/")
-    parser.add_argument(
-        "--version", action="store_true", help="Version of pyspacemouse"
+    parser = argparse.ArgumentParser(
+        description="PySpaceMouse CLI",
+        epilog="For more information, visit https://spacemouse.kubaandrysek.cz/",
     )
+    parser.add_argument("--version", action="store_true", help="Version of pyspacemouse")
     parser.add_argument(
         "--list-spacemouse", action="store_true", help="List connected SpaceMouse devices"
     )

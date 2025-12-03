@@ -38,15 +38,14 @@ Control [Robo Arm](https://roboruka.robotickytabor.cz/) with a Space Mouse.
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/). If you are using a Mac with an ARM processor, you'll need a patched version of `easyhid`.
+Use the package manager [pip](https://pip.pypa.io/en/stable/) to install [pyspacemouse](https://pypi.org/project/pyspacemouse/).
 
 ```bash
 # Install package
 pip install pyspacemouse
-
-# Only needed for ARM MacOs
-pip install git+https://github.com/bglopez/python-easyhid.git
 ```
+
+**Note for ARM Mac users**: If you encounter issues with `easyhid`, see the [Troubleshooting - Mac OS (M1)](./troubleshooting.md#mac-os-m1) section.
 
 ## Dependencies (required)
 
@@ -97,9 +96,52 @@ The library uses `hidapi` as low-level interface to the device and `easyhid` as 
         - More info on [Troubleshooting - Mac OS (M1)](./troubleshooting.md#mac-os-m1) page.
 
 - ### [easyhid](https://github.com/bglopez/python-easyhid) is `hidapi` interface for Python - required on all platforms
-    - `pip install git+https://github.com/bglopez/python-easyhid.git`
-    - this fork fix problems with `hidapi` on MacOS.
-    - on other platforms it possible works with original package `pip install easyhid`
+    - Automatically installed with `pip install pyspacemouse`
+    - This fork fixes problems with `hidapi` on MacOS
+
+## Development Setup
+
+To contribute to pyspacemouse or run it in development mode:
+
+```bash
+# Clone the repository
+git clone https://github.com/JakubAndrysek/pyspacemouse.git
+cd pyspacemouse
+
+# Install in editable mode with development dependencies
+pip install -e ".[dev]"
+
+# Install pre-commit hooks (optional, but recommended)
+pre-commit install
+
+# Run tests
+pytest
+
+# Run linting
+ruff check .
+
+# Format code
+ruff format .
+```
+
+### Using Hatch (Recommended for Maintainers)
+
+```bash
+# Install Hatch
+pip install hatch
+
+# Run tests
+hatch run test:pytest
+
+# Run linting
+hatch run ruff check .
+
+# Format code
+hatch run ruff format .
+
+# Build package
+hatch build
+```
 
 ## Basic Usage:
 

@@ -1,5 +1,7 @@
-import pyspacemouse
 import time
+
+import pyspacemouse
+
 
 def test(info):
     print(f"Test: {info}")
@@ -21,7 +23,7 @@ def success():
     ]
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_arr_arr_string():
@@ -32,7 +34,7 @@ def err_arr_arr_string():
     ]
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_arr_num_string():
@@ -43,7 +45,7 @@ def err_arr_num_string():
     ]
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_obj_arr_string():
@@ -52,7 +54,7 @@ def err_obj_arr_string():
 
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
 
 
 def err_obj_num_string():
@@ -61,22 +63,23 @@ def err_obj_num_string():
 
     dev = pyspacemouse.open(button_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
+
 
 def success_dof_callback():
     test("Move X axis")
     arr_success = [
-        pyspacemouse.DofCallback("x", lambda axis: print("x:",axis)),
+        pyspacemouse.DofCallback("x", lambda axis: print("x:", axis)),
         pyspacemouse.DofCallback("pitch", lambda axis: print("pitch:", axis)),
         # pyspacemouse.ButtonCallback([1], call2),
     ]
     dev = pyspacemouse.open(dof_callback_arr=arr_success)
     while True:
-        state = dev.read()
+        dev.read()
         time.sleep(0.0001)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     print("Start testing")
     # success()
     # err_arr_arr_string() #y

@@ -1,5 +1,6 @@
-import pyspacemouse
 import time
+
+import pyspacemouse
 
 success = pyspacemouse.open()
 if success:

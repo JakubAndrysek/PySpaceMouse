@@ -1,0 +1,158 @@
+[build-system]
+requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pyspacemouse"
+dynamic = ["version"]
+description = "Multiplatform Python interface to the 3DConnexion Space Mouse - forked from pyspacenavigator"
+readme = "README.md"
+authors = [{ name = "Jakub Andrýsek", email = "email@kubaandrysek.cz" }]
+license = "MIT"
+keywords = [
+    "pyspacemouse",
+    "3d",
+    "6 DoF",
+    "HID",
+    "python",
+    "open-source",
+    "spacemouse",
+    "spacenavigator",
+    "3dconnection",
+    "3d-mouse",
+]
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Hardware :: Universal Serial Bus (USB) :: Human Interface Device (HID)",
+]
+dependencies = ["easyhid"]
+
+[project.urls]
+Documentation = "https://spacemouse.kubaandrysek.cz"
+Issues = "https://github.com/JakubAndrysek/pyspacemouse/issues"
+Source = "https://github.com/JakubAndrysek/pyspacemouse"
+
+[project.optional-dependencies]
+dev = [
+    "build",
+    "twine",
+    "ruff>=0.12.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+docs = [
+    "mkdocs",
+    "mkdocs-material",
+    "mkdocs-glightbox",
+    "mkdocs-redirects",
+    "mkdoxy",
+    "mkdocs-open-in-new-tab",
+    "mkdocs-git-revision-date-localized-plugin",
+]
+
+[project.scripts]
+pyspacemouse = "pyspacemouse.pyspacemouse_cli:main"
+
+[tool.hatch.version]
+source = "vcs"
+tag-pattern = "(?P<version>.*)"
+
+[tool.hatch.version.raw-options]
+local_scheme = "no-local-version"  # Remove local version identifier for PyPI compatibility
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/.github",
+    "/docs",
+    "/html",
+    "/media",
+    "/site",
+    "/tests",
+    "/.gitignore",
+    "/.pre-commit-config.yaml",
+    "/Doxyfile",
+    "/mkdocs.yml",
+    "/Makefile",
+    "/CONTRIBUTING.md",
+    "/troubleshooting.md",
+    "/release.md",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["pyspacemouse"]
+
+# Ruff configuration
+[tool.ruff]
+target-version = "py38"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+    "W",   # pycodestyle warnings
+]
+ignore = [
+    "E501",    # Line too long (handled by formatter)
+    "F403",    # Star import unable to detect undefined names
+    "PLR0913", # Too many arguments
+    "PLR2004", # Magic value used in comparison
+    "PLR0912", # Too many branches
+    "PLW0603", # Global statement discouraged
+    "PLW2901", # Loop variable overwritten
+    "UP031",   # Use format specifiers (keep % format for now)
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# Pytest configuration
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "--strict-markers --cov=pyspacemouse --cov-report=term-missing --cov-report=xml"
+
+[tool.coverage.run]
+source_pkgs = ["pyspacemouse"]
+branch = true
+omit = ["*/tests/*", "*/__pycache__/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "no cov",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "pragma: no cover",
+]
+
+[tool.hatch.envs.default]
+dependencies = [
+    "ruff>=0.12.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[tool.hatch.envs.dev]
+template = "default"
+features = ["dev", "docs"]
+
+[tool.hatch.envs.test]
+template = "default"
+dependencies = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]

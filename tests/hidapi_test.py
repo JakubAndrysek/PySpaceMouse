@@ -7,8 +7,9 @@
 #         state = pyspacemouse.read()
 #         print(state.x, state.y, state.z)
 #         time.sleep(0.01)
-import hid
 import time
+
+import hid
 
 # for device_dict in hid.enumerate():
 #     keys = list(device_dict.keys())
@@ -19,7 +20,6 @@ import time
 
 
 print("Opening the device")
-
 
 
 h = hid.Device
