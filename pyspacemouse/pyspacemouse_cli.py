@@ -53,13 +53,13 @@ def test_connect_cli():
         print("Failed to open SpaceMouse")
         return
 
-    print("SpaceMouse opened successfully, reading x, y, z values...")
+    print("SpaceMouse opened successfully, reading state values...")
     time.sleep(1)
 
     try:
         while True:
             state = read_mouse()
-            print(state.x, state.y, state.z)
+            print(f"{state.x:.1f} {state.y:.1f} {state.z:.1f} | {state.roll:.1f} {state.pitch:.1f} {state.yaw:.1f}")
             time.sleep(0.01)
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
