@@ -59,7 +59,7 @@ def test_connect_cli():
     try:
         while True:
             state = read_mouse()
-            print(f"{state.x:.1f} {state.y:.1f} {state.z:.1f} | {state.roll:.1f} {state.pitch:.1f} {state.yaw:.1f}")
+            print(f"{state.x:.3f} {state.y:.3f} {state.z:.3f} | {state.roll:.3f} {state.pitch:.3f} {state.yaw:.3f}")
             time.sleep(0.01)
     except KeyboardInterrupt:
         print("KeyboardInterrupt: Exiting...")
