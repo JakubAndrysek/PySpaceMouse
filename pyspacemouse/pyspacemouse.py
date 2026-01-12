@@ -3,7 +3,7 @@ import timeit
 from collections import namedtuple
 from typing import Callable, List, Union
 
-from easyhid import Enumeration, HIDException
+from easyhid import Enumeration, HIDException, HIDDevice
 
 # current version number
 __version__ = "1.0.3"
@@ -900,8 +900,54 @@ def open(
         Device object if the device was opened successfully
         None if the device could not be opened
     """
-    # only used if the module-level functions are used
-    global _active_device
+    hid = Enumeration()
+    all_hids = hid.device_list
+
+    # If `path` is specified, that gives us all the information we need to open the device.
+    if path:
+        if device is not None:
+            print("Warning: 'device' parameter is ignored when 'path' parameter is specified.")
+        if DeviceNumber != 0:
+            print("Warning: 'DeviceNumber' parameter is ignored when 'path' parameter is specified.")
+
+        path = Path(path)
+
+        if not path.exists():
+            raise FileNotFoundError(f"Specified device path '{path}' does not exist.")
+
+        # Resolve path, in the case it is relative or a symlink
+        path = path.resolve()
+
+        # Get the HID device at this path
+        hid_device = None
+        for dev in all_hids:
+            dev_path = Path(dev.path).resolve()
+            if dev_path == path:
+                hid_device = dev
+                break
+
+        if hid_device is None:
+            raise Exception(f"No HID device found at path '{path}'.")
+
+        # Get the device spec for this device
+        spec = None
+        for device_spec in device_specs.values():
+            if hid_device.vendor_id == device_spec.hid_id[0] and hid_device.product_id == device_spec.hid_id[1]:
+                spec = device_spec
+                break
+
+        return set_active_device(
+            spec,
+            hid_device,
+            callback,
+            dof_callback,
+            dof_callback_arr,
+            button_callback,
+            button_callback_arr,
+            set_nonblocking_loop,
+        )
+
+
 
     # if no device name specified, look for any matching device and choose the first
     if device is None:
@@ -912,12 +958,8 @@ def open(
             raise Exception("No found any connected or supported devices.")
 
     found_devices = []
-    hid = Enumeration()
-    all_hids = hid.find()
     if all_hids:
         for dev in all_hids:
-            if path:
-                dev.path = path
             spec = device_specs[device]
             if dev.vendor_id == spec.hid_id[0] and dev.product_id == spec.hid_id[1]:
                 found_devices.append({"Spec": spec, "HIDDevice": dev})
@@ -935,34 +977,54 @@ def open(
             DeviceNumber = 0
 
         if len(found_devices) > DeviceNumber:
-            # Check that the input configuration has the correct components
-            # Raise an exception if it encounters incorrect component.
-            check_config(
-                callback, dof_callback, dof_callback_arr, button_callback, button_callback_arr
+            return set_active_device(
+                found_devices[DeviceNumber]["Spec"],
+                found_devices[DeviceNumber]["HIDDevice"],
+                callback,
+                dof_callback,
+                dof_callback_arr,
+                button_callback,
+                button_callback_arr,
+                set_nonblocking_loop,
             )
-            # create a copy of the device specification
-            spec = found_devices[DeviceNumber]["Spec"]
-            dev = found_devices[DeviceNumber]["HIDDevice"]
-            new_device = copy.deepcopy(spec)
-            new_device.device = dev
-
-            # set the callbacks
-            new_device.callback = callback
-            new_device.dof_callback = dof_callback
-            new_device.dof_callback_arr = dof_callback_arr
-            new_device.button_callback = button_callback
-            new_device.button_callback_arr = button_callback_arr
-            # open the device
-            new_device.open()
-            # set nonblocking/blocking mode
-            new_device.set_nonblocking_loop = set_nonblocking_loop
-            dev.set_nonblocking(set_nonblocking_loop)
-
-            _active_device = new_device
-            return new_device
 
     print("Unknown error occured.")
     return None
+
+def set_active_device(
+        spec: DeviceSpec,
+        hid_device: HIDDevice,
+        callback,
+        dof_callback,
+        dof_callback_arr,
+        button_callback,
+        button_callback_arr,
+        set_nonblocking_loop,
+    ):
+    # only used if the module-level functions are used
+    global _active_device
+
+    # Check that the input configuration has the correct components
+    # Raise an exception if it encounters incorrect component.
+    check_config(callback, dof_callback, dof_callback_arr, button_callback, button_callback_arr)
+    # create a copy of the device specification
+    new_device = copy.deepcopy(spec)
+    new_device.device = hid_device
+
+    # set the callbacks
+    new_device.callback = callback
+    new_device.dof_callback = dof_callback
+    new_device.dof_callback_arr = dof_callback_arr
+    new_device.button_callback = button_callback
+    new_device.button_callback_arr = button_callback_arr
+    # open the device
+    new_device.open()
+    # set nonblocking/blocking mode
+    new_device.set_nonblocking_loop = set_nonblocking_loop
+    hid_device.set_nonblocking(set_nonblocking_loop)
+
+    _active_device = new_device
+    return new_device
 
 
 def check_config(
