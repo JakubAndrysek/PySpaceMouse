@@ -2,6 +2,7 @@ import copy
 import timeit
 from collections import namedtuple
 from typing import Callable, List, Union
+from pathlib import Path
 
 from easyhid import Enumeration, HIDException, HIDDevice
 
