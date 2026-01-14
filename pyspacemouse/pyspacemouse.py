@@ -1,10 +1,10 @@
 import copy
 import timeit
 from collections import namedtuple
-from typing import Callable, List, Union
 from pathlib import Path
+from typing import Callable, List, Union
 
-from easyhid import Enumeration, HIDException, HIDDevice
+from easyhid import Enumeration, HIDDevice, HIDException
 
 # current version number
 __version__ = "1.0.3"
@@ -909,7 +909,9 @@ def open(
         if device is not None:
             print("Warning: 'device' parameter is ignored when 'path' parameter is specified.")
         if DeviceNumber != 0:
-            print("Warning: 'DeviceNumber' parameter is ignored when 'path' parameter is specified.")
+            print(
+                "Warning: 'DeviceNumber' parameter is ignored when 'path' parameter is specified."
+            )
 
         path = Path(path)
 
@@ -933,10 +935,18 @@ def open(
         # Get the device spec for this device
         spec = None
         for device_spec in device_specs.values():
-            if hid_device.vendor_id == device_spec.hid_id[0] and hid_device.product_id == device_spec.hid_id[1]:
+            if (
+                hid_device.vendor_id == device_spec.hid_id[0]
+                and hid_device.product_id == device_spec.hid_id[1]
+            ):
                 spec = device_spec
                 break
 
+        if spec is None:
+            raise ValueError(
+                f"Device with {path=} vid {hid_device.vendor_id}/pid {hid_device.product_id} "
+                "does not match any DeviceSpec"
+            )
         return set_active_device(
             spec,
             hid_device,
@@ -947,8 +957,6 @@ def open(
             button_callback_arr,
             set_nonblocking_loop,
         )
-
-
 
     # if no device name specified, look for any matching device and choose the first
     if device is None:
@@ -992,16 +1000,17 @@ def open(
     print("Unknown error occured.")
     return None
 
+
 def set_active_device(
-        spec: DeviceSpec,
-        hid_device: HIDDevice,
-        callback,
-        dof_callback,
-        dof_callback_arr,
-        button_callback,
-        button_callback_arr,
-        set_nonblocking_loop,
-    ):
+    spec: DeviceSpec,
+    hid_device: HIDDevice,
+    callback,
+    dof_callback,
+    dof_callback_arr,
+    button_callback,
+    button_callback_arr,
+    set_nonblocking_loop,
+):
     # only used if the module-level functions are used
     global _active_device
 
