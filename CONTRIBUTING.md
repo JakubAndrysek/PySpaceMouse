@@ -6,7 +6,7 @@
 3. Create a pull request to `master` and assign a reviewer.
 4. The reviewer will review your code and merge it into `master`.
 
-## Adding new device
+## Adding a new device
 
 This section describes how to add support for a new SpaceMouse or similar 6-DOF device.
 

@@ -49,7 +49,7 @@ State objects returned from `read()` have 7 attributes: [t,x,y,z,roll,pitch,yaw,
 * t: timestamp in seconds since the script started.
 * x,y,z: translations in the range [-1.0, 1.0]
 * roll, pitch, yaw: rotations in the range [-1.0, 1.0].
-* button: list of button states (0 or 1), in order specified in the device specifier
+* buttons: list of button states (0 or 1), in order specified in the device specifier
 
 ## Custom Device Configuration
 

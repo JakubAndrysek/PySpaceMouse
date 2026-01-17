@@ -86,7 +86,7 @@ with pyspacemouse.open() as device:
 with pyspacemouse.open(device="SpaceNavigator") as device:
     state = device.read()
 
-# Open second device (when multiple same devices)
+# Open second device when multiple identical devices are connected
 with pyspacemouse.open(device_index=1) as device:
     state = device.read()
 
@@ -164,7 +164,7 @@ with pyspacemouse.open(device_spec=custom) as device:
     state = device.read()
 ```
 
-See [Custom Device Configuration](./mouseApi/index.md#custom-device-configuration) for full API.
+See [Custom Device Configuration](./docs/mouseApi/index.md#custom-device-configuration) for full API.
 
 ## CLI
 

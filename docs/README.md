@@ -54,6 +54,9 @@ with pyspacemouse.open() as device:
 
 ## API Reference
 
+From version 2.0.0 the API has been modularized and changed.
+Please look at the [API Reference](./mouseApi/index.md) and [Examples](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/examples) for more information.
+
 ### Device Discovery
 
 ```python
@@ -83,7 +86,7 @@ with pyspacemouse.open() as device:
 with pyspacemouse.open(device="SpaceNavigator") as device:
     state = device.read()
 
-# Open second device (when multiple same devices)
+# Open second device when multiple identical devices are connected
 with pyspacemouse.open(device_index=1) as device:
     state = device.read()
 
