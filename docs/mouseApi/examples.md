@@ -64,3 +64,33 @@ Print all axis states
 Print all buttons states
 
     [ 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, ]
+
+
+## Custom Device Configuration
+
+[09_custom_config.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/09_custom_config.py)
+
+Customize axis mappings for different coordinate conventions (ROS, OpenGL, etc.):
+
+````py
+import pyspacemouse
+
+# Get existing device spec and modify it
+specs = pyspacemouse.get_device_specs()
+base = specs["SpaceNavigator"]
+
+# Invert axes for ROS conventions
+ros_spec = pyspacemouse.modify_device_info(
+    base,
+    name="SpaceNavigator (ROS)",
+    invert_axes=["y", "z", "roll", "yaw"],
+)
+
+# Open with custom configuration
+with pyspacemouse.open(device_spec=ros_spec) as device:
+    while True:
+        state = device.read()
+        print(f"x={state.x:.2f} y={state.y:.2f} z={state.z:.2f}")
+````
+
+See also: `create_device_info()` for creating completely custom device specs.

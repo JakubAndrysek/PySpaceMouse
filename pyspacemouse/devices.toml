@@ -1,0 +1,360 @@
+# PySpaceMouse Device Specifications
+# Format:
+#   hid_id = [vendor_id, product_id]
+#   led_id = [report_id, on_value] or null (omit if no LED)
+#   axis_scale = scaling factor (default 350.0)
+#   mappings.<axis> = [channel, byte1, byte2, scale]
+#   buttons.<NAME> = [channel, byte, bit]
+
+[SpaceMouseEnterprise]
+hid_id = [0x256F, 0xC633]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [1, 7, 8, -1]
+mappings.roll  = [1, 9, 10, -1]
+mappings.yaw   = [1, 11, 12, 1]
+
+[SpaceMouseEnterprise.buttons]
+BTN_1 = [3, 2, 4]
+BTN_2 = [3, 2, 5]
+BTN_3 = [3, 2, 6]
+BTN_4 = [3, 2, 7]
+BTN_5 = [3, 3, 0]
+BTN_6 = [3, 3, 1]
+BTN_7 = [3, 3, 2]
+BTN_8 = [3, 3, 3]
+BTN_9 = [3, 3, 4]
+BTN_10 = [3, 3, 5]
+MENU = [3, 1, 0]
+FIT = [3, 1, 1]
+TOP = [3, 1, 2]
+RIGHT = [3, 1, 4]
+FRONT = [3, 1, 5]
+ROLL_CW = [3, 2, 0]
+ISO1 = [3, 2, 2]
+ESC = [3, 3, 6]
+ALT = [3, 3, 7]
+SHIFT = [3, 4, 0]
+CTRL = [3, 4, 1]
+LOCK = [3, 4, 2]
+
+# -----------------------------------------------------------------------------
+
+[SpaceExplorer]
+hid_id = [0x46D, 0xC627]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+[SpaceExplorer.buttons]
+SHIFT = [3, 2, 0]
+ESC = [3, 1, 6]
+CTRL = [3, 2, 1]
+ALT = [3, 1, 7]
+BTN_1 = [3, 1, 0]
+BTN_2 = [3, 1, 1]
+PANEL = [3, 2, 3]
+FIT = [3, 2, 2]
+MINUS = [3, 2, 5]
+PLUS = [3, 2, 4]
+T = [3, 1, 2]
+L = [3, 1, 3]
+F = [3, 1, 5]
+BTN_2D = [3, 2, 6]
+R = [3, 1, 4]
+
+# -----------------------------------------------------------------------------
+
+[SpaceNavigator]
+hid_id = [0x46D, 0xC626]
+led_id = [0x04, 0x01]  # tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+[SpaceNavigator.buttons]
+LEFT = [3, 1, 0]
+RIGHT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpaceMouseUSB]
+hid_id = [0x256F, 0xC641]
+# No LED on this device
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+# No buttons on this device
+
+# -----------------------------------------------------------------------------
+
+[SpaceMouseCompact]
+hid_id = [0x256F, 0xC635]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+[SpaceMouseCompact.buttons]
+LEFT = [3, 1, 0]
+RIGHT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpaceMouseProWireless]
+hid_id = [0x256F, 0xC632]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [1, 7, 8, -1]
+mappings.roll  = [1, 9, 10, -1]
+mappings.yaw   = [1, 11, 12, 1]
+
+[SpaceMouseProWireless.buttons]
+MENU = [3, 1, 0]
+ALT = [3, 3, 7]
+CTRL = [3, 4, 1]
+SHIFT = [3, 4, 0]
+ESC = [3, 3, 6]
+BTN_1 = [3, 2, 4]
+BTN_2 = [3, 2, 5]
+BTN_3 = [3, 2, 6]
+BTN_4 = [3, 2, 7]
+ROLL_CW = [3, 2, 0]
+TOP = [3, 1, 2]
+ROTATION = [3, 4, 2]
+FRONT = [3, 1, 5]
+REAR = [3, 1, 4]
+FIT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpaceMouseProWirelessBluetooth]
+hid_id = [0x256F, 0xC638]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [1, 7, 8, -1]
+mappings.roll  = [1, 9, 10, -1]
+mappings.yaw   = [1, 11, 12, 1]
+
+[SpaceMouseProWirelessBluetooth.buttons]
+MENU = [3, 1, 0]
+ALT = [3, 3, 7]
+CTRL = [3, 4, 1]
+SHIFT = [3, 4, 0]
+ESC = [3, 3, 6]
+BTN_1 = [3, 2, 4]
+BTN_2 = [3, 2, 5]
+BTN_3 = [3, 2, 6]
+BTN_4 = [3, 2, 7]
+ROLL_CW = [3, 2, 0]
+TOP = [3, 1, 2]
+ROTATION = [3, 4, 2]
+FRONT = [3, 1, 5]
+REAR = [3, 1, 4]
+FIT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpaceMousePro]
+hid_id = [0x46D, 0xC62B]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+[SpaceMousePro.buttons]
+MENU = [3, 1, 0]
+ALT = [3, 3, 7]
+CTRL = [3, 4, 1]
+SHIFT = [3, 4, 0]
+ESC = [3, 3, 6]
+BTN_1 = [3, 2, 4]
+BTN_2 = [3, 2, 5]
+BTN_3 = [3, 2, 6]
+BTN_4 = [3, 2, 7]
+ROLL_CW = [3, 2, 0]
+TOP = [3, 1, 2]
+ROTATION = [3, 4, 2]
+FRONT = [3, 1, 5]
+REAR = [3, 1, 4]
+FIT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpaceMouseWireless]
+hid_id = [0x256F, 0xC62E]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [1, 7, 8, -1]
+mappings.roll  = [1, 9, 10, -1]
+mappings.yaw   = [1, 11, 12, 1]
+
+[SpaceMouseWireless.buttons]
+LEFT = [3, 1, 0]
+RIGHT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpaceMouseWirelessNew]
+hid_id = [0x256F, 0xC63A]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [1, 7, 8, -1]
+mappings.roll  = [1, 9, 10, -1]
+mappings.yaw   = [1, 11, 12, 1]
+
+[SpaceMouseWirelessNew.buttons]
+LEFT = [3, 1, 0]
+RIGHT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[UniversalReceiver]
+hid_id = [0x256F, 0xC652]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [1, 7, 8, -1]
+mappings.roll  = [1, 9, 10, -1]
+mappings.yaw   = [1, 11, 12, 1]
+
+[UniversalReceiver.buttons]
+MENU = [3, 1, 0]
+ALT = [3, 3, 7]
+CTRL = [3, 4, 1]
+SHIFT = [3, 4, 0]
+ESC = [3, 3, 6]
+BTN_1 = [3, 2, 4]
+BTN_2 = [3, 2, 5]
+BTN_3 = [3, 2, 6]
+BTN_4 = [3, 2, 7]
+ROLL_CW = [3, 2, 0]
+TOP = [3, 1, 2]
+ROTATION = [3, 4, 2]
+FRONT = [3, 1, 5]
+REAR = [3, 1, 4]
+FIT = [3, 1, 1]
+
+# -----------------------------------------------------------------------------
+
+[SpacePilot]
+hid_id = [0x46D, 0xC625]
+# No LED on this device
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+[SpacePilot.buttons]
+BTN_1 = [3, 1, 0]
+BTN_2 = [3, 1, 1]
+BTN_3 = [3, 1, 2]
+BTN_4 = [3, 1, 3]
+BTN_5 = [3, 1, 4]
+BTN_6 = [3, 1, 5]
+T = [3, 1, 6]
+L = [3, 1, 7]
+R = [3, 2, 0]
+F = [3, 2, 1]
+ESC = [3, 2, 2]
+ALT = [3, 2, 3]
+SHIFT = [3, 2, 4]
+CTRL = [3, 2, 5]
+FIT = [3, 2, 6]
+PANEL = [3, 2, 7]
+ZOOM_MINUS = [3, 3, 0]
+ZOOM_PLUS = [3, 3, 1]
+DOM = [3, 3, 2]
+LOCK_3D = [3, 3, 3]
+CONFIG = [3, 3, 4]
+
+# -----------------------------------------------------------------------------
+
+[SpacePilotPro]
+hid_id = [0x46D, 0xC629]
+led_id = [0x04, 0x01]  # TODO: has to be tested
+axis_scale = 350.0
+
+mappings.x     = [1, 1, 2, 1]
+mappings.y     = [1, 3, 4, -1]
+mappings.z     = [1, 5, 6, -1]
+mappings.pitch = [2, 1, 2, -1]
+mappings.roll  = [2, 3, 4, -1]
+mappings.yaw   = [2, 5, 6, 1]
+
+[SpacePilotPro.buttons]
+SHIFT = [3, 4, 0]
+ESC = [3, 3, 6]
+CTRL = [3, 4, 1]
+ALT = [3, 3, 7]
+BTN_1 = [3, 3, 1]
+BTN_2 = [3, 3, 2]
+BTN_3 = [3, 2, 6]
+BTN_4 = [3, 2, 7]
+BTN_5 = [3, 3, 0]
+MENU = [3, 1, 0]
+MINUS = [3, 4, 6]
+PLUS = [3, 4, 5]
+DOMINANT = [3, 4, 4]
+PAN_ZOOM = [3, 4, 3]
+ROTATION = [3, 4, 2]
+ROLL_CW = [3, 2, 0]
+TOP = [3, 1, 2]
+FRONT = [3, 1, 5]
+REAR = [3, 1, 4]
+ISO = [3, 2, 2]
+FIT = [3, 1, 1]

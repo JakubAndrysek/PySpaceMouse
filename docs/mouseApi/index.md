@@ -49,4 +49,54 @@ State objects returned from `read()` have 7 attributes: [t,x,y,z,roll,pitch,yaw,
 * t: timestamp in seconds since the script started.
 * x,y,z: translations in the range [-1.0, 1.0]
 * roll, pitch, yaw: rotations in the range [-1.0, 1.0].
-* button: list of button states (0 or 1), in order specified in the device specifier
+* buttons: list of button states (0 or 1), in order specified in the device specifier
+
+## Custom Device Configuration
+
+You can customize axis mappings without modifying the TOML configuration by using the helper functions:
+
+### `create_device_info()`
+
+Create a completely custom device configuration:
+
+```python
+custom = pyspacemouse.create_device_info(
+    name="MyDevice",
+    vendor_id=0x256F,
+    product_id=0xC635,
+    mappings={
+        "x": (1, 1, 2, 1),      # (channel, byte1, byte2, scale)
+        "y": (1, 3, 4, -1),     # Inverted
+        "z": (1, 5, 6, -1),
+        "pitch": (2, 1, 2, -1),
+        "roll": (2, 3, 4, -1),
+        "yaw": (2, 5, 6, 1),
+    },
+    buttons={"LEFT": (3, 1, 0), "RIGHT": (3, 1, 1)},
+)
+```
+
+### `modify_device_info()`
+
+Modify an existing device spec (e.g., to invert axes):
+
+```python
+specs = pyspacemouse.get_device_specs()
+base = specs["SpaceNavigator"]
+
+# Invert Y and Z for ROS conventions
+ros_spec = pyspacemouse.modify_device_info(
+    base,
+    name="SpaceNavigator (ROS)",
+    invert_axes=["y", "z", "roll", "yaw"],
+)
+```
+
+### Using Custom Specs
+
+Pass the custom spec to `open()` or `open_by_path()`:
+
+```python
+with pyspacemouse.open(device_spec=ros_spec) as device:
+    state = device.read()
+```

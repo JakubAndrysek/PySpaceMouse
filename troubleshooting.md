@@ -2,15 +2,44 @@
 
 If you encounter any issues, you can find help in the following section.
 
+## Axis Conventions
+
+The library applies some axis inversions to make values more intuitive:
+
+- **Z axis**: Inverted so positive = up (HID spec defines down as positive)
+- **Y axis**: Inverted for common conventions
+- **Rotations**: pitch/roll inverted from HID spec
+
+If your application needs different conventions (e.g., ROS, OpenGL), use the `modify_device_info()` function:
+
+```python
+import pyspacemouse
+
+specs = pyspacemouse.get_device_specs()
+base = specs["SpaceNavigator"]
+
+# Customize axes for your application
+custom = pyspacemouse.modify_device_info(
+    base,
+    invert_axes=["y", "z", "roll", "yaw"],  # Axes to flip
+)
+
+with pyspacemouse.open(device_spec=custom) as device:
+    state = device.read()
+```
+
+See [Custom Device Configuration](https://spacemouse.kubaandrysek.cz/mouseApi#custom-device-configuration) for full details.
+
+
 ## Common issues
 
 ### ModuleNotFoundError: No module named 'easyhid'
 
-- Install `easyhid` by `pip install easyhid`.
+- Install `easyhid` by `pip install easyhid-ng`.
 
 ### AttributeError: function/symbol 'hid_enumerate' not found in library '<None>': python3: undefined symbol: hid_enumerate
 
-- HID library for your computer is not installed.
+- HID C library is not installed or not found in PATH.
 - Follow the instructions in [requirements](./README.md#dependencies).
 
 <hr>
@@ -23,27 +52,19 @@ If you encounter any issues, you can find help in the following section.
 If you are using a Mac with an M1 chip or newer, you may encounter issues when installing the dependencies.
 Required dependency is `hidapi` which you can install using Homebrew `brew install hidapi`.
 
-By  default, the `hidapi` library is installed in `/opt/homebrew/Cellar/hidapi/0.14.0/lib` directory, and you need to add it to your `DYLD_LIBRARY_PATH` environment variable.
+By default, the `hidapi` library is installed in `/opt/homebrew/Cellar/hidapi/<VERSION>/lib` directory, and you need to add it to your `DYLD_LIBRARY_PATH` environment variable.
 It is possible to add it to your `.bashrc` or `.zshrc` file, but you can also add it directly in the terminal (only for the current session).
 
-Replace `0.14.0` with the version you have installed on your system (`brew info hidapi`).
+Replace `<VERSION>` with the version you have installed on your system (`brew info hidapi`).
 ```bash
-export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/0.14.0/lib:$DYLD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/<VERSION>/lib:$DYLD_LIBRARY_PATH
 ```
 
-In case of changes in MacOS M1, architecture name, you have to use patched version of `easyhid` library.
-Updated version is not yet available on PyPi, so you have to uninstall the current version and install the patched version from GitHub.
-```bash
-pip install git+https://github.com/bglopez/python-easyhid.git
-```
-
-After this setup everything works correctly directly on MacOS M1.
+After this setup everything works correctly.
 Tested on:
 
 - MacBook Pro 14 (M1 Pro, 2021)
-- ??? (add your device and feedback)
-
-I have probably tested it also in Rosetta 2 mode, but right now it works directly on M1 chip with python from `brew`.
+- ... add your device and feedback
 
 <hr>
 

@@ -4,21 +4,28 @@ on:
     branches:
       - master
       - main
+  workflow_dispatch:
+
 permissions:
   contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
         with:
-          python-version: 3.x
-      - uses: actions/cache@v2
+          fetch-depth: 0  # Required for git-revision-date-localized-plugin
+      - uses: actions/setup-python@v5
         with:
-          key: ${{ github.ref }}
+          python-version: "3.12"
+      - uses: actions/cache@v4
+        with:
+          key: mkdocs-${{ github.ref }}
           path: .cache
-      - run: pip install -e ".[develop]"
-      - run: pip install mkdoxy
-      - run: sudo apt-get install doxygen
-      - run: mkdocs gh-deploy --force
+      - name: Install dependencies
+        run: |
+          pip install -e ".[docs]"
+          sudo apt-get install -y doxygen
+      - name: Deploy docs
+        run: make docs-deploy
