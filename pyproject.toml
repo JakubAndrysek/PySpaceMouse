@@ -36,7 +36,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: System :: Hardware :: Universal Serial Bus (USB) :: Human Interface Device (HID)",
 ]
-dependencies = ["easyhid"]
+dependencies = ["easyhid-ng", "tomli; python_version < '3.11'"]
 
 [project.urls]
 Documentation = "https://spacemouse.kubaandrysek.cz"
@@ -113,7 +113,10 @@ ignore = [
     "PLR0912", # Too many branches
     "PLW0603", # Global statement discouraged
     "PLW2901", # Loop variable overwritten
+    "UP006",   # Use `list` instead of `List` - not available in Python 3.8
+    "UP007",   # Use `X | Y` instead of `Union` - not available in Python 3.8
     "UP031",   # Use format specifiers (keep % format for now)
+    "UP045",   # Use `X | None` instead of `Optional` - not available in Python 3.8
 ]
 
 [tool.ruff.format]

@@ -1,23 +1,51 @@
-.PHONY: package release test lint format
+.PHONY: package release test lint format build clean version publish
 
 all: package
 
 # Packaging (using Hatch)
-package:
-	rm -f dist/*
+build:
 	hatch build
 
-install: package
+package: build
+
+build-clean:
+	hatch clean
+	hatch build
+
+install: build
 	python3 -m pip install --no-deps --force dist/*.whl
 
-release: package
+# Publishing (using Hatch)
+publish: build
+	hatch publish
+
+publish-test: build
+	hatch publish --repo test
+
+# Legacy twine commands (deprecated, use publish/publish-test)
+release: build
 	twine upload --repository pypi dist/*
 
-release-test: package
+release-test: build
 	twine upload --repository testpypi dist/*
 
+# Version management (using Hatch)
+version:
+	hatch version
+
+version-patch:
+	hatch version patch
+
+version-minor:
+	hatch version minor
+
+version-major:
+	hatch version major
+
+# Clean
 clean:
-	rm -rf dist build pyspacemouse.egg-info
+	hatch clean
+	rm -rf dist build pyspacemouse.egg-info .ruff_cache
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.pyc" -delete
 	find . -type f -name "*.pyo" -delete
@@ -25,6 +53,7 @@ clean:
 
 # Development
 install-dev:
+	hatch env create
 	python3 -m pip install --editable ".[dev]"
 
 # Code Quality
