@@ -54,6 +54,9 @@ with pyspacemouse.open() as device:
 
 ## API Reference
 
+From version 2.0.0 the API has been modularized and changed.
+Please look at the [API Reference](./docs/mouseApi/index.md) and [Examples](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/examples) for more information.
+
 ### Device Discovery
 
 ```python

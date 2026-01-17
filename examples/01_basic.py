@@ -12,7 +12,6 @@ import pyspacemouse
 with pyspacemouse.open() as device:
     print(f"Connected to: {device.name}")
     print("Move the SpaceMouse to see values (Ctrl+C to exit)")
-    print("Move the SpaceMouse to see values")
 
     while True:
         state = device.read()
