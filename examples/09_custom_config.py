@@ -23,16 +23,20 @@ def example_modify_existing():
     print(f"Available devices: {list(specs.keys())}")
 
     # Get connected devices
-    connected = pyspacemouse.get_connected_devices()
+    connected = pyspacemouse.get_connected_spacemice()
     if not connected:
         print("No devices connected!")
         return
+    if len(connected) > 1:
+        print("This example only works with one device connected.")
+        return
 
-    device_name = connected[0]
+    device = connected[0]
+    device_path, device_name = device
     print(f"Using device: {device_name}")
 
     # Get base spec and create modified version
-    base_spec = specs[device_name]
+    base_spec = specs[device_path]
     print(f"Original mappings: y scale = {base_spec.mappings['y'].scale}")
 
     # Create modified spec with inverted Y and Z (common for ROS)
@@ -62,18 +66,23 @@ def example_invert_rotations():
     print("Example 2: Fix rotation conventions")
     print("=" * 60)
 
-    connected = pyspacemouse.get_connected_devices()
+    connected = pyspacemouse.get_connected_spacemice()
     if not connected:
         print("No devices connected!")
         return
+    if len(connected) > 1:
+        print("This example only works with one device connected.")
+        return
 
+    device = connected[0]
+    device_path, device_name = device
     specs = pyspacemouse.get_device_specs()
-    base_spec = specs[connected[0]]
+    base_spec = specs[device_name]
 
     # Invert roll and yaw for right-handed coordinate system
     fixed_spec = pyspacemouse.modify_device_info(
         base_spec,
-        name=f"{connected[0]} (Fixed Rotations)",
+        name=f"{device_name} (Fixed Rotations)",
         invert_axes=["roll", "yaw"],
     )
 
