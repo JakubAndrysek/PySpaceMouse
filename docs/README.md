@@ -203,7 +203,7 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 ### Linux permissions
 
 ```bash
-sudo echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' > /etc/udev/rules.d/99-hidraw-permissions.rules
+echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
 sudo usermod -aG plugdev $USER
 newgrp plugdev
 ```
@@ -218,8 +218,20 @@ export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/<VERSION>/lib:$DYLD_LIBRARY
 
 See [troubleshooting.md](./troubleshooting.md) for help with common issues.
 
-## Used In
+## Developing / Contributing
 
+This project includes a `Makefile` with commands for creating a virtual environment (using hatch), and publishing to pypi.
+
+You will need `hatch` and `pre-commit` for this.
+You can get these by using
+
+```
+pipx install hatch==1.15.1 pre-commit
+```
+
+If you're not familiar with pipx, it lets you install python tools into isolated environments in `~/.local`.
+
+## Used In
 
 - [TeleMoMa](https://github.com/UT-Austin-RobIn/telemoma) - A Modular and Versatile Teleoperation System for Mobile Manipulation
 - [SERL](https://github.com/rail-berkeley/serl) - SERL: A Software Suite for Sample-Efficient Robotic Reinforcement Learning
