@@ -19,4 +19,4 @@ repos:
           - id: check-merge-conflict
 
 default_language_version:
-    python: python3.8
+    python: python3.12

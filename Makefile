@@ -22,13 +22,6 @@ publish: build
 publish-test: build
 	hatch publish --repo test
 
-# Legacy twine commands (deprecated, use publish/publish-test)
-release: build
-	twine upload --repository pypi dist/*
-
-release-test: build
-	twine upload --repository testpypi dist/*
-
 # Version management (using Hatch)
 version:
 	hatch version
@@ -74,7 +67,7 @@ test-cov:
 	hatch run test:pytest --cov-report=html
 
 run-demo:
-	python3 ./examples/basicExample.py
+	python3 ./examples/01_basic.py
 
 # Pre-commit
 pre-commit-install:
