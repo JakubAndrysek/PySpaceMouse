@@ -12,9 +12,6 @@ build-clean:
 	hatch clean
 	hatch build
 
-install: build
-	python3 -m pip install --no-deps --force dist/*.whl
-
 # Publishing (using Hatch)
 publish: build
 	hatch publish
@@ -46,8 +43,7 @@ clean:
 
 # Development
 install-dev:
-	hatch env create
-	python3 -m pip install --editable ".[dev]"
+	hatch run pip install --editable ".[dev]"
 
 # Code Quality
 lint:
@@ -60,14 +56,14 @@ format-check:
 	hatch run ruff format --check .
 
 # Testing
-test:
+test: # FIXME!
 	hatch run test:pytest
 
-test-cov:
+test-cov: # FIXME!
 	hatch run test:pytest --cov-report=html
 
 run-demo:
-	python3 ./examples/01_basic.py
+	hatch run python ./examples/01_basic.py
 
 # Pre-commit
 pre-commit-install:
@@ -77,6 +73,9 @@ pre-commit-run:
 	pre-commit run --all-files
 
 
+# Documentation, using mkdocs and mkdoxy
+install-doxygen:
+	@command -v doxygen >/dev/null || (echo "Please install doxygen (apt/dnf/brew)" && exit 1)
 
 fixRelativeLinkDocs:
 	sed  's/\.\/docs/\./g'  README.md > docs/README.md
@@ -84,14 +83,14 @@ fixRelativeLinkDocs:
 	sed  's/\.\/docs/\./g'  troubleshooting.md > docs/troubleshooting.md
 
 # Docs
-docs-build: fixRelativeLinkDocs
+docs-build: install-doxygen fixRelativeLinkDocs
 	@echo "Building docs..."
-	mkdocs build
+	hatch run dev:mkdocs build
 
-docs-serve: fixRelativeLinkDocs
+docs-serve: install-doxygen fixRelativeLinkDocs
 	@echo "Serving docs..."
-	mkdocs serve
+	hatch run dev:mkdocs serve
 
-docs-deploy: fixRelativeLinkDocs
+docs-deploy: install-doxygen fixRelativeLinkDocs
 	@echo "Deploying docs..."
-	mkdocs gh-deploy --force
+	hatch run dev:mkdocs gh-deploy
