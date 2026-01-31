@@ -27,11 +27,11 @@ from .loader import get_device_specs
 from .types import DeviceInfo, SpaceMouseState
 
 
-def get_connected_devices() -> List[str]:
-    """Return a list of the supported devices currently connected.
+def get_connected_spacemice() -> List[Tuple[str, str]]:
+    """Return the paths and names of the supported devices currently connected.
 
     Returns:
-        List of device names that are both supported and connected.
+        Tuple of two lists: (device_paths, device_names)
         Empty list if no supported devices are found.
 
     Raises:
@@ -45,14 +45,14 @@ def get_connected_devices() -> List[str]:
         ) from e
 
     device_specs = get_device_specs()
-    devices = []
+    devices_by_path = {}
 
     for hid_device in hid.find():
         for name, spec in device_specs.items():
             if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
-                devices.append(name)
+                devices_by_path[hid_device.path] = name
 
-    return devices
+    return list(devices_by_path.items())
 
 
 def get_supported_devices() -> List[Tuple[str, int, int]]:
@@ -253,10 +253,10 @@ def open(
 
     # Auto-detect device if not specified
     if device is None:
-        connected = get_connected_devices()
+        connected = get_connected_spacemice()
         if not connected:
             raise RuntimeError("No connected or supported devices found.")
-        device = connected[0]
+        device = connected[0][1]
 
     if device not in device_specs:
         raise ValueError(f"Unknown device: '{device}'. Available: {list(device_specs.keys())}")
