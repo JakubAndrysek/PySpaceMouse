@@ -35,7 +35,7 @@ See [Custom Device Configuration](https://spacemouse.kubaandrysek.cz/mouseApi#cu
 
 ### ModuleNotFoundError: No module named 'easyhid'
 
-- Install `easyhid` by `pip install easyhid-ng`.
+- Install `easyhid` by `pip install easyhid`.
 
 ### AttributeError: function/symbol 'hid_enumerate' not found in library '<None>': python3: undefined symbol: hid_enumerate
 
