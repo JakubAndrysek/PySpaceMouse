@@ -1771,9 +1771,9 @@
 </code></pre></div>
 <p>See <a href="https://spacemouse.kubaandrysek.cz/mouseApi/#custom-device-configuration">Custom Device Configuration</a> for more details.</p>
 <h2 id="how-to-write-documentation">How to write documentation</h2>
-<p>To install the required dependencies, run <code>pip install pyspacemouse[docs]</code>.</p>
+<p>To install the required dependencies, run <code>make install-dev</code>, and please also install <code>doxygen</code> manually.</p>
 <p>Edit <code>README.md</code> only in the root folder. The documentation is automatically generated from <code>README.md</code> and <code>docs/</code> folder.
-To update documentation from root to <code>/docs</code> use macro <code>make fixRelativeLinkDocs</code> which will replace all relative links from <code>/</code> to <code>/docs</code> folder.</p>
+To update documentation from root to <code>/docs</code>, use <code>make docs-build</code>.</p>
 <h3 id="building-the-documentation">Building the documentation</h3>
 <p>The documentation is built using <a href="https://www.mkdocs.org/">mkdocs</a>. To test the documentation locally, run <code>make docs-serve</code> and open <a href="http://localhost:8000">http://localhost:8000</a> in your browser.</p>
 <h3 id="deploying-the-documentation">Deploying the documentation</h3>
@@ -1798,7 +1798,7 @@ To update documentation from root to <code>/docs</code> use macro <code>make fix
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 17, 2026 13:26:18 UTC">January 17, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 8, 2026 17:19:05 UTC">February 8, 2026</span>
   </span>
 
     

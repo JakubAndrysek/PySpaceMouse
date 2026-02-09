@@ -2,254 +2,254 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/CONTRIBUTING/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/troubleshooting/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/examples/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/annotated/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/files/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1api/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1callbacks/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1callbacks_1_1ButtonCallback/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1callbacks_1_1Config/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1callbacks_1_1DofCallback/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1config__helpers/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1device/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1device_1_1SpaceMouseDevice/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1loader/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1pyspacemouse__cli/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1types/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1types_1_1AxisSpec/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1types_1_1ButtonSpec/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1types_1_1ButtonState/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1types_1_1DeviceInfo/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classpyspacemouse_1_1types_1_1SpaceMouseState/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespacepyspacemouse_1_1utils/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/dir_4d4c91c635597e458e70163b03149dfd/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/____init_____8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/____init_____8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/api_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/api_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/callbacks_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/callbacks_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/config__helpers_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/config__helpers_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/device_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/device_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/loader_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/loader_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/pyspacemouse__cli_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/pyspacemouse__cli_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/types_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/types_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/utils_8py/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/utils_8py_source/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespaces/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/classes/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/hierarchy/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/modules/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/pages/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/class_members/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/class_member_functions/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/class_member_variables/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/class_member_typedefs/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/class_member_enums/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespace_members/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespace_member_functions/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespace_member_variables/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespace_member_typedefs/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/namespace_member_enums/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/functions/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/macros/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/variables/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
     <url>
          <loc>https://jakubandrysek.github.io/pyspacemouse/mouseApi/links/</loc>
-         <lastmod>2026-01-17</lastmod>
+         <lastmod>2026-02-09</lastmod>
     </url>
 </urlset>
