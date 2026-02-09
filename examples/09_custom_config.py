@@ -27,8 +27,12 @@ def example_modify_existing():
     if not connected:
         print("No devices connected!")
         return
+    if len(connected) > 1:
+        print("This example only works with one device connected.")
+        return
 
-    device_name = connected[0]
+    device = connected[0]
+    device_path, device_name = device
     print(f"Using device: {device_name}")
 
     # Get base spec and create modified version
@@ -49,11 +53,11 @@ def example_modify_existing():
         print("Move the SpaceMouse (Ctrl+C to exit)")
         print("Y and Z axes are now inverted!\n")
 
-        for _ in range(50):  # Run for ~5 seconds
+        for _ in range(500):  # Run for ~5 seconds
             state = device.read()
             if any([state.x, state.y, state.z]):
                 print(f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} (Y/Z inverted)")
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 
 def example_invert_rotations():
@@ -66,14 +70,19 @@ def example_invert_rotations():
     if not connected:
         print("No devices connected!")
         return
+    if len(connected) > 1:
+        print("This example only works with one device connected.")
+        return
 
+    device = connected[0]
+    device_path, device_name = device
     specs = pyspacemouse.get_device_specs()
-    base_spec = specs[connected[0]]
+    base_spec = specs[device_name]
 
     # Invert roll and yaw for right-handed coordinate system
     fixed_spec = pyspacemouse.modify_device_info(
         base_spec,
-        name=f"{connected[0]} (Fixed Rotations)",
+        name=f"{device_name} (Fixed Rotations)",
         invert_axes=["roll", "yaw"],
     )
 
@@ -81,11 +90,11 @@ def example_invert_rotations():
         print(f"Connected to: {device.name}")
         print("Roll and Yaw are now inverted!\n")
 
-        for _ in range(30):
+        for _ in range(500):
             state = device.read()
             if any([state.roll, state.pitch, state.yaw]):
                 print(f"roll={state.roll:+.2f} pitch={state.pitch:+.2f} yaw={state.yaw:+.2f}")
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 
 def example_create_custom():
