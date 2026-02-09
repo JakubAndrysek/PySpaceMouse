@@ -16,8 +16,8 @@ def list_spacemouse_cli():
     devices = pyspacemouse.get_connected_devices()
     if devices:
         print("Connected SpaceMouse devices:")
-        for _, device in devices:
-            print(f"  - {device}")
+        for path, device in devices:
+            print(f"  - {device} ({path})")
     else:
         print("No connected SpaceMouse devices found.")
 
