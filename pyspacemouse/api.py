@@ -27,7 +27,7 @@ from .loader import get_device_specs
 from .types import DeviceInfo, SpaceMouseState
 
 
-def get_connected_spacemice() -> List[Tuple[str, str]]:
+def get_connected_devices() -> List[Tuple[str, str]]:
     """Return the paths and names of the supported devices currently connected.
 
     Returns:
@@ -253,7 +253,7 @@ def open(
 
     # Auto-detect device if not specified
     if device is None:
-        connected = get_connected_spacemice()
+        connected = get_connected_devices()
         if not connected:
             raise RuntimeError("No connected or supported devices found.")
         device = connected[0][1]

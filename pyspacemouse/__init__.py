@@ -37,7 +37,7 @@ except PackageNotFoundError:
 # Public API
 from .api import (
     get_all_hid_devices,
-    get_connected_spacemice,
+    get_connected_devices,
     get_supported_devices,
     open,
     open_by_path,
@@ -95,7 +95,7 @@ __all__ = [
     "SpaceMouseDevice",
     # API
     "get_all_hid_devices",
-    "get_connected_spacemice",
+    "get_connected_devices",
     "get_supported_devices",
     "open",
     "open_by_path",
