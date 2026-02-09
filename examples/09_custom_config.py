@@ -36,7 +36,7 @@ def example_modify_existing():
     print(f"Using device: {device_name}")
 
     # Get base spec and create modified version
-    base_spec = specs[device_path]
+    base_spec = specs[device_name]
     print(f"Original mappings: y scale = {base_spec.mappings['y'].scale}")
 
     # Create modified spec with inverted Y and Z (common for ROS)
@@ -53,11 +53,11 @@ def example_modify_existing():
         print("Move the SpaceMouse (Ctrl+C to exit)")
         print("Y and Z axes are now inverted!\n")
 
-        for _ in range(50):  # Run for ~5 seconds
+        for _ in range(500):  # Run for ~5 seconds
             state = device.read()
             if any([state.x, state.y, state.z]):
                 print(f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} (Y/Z inverted)")
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 
 def example_invert_rotations():
@@ -90,11 +90,11 @@ def example_invert_rotations():
         print(f"Connected to: {device.name}")
         print("Roll and Yaw are now inverted!\n")
 
-        for _ in range(30):
+        for _ in range(500):
             state = device.read()
             if any([state.roll, state.pitch, state.yaw]):
                 print(f"roll={state.roll:+.2f} pitch={state.pitch:+.2f} yaw={state.yaw:+.2f}")
-            time.sleep(0.1)
+            time.sleep(0.01)
 
 
 def example_create_custom():
