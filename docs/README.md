@@ -231,6 +231,8 @@ pipx install hatch==1.15.1 pre-commit
 
 If you're not familiar with pipx, it lets you install python tools into isolated environments in `~/.local`.
 
+For building the documentation locally, you will also need `doxygen` installed and on the path.
+
 ## Used In
 
 - [TeleMoMa](https://github.com/UT-Austin-RobIn/telemoma) - A Modular and Versatile Teleoperation System for Mobile Manipulation

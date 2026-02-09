@@ -142,10 +142,10 @@ with pyspacemouse.open(device_spec=device_spec) as device:
 See [Custom Device Configuration](https://spacemouse.kubaandrysek.cz/mouseApi/#custom-device-configuration) for more details.
 
 ## How to write documentation
-To install the required dependencies, run `pip install pyspacemouse[docs]`.
+To install the required dependencies, run `make install-dev`, and please also install `doxygen` manually.
 
 Edit `README.md` only in the root folder. The documentation is automatically generated from `README.md` and `docs/` folder.
-To update documentation from root to `/docs` use macro `make fixRelativeLinkDocs` which will replace all relative links from `/` to `/docs` folder.
+To update documentation from root to `/docs`, use `make docs-build`.
 
 ### Building the documentation
 The documentation is built using [mkdocs](https://www.mkdocs.org/). To test the documentation locally, run `make docs-serve` and open [http://localhost:8000](http://localhost:8000) in your browser.
