@@ -31,7 +31,7 @@ def get_connected_devices() -> List[Tuple[str, str]]:
     """Return the paths and names of the supported devices currently connected.
 
     Returns:
-        Tuple of two lists: (device_paths, device_names)
+        List of tuples: (device_path, device_name).
         Empty list if no supported devices are found.
 
     Raises:
