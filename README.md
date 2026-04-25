@@ -49,7 +49,7 @@ The optional argument is the threshold used, and is applied per-axis.
 import pyspacemouse
 
 # Context manager (recommended) - automatically closes device
-with pyspacemouse.open() as device:
+with pyspacemouse.open(nonblocking=False) as device:
     while True:
         state = device.read()
         if state.has_motion(0.01):
@@ -172,10 +172,10 @@ dof_callbacks = [
 with pyspacemouse.open(
     button_callbacks=button_callbacks,
     dof_callbacks=dof_callbacks,
+    nonblocking=False
 ) as device:
     while True:
         device.read()  # Triggers callbacks
-        time.sleep(0.001) # NOTE: avoid larger sleeps, which can cause data to buffer
 ```
 
 ### Custom Axis Mapping
@@ -195,11 +195,29 @@ custom = pyspacemouse.modify_device_info(
     invert_axes=["y", "z", "roll", "yaw"],  # Invert these
 )
 
-with pyspacemouse.open(device_spec=custom) as device:
+with pyspacemouse.open(device_spec=custom, nonblocking=False) as device:
     state = device.read()
 ```
 
 See [Custom Device Configuration](./docs/mouseApi/index.md#custom-device-configuration) for full API.
+
+## Blocking, Non-Blocking, sleeps, and callbacks
+
+The default `open()` function uses `nonblocking=True`, which means `read()` can return without any data if none is available.
+However, the spacemouse device sends data very quickly and the operating system may buffer this data if it is not being read quickly enough.
+This means that you are very unlikely to ever _not_ get data from `read()`, even in non-blocking mode.
+This also means that if you have a loop that calls `read()` and it is slow, for example if you add `sleep(0.01)`, you might start to see the data start lagging behind a bit.
+For instance, if you poke the spacemouse it will take a few dozen/hundred milliseconds for non-zero data to be return from `read()`.
+This is why you see many of our examples us `nonblocking=False` and no sleep at all.
+This is an attempt to read as quickly as possible to avoid buffering data.
+If you want to minimize the effects of buffering while still operating at a lower rate, consider something like this:
+```python
+with pyspacemouse.open() as device:
+    while True:
+        state = device.read()
+        if
+```
+
 
 ## CLI
 

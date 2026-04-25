@@ -139,6 +139,7 @@ def _create_and_open_device(
     )
     mouse.open()
     hid_device.set_nonblocking(nonblocking)
+    mouse._nonblocking = nonblocking
     return mouse
 
 

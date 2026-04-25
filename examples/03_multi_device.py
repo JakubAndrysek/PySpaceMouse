@@ -35,8 +35,8 @@ def main():
             print("Move both devices (Ctrl+C to exit)")
 
             while True:
-                left = left_hand.read()
-                right = right_hand.read()
+                left = left_hand.read_latest()
+                right = right_hand.read_latest()
 
                 if left.has_motion() or right.has_motion():
                     print(
@@ -44,7 +44,7 @@ def main():
                         f"Right: x={right.x:+.2f} y={right.y:+.2f} z={right.z:+.2f}"
                     )
 
-                time.sleep(0.01)
+                time.sleep(0.1)
 
 
 if __name__ == "__main__":

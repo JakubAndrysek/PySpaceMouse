@@ -28,14 +28,15 @@ def main():
     supported = pyspacemouse.get_supported_devices()
     for supported_name, vid, pid in supported:
         # Check if this device type is connected
-        status = " "
+        count = 0
         path_if_connected = ""
         for path, name in connected.items():
             if name == supported_name:
-                status = "✓"
+                count += 1
                 path_if_connected = f"   (path: {path})"
+        count_str = " " if count == 0 else str(count)
         print(
-            f"  [{status}] {supported_name} (VID: {vid:#06x}, PID: {pid:#06x}){path_if_connected}"
+            f"  [{count_str}] {supported_name} (VID: {vid:#06x}, PID: {pid:#06x}){path_if_connected}"
         )
     print()
 

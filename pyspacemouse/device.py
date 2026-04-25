@@ -194,6 +194,32 @@ class SpaceMouseDevice:
     # Reading and processing
     # -------------------------------------------------------------------------
 
+    def read_latest(self) -> SpaceMouseState:
+        """
+        Read and process data from the device.
+        It tries to ensure the buffer is drained by reading all available data until no more is left.
+        This makes it simpler to read from the device slowly.
+
+
+        Returns:
+            The current state after processing any available data.
+        """
+        if not self._nonblocking:
+            raise RuntimeError(
+                "read_latest() cannot be used with nonblocking=False. Use read(), and read quickly enough to avoid buffering."
+            )
+
+        if not self.connected:
+            return self._state
+
+        while True:
+            data = self._device.read(self._info.bytes_to_read)
+            if data:
+                self._process(data)
+            else:
+                break
+        return self._state
+
     def read(self) -> SpaceMouseState:
         """Read and process data from the device.
 
