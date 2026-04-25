@@ -31,8 +31,7 @@ def example_modify_existing():
         print("This example only works with one device connected.")
         return
 
-    device = connected[0]
-    device_path, device_name = device
+    device_name = connected[0]
     print(f"Using device: {device_name}")
 
     # Get base spec and create modified version
@@ -74,8 +73,7 @@ def example_invert_rotations():
         print("This example only works with one device connected.")
         return
 
-    device = connected[0]
-    device_path, device_name = device
+    device_name = connected[0]
     specs = pyspacemouse.get_device_specs()
     base_spec = specs[device_name]
 

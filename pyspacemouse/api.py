@@ -27,11 +27,11 @@ from .loader import get_device_specs
 from .types import DeviceInfo, SpaceMouseState
 
 
-def get_connected_devices() -> List[Tuple[str, str]]:
-    """Return the paths and names of the supported devices currently connected.
+def get_connected_devices() -> List[str]:
+    """Return a list of the supported devices currently connected.
 
     Returns:
-        List of tuples: (device_path, device_name).
+        List of device names that are both supported and connected.
         Empty list if no supported devices are found.
 
     Raises:
@@ -45,14 +45,14 @@ def get_connected_devices() -> List[Tuple[str, str]]:
         ) from e
 
     device_specs = get_device_specs()
-    devices_by_path = {}
+    devices = []
 
     for hid_device in hid.find():
         for name, spec in device_specs.items():
             if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
-                devices_by_path[hid_device.path] = name
+                devices.append(name)
 
-    return list(devices_by_path.items())
+    return devices
 
 
 def get_supported_devices() -> List[Tuple[str, int, int]]:
@@ -321,3 +321,35 @@ def open_with_config(
         device=device,
         device_index=device_index,
     )
+
+
+def get_connected_paths_and_names() -> Tuple[List[str], List[str]]:
+    """Return the paths and names of the supported devices currently connected.
+
+    Returns:
+        Tuple of two lists: (device_paths, device_names).
+        Tuple of empty lists if no supported devices are found.
+
+    Raises:
+        RuntimeError: If HID API is not installed.
+    """
+    try:
+        hid = Enumeration()
+    except AttributeError as e:
+        raise RuntimeError(
+            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
+        ) from e
+
+    device_specs = get_device_specs()
+    device_paths = []
+    device_names = []
+
+    # hid.find() is all connected HID devices,
+    # device_specs is all supported Spacemouse devices.
+    for hid_device in hid.find():
+        for name, spec in device_specs.items():
+            if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
+                device_paths.append(hid_device.path)
+                device_names.append(name)
+
+    return device_paths, device_names

@@ -16,9 +16,8 @@ def main():
     # 1. List connected SpaceMouse devices
     print("Connected SpaceMouse devices:")
     connected = pyspacemouse.get_connected_devices()
-    connected_names = [name for _, name in connected]
     if connected:
-        for name in connected_names:
+        for name in connected:
             print(f"  ✓ {name}")
     else:
         print("  (none found)")
@@ -29,7 +28,7 @@ def main():
     supported = pyspacemouse.get_supported_devices()
     for name, vid, pid in supported:
         # Check if this device type is connected
-        is_connected = name in connected_names
+        is_connected = name in connected
         status = "✓" if is_connected else " "
         print(f"  [{status}] {name} (VID: {vid:#06x}, PID: {pid:#06x})")
     print()

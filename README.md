@@ -66,6 +66,10 @@ import pyspacemouse
 pyspacemouse.get_connected_devices()
 # Returns: ["SpaceNavigator", "SpaceMouse Pro", ...]
 
+# List connected SpaceMouse devices with paths
+pyspacemouse.get_connected_paths_and_names()
+# Returns: [("/dev/hidraw0", "SpaceNavigator"), ...]
+
 # List all supported device types
 pyspacemouse.get_supported_devices()
 # Returns: [(name, vendor_id, product_id), ...]

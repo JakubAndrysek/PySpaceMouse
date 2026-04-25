@@ -11,9 +11,7 @@ import pyspacemouse
 
 def main():
     # First, discover connected devices
-    devices = pyspacemouse.get_connected_devices()
-    paths = [path for path, name in devices]
-    names = [name for path, name in devices]
+    paths, names = pyspacemouse.get_connected_paths_and_names()
     print(f"Found {len(names)} spacemouse device(s): {names}")
 
     if len(names) < 2:
