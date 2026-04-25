@@ -9,8 +9,6 @@ Note: Device paths vary by OS:
 - Windows: Uses different path format
 """
 
-import time
-
 import pyspacemouse
 
 
@@ -34,8 +32,11 @@ def main():
 
             while True:
                 state = device.read()
-                print(f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f}")
-                time.sleep(0.01)
+                if state.nonzero():
+                    print(
+                        f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} "
+                        f"r={state.roll:+.2f} p={state.pitch:+.2f} y={state.yaw:+.2f}"
+                    )
 
     except FileNotFoundError as e:
         print(f"Device path not found: {e}")

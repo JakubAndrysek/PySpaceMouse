@@ -15,9 +15,9 @@ def main():
 
     # 1. List connected SpaceMouse devices
     print("Connected SpaceMouse devices:")
-    connected = pyspacemouse.get_connected_devices()
+    connected = pyspacemouse.get_connected_paths_and_names()
     if connected:
-        for name in connected:
+        for name in connected.values():
             print(f"  ✓ {name}")
     else:
         print("  (none found)")
@@ -26,11 +26,17 @@ def main():
     # 2. List all supported device types
     print("Supported device types:")
     supported = pyspacemouse.get_supported_devices()
-    for name, vid, pid in supported:
+    for supported_name, vid, pid in supported:
         # Check if this device type is connected
-        is_connected = name in connected
-        status = "✓" if is_connected else " "
-        print(f"  [{status}] {name} (VID: {vid:#06x}, PID: {pid:#06x})")
+        status = " "
+        path_if_connected = ""
+        for path, name in connected.items():
+            if name == supported_name:
+                status = "✓"
+                path_if_connected = f"   (path: {path})"
+        print(
+            f"  [{status}] {supported_name} (VID: {vid:#06x}, PID: {pid:#06x}){path_if_connected}"
+        )
     print()
 
     # 3. List ALL HID devices (for debugging)

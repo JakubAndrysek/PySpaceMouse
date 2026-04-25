@@ -17,7 +17,7 @@ Usage:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Callable, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from easyhid import Enumeration
 
@@ -256,7 +256,7 @@ def open(
         connected = get_connected_devices()
         if not connected:
             raise RuntimeError("No connected or supported devices found.")
-        device = connected[0][1]
+        device = connected[0]
 
     if device not in device_specs:
         raise ValueError(f"Unknown device: '{device}'. Available: {list(device_specs.keys())}")
@@ -323,12 +323,11 @@ def open_with_config(
     )
 
 
-def get_connected_paths_and_names() -> Tuple[List[str], List[str]]:
+def get_connected_paths_and_names() -> Dict[str, str]:
     """Return the paths and names of the supported devices currently connected.
 
     Returns:
-        Tuple of two lists: (device_paths, device_names).
-        Tuple of empty lists if no supported devices are found.
+        Dict of paths: device names (e.g., {"/dev/hidraw0": "SpaceMouse Pro"}).
 
     Raises:
         RuntimeError: If HID API is not installed.
@@ -341,15 +340,13 @@ def get_connected_paths_and_names() -> Tuple[List[str], List[str]]:
         ) from e
 
     device_specs = get_device_specs()
-    device_paths = []
-    device_names = []
+    devices_by_path = {}
 
     # hid.find() is all connected HID devices,
     # device_specs is all supported Spacemouse devices.
     for hid_device in hid.find():
         for name, spec in device_specs.items():
             if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
-                device_paths.append(hid_device.path)
-                device_names.append(name)
+                devices_by_path[hid_device.path] = name
 
-    return device_paths, device_names
+    return devices_by_path

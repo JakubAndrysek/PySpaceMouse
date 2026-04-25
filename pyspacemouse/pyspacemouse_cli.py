@@ -13,10 +13,10 @@ def print_version_cli():
 
 def list_spacemouse_cli():
     """List connected SpaceMouse devices."""
-    devices = pyspacemouse.get_connected_devices()
-    if devices:
+    connected = pyspacemouse.get_connected_paths_and_names()
+    if connected:
         print("Connected SpaceMouse devices:")
-        for path, device in devices:
+        for path, device in connected.items():
             print(f"  - {device} ({path})")
     else:
         print("No connected SpaceMouse devices found.")
@@ -59,15 +59,11 @@ def test_connect_cli():
 
             while True:
                 state = device.read()
-                if any(
-                    abs(val) > 0.01
-                    for val in [state.x, state.y, state.z, state.roll, state.pitch, state.yaw]
-                ):
+                if state.nonzero():
                     print(
                         f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} "
                         f"roll={state.roll:+.2f} pitch={state.pitch:+.2f} yaw={state.yaw:+.2f}"
                     )
-                time.sleep(0.01)
 
     except RuntimeError as e:
         print(f"Failed to open SpaceMouse: {e}")

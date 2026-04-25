@@ -49,7 +49,8 @@ import pyspacemouse
 with pyspacemouse.open() as device:
     while True:
         state = device.read()
-        print(state.x, state.y, state.z)
+        if state.nonzero(0.01):
+            print(state.x, state.y, state.z, state.roll, state.pitch, state.yaw)
 ```
 
 ## API Reference
@@ -145,6 +146,7 @@ with pyspacemouse.open(
 ) as device:
     while True:
         device.read()  # Triggers callbacks
+        time.sleep(0.001) # NOTE: avoid larger sleeps, which can cause data to buffer
 ```
 
 ### Custom Axis Mapping

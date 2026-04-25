@@ -23,7 +23,7 @@ def example_modify_existing():
     print(f"Available devices: {list(specs.keys())}")
 
     # Get connected devices
-    connected = pyspacemouse.get_connected_devices()
+    connected = pyspacemouse.get_connected_paths_and_names()
     if not connected:
         print("No devices connected!")
         return
@@ -31,7 +31,7 @@ def example_modify_existing():
         print("This example only works with one device connected.")
         return
 
-    device_name = connected[0]
+    device_name = list(connected.values())[0]
     print(f"Using device: {device_name}")
 
     # Get base spec and create modified version
@@ -54,7 +54,7 @@ def example_modify_existing():
 
         for _ in range(500):  # Run for ~5 seconds
             state = device.read()
-            if any([state.x, state.y, state.z]):
+            if state.nonzero():
                 print(f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} (Y/Z inverted)")
             time.sleep(0.01)
 
@@ -65,7 +65,7 @@ def example_invert_rotations():
     print("Example 2: Fix rotation conventions")
     print("=" * 60)
 
-    connected = pyspacemouse.get_connected_devices()
+    connected = pyspacemouse.get_connected_paths_and_names()
     if not connected:
         print("No devices connected!")
         return
@@ -73,7 +73,7 @@ def example_invert_rotations():
         print("This example only works with one device connected.")
         return
 
-    device_name = connected[0]
+    device_name = list(connected.values())[0]
     specs = pyspacemouse.get_device_specs()
     base_spec = specs[device_name]
 
@@ -90,7 +90,7 @@ def example_invert_rotations():
 
         for _ in range(500):
             state = device.read()
-            if any([state.roll, state.pitch, state.yaw]):
+            if state.nonzero():
                 print(f"roll={state.roll:+.2f} pitch={state.pitch:+.2f} yaw={state.yaw:+.2f}")
             time.sleep(0.01)
 

@@ -6,7 +6,6 @@
 #     while 1:
 #         state = pyspacemouse.read()
 #         print(state.x, state.y, state.z)
-#         time.sleep(0.01)
 import time
 
 import hid
