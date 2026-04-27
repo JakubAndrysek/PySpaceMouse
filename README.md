@@ -120,6 +120,9 @@ with pyspacemouse.open() as device:
 ### Callbacks
 
 ```python
+import pyspacemouse
+import time
+
 # Button callback
 def on_button(state, buttons, pressed):
     print(f"Button {pressed} pressed!")

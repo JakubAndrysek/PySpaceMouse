@@ -49,4 +49,4 @@ with pyspacemouse.open(
 
     while True:
         device.read()  # Must call read() to process callbacks
-        time.sleep(0.01)  # NOTE: large sleeps can cause data to buffer
+        time.sleep(0.01)

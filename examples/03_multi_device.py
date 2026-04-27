@@ -4,6 +4,8 @@ This example shows how to open two SpaceMouse devices simultaneously,
 useful for dual-hand control or controlling multiple robots.
 """
 
+import time
+
 import pyspacemouse
 
 
@@ -38,6 +40,8 @@ def main():
                         f"Left: x={left.x:+.2f} y={left.y:+.2f} z={left.z:+.2f}  |  "
                         f"Right: x={right.x:+.2f} y={right.y:+.2f} z={right.z:+.2f}"
                     )
+
+                time.sleep(0.01)
 
 
 if __name__ == "__main__":
