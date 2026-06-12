@@ -52,7 +52,7 @@ from .callbacks import (
 )
 
 # Config helpers (for custom device configurations)
-from .config_helpers import create_device_info, modify_device_info
+from .config_helpers import apply_axis_convention, create_device_info, modify_device_info
 
 # Device class
 from .device import SpaceMouseDevice
@@ -62,6 +62,7 @@ from .loader import get_device_specs, load_device_specs
 from .types import (
     AXIS_NAMES,
     Axis,
+    AxisConvention,
     AxisSpec,
     ButtonSpec,
     ButtonState,
@@ -82,6 +83,7 @@ __all__ = [
     # Types
     "Axis",
     "AXIS_NAMES",
+    "AxisConvention",
     "AxisSpec",
     "ButtonSpec",
     "ButtonState",
@@ -108,6 +110,7 @@ __all__ = [
     "get_device_specs",
     "load_device_specs",
     # Config helpers
+    "apply_axis_convention",
     "create_device_info",
     "modify_device_info",
 ]

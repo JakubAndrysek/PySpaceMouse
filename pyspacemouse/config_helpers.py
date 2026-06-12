@@ -18,7 +18,7 @@ Example:
 
 from __future__ import annotations
 
-from .types import AxisSpec, ButtonSpec, DeviceInfo
+from .types import AxisConvention, AxisSpec, ButtonSpec, DeviceInfo
 
 
 def create_device_info(
@@ -91,6 +91,91 @@ def create_device_info(
         mappings=axis_specs,
         button_specs=tuple(button_specs),
         button_names=tuple(button_names),
+    )
+
+
+def apply_axis_convention(base: DeviceInfo, convention: AxisConvention) -> DeviceInfo:
+    """Apply an axis convention to a DeviceInfo, returning a corrected copy.
+
+    This function understands the internal structure of specs loaded from
+    devices.toml (the *legacy* convention) and remaps byte assignments and
+    scales to produce a geometrically consistent coordinate frame.
+
+    Legacy byte layout (assumed for all devices.toml entries):
+      - 'x'     bytes → HID Tx  (scale +1)
+      - 'y'     bytes → HID Ty  (scale −1, inverted)
+      - 'z'     bytes → HID Tz  (scale −1, inverted)
+      - 'pitch' bytes → HID Rx  (scale −1)   ← label is intentionally "wrong"
+      - 'roll'  bytes → HID Ry  (scale −1)   ← label is intentionally "wrong"
+      - 'yaw'   bytes → HID Rz  (scale +1)
+
+    Do NOT call this on a DeviceInfo that was already produced by this function
+    or that uses a non-legacy mapping — the result would be incorrect.
+
+    Args:
+        base: DeviceInfo from get_device_specs() (legacy convention).
+        convention: Target AxisConvention.
+
+    Returns:
+        New DeviceInfo with remapped axes.  LEGACY returns *base* unchanged.
+    """
+    convention = AxisConvention(convention)
+
+    if convention == AxisConvention.LEGACY:
+        return base
+
+    m = base.mappings
+    new_m: dict = {}
+
+    # ── Translation axes ──────────────────────────────────────────────────────
+    for axis in ("x", "y", "z"):
+        if axis not in m:
+            continue
+        spec = m[axis]
+        if convention == AxisConvention.HID:
+            # HID: all raw values are positive
+            new_m[axis] = AxisSpec(spec.channel, spec.byte1, spec.byte2, 1)
+        else:
+            # Z_UP: same translation signs as legacy (x=+1, y=−1, z=−1)
+            new_m[axis] = spec
+
+    # ── Rotation axes ─────────────────────────────────────────────────────────
+    # In the legacy TOML the byte *positions* are correct but the names and
+    # signs are wrong.  The bytes labelled 'pitch' hold raw HID Rx (rotation
+    # around X), 'roll' holds HID Ry, and 'yaw' holds HID Rz.
+    hid_rx = m.get("pitch")  # legacy 'pitch' bytes  =  HID Rx
+    hid_ry = m.get("roll")  # legacy 'roll'  bytes  =  HID Ry
+    hid_rz = m.get("yaw")  # legacy 'yaw'   bytes  =  HID Rz
+
+    if convention == AxisConvention.HID:
+        # roll=+HID_Rx, pitch=+HID_Ry, yaw=+HID_Rz  (all positive)
+        if hid_rx:
+            new_m["roll"] = AxisSpec(hid_rx.channel, hid_rx.byte1, hid_rx.byte2, 1)
+        if hid_ry:
+            new_m["pitch"] = AxisSpec(hid_ry.channel, hid_ry.byte1, hid_ry.byte2, 1)
+        if hid_rz:
+            new_m["yaw"] = AxisSpec(hid_rz.channel, hid_rz.byte1, hid_rz.byte2, 1)
+    else:  # Z_UP
+        # roll=+HID_Rx, pitch=−HID_Ry, yaw=−HID_Rz
+        # Derivation: Z_up = −Z_hid, Y_back = −Y_hid.
+        # Rotation around Y_back = −rotation around Y_hid → pitch = −HID_Ry
+        # Rotation around Z_up   = −rotation around Z_hid → yaw   = −HID_Rz
+        if hid_rx:
+            new_m["roll"] = AxisSpec(hid_rx.channel, hid_rx.byte1, hid_rx.byte2, 1)
+        if hid_ry:
+            new_m["pitch"] = AxisSpec(hid_ry.channel, hid_ry.byte1, hid_ry.byte2, -1)
+        if hid_rz:
+            new_m["yaw"] = AxisSpec(hid_rz.channel, hid_rz.byte1, hid_rz.byte2, -1)
+
+    return DeviceInfo(
+        name=base.name,
+        vendor_id=base.vendor_id,
+        product_id=base.product_id,
+        led_id=base.led_id,
+        axis_scale=base.axis_scale,
+        mappings=new_m,
+        button_specs=base.button_specs,
+        button_names=base.button_names,
     )
 
 
