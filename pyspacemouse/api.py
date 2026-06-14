@@ -122,7 +122,7 @@ def _create_and_open_device(
             warnings.warn(
                 "AxisConvention.LEGACY is deprecated for built-in device specs "
                 "and will be removed in a future release. Pass "
-                "axis_convention=AxisConvention.Z_UP for the recommended "
+                "axis_convention=AxisConvention.HID_Z_UP for the recommended "
                 "right-handed Z-up frame, or AxisConvention.HID for raw HID axes.",
                 DeprecationWarning,
                 stacklevel=3,
@@ -172,7 +172,7 @@ def open_by_path(
                      used exactly as provided.
         axis_convention: Coordinate convention for axis values. If None,
                          uses the deprecated legacy convention for backward
-                         compatibility. Use AxisConvention.Z_UP for a
+                         compatibility. Use AxisConvention.HID_Z_UP for a
                          right-handed Z-up frame. Mutually exclusive with
                          device_spec.
 
@@ -279,7 +279,7 @@ def open(
                      as provided.
         axis_convention: Coordinate convention for axis values. If None,
                          uses the deprecated legacy convention for backward
-                         compatibility. Use AxisConvention.Z_UP for a
+                         compatibility. Use AxisConvention.HID_Z_UP for a
                          geometrically consistent right-handed Z-up frame, or
                          AxisConvention.HID for raw HID values (Z down).
                          Mutually exclusive with device_spec.

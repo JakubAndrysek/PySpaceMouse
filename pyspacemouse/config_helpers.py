@@ -136,7 +136,7 @@ def apply_axis_convention(base: DeviceInfo, convention: AxisConvention) -> Devic
             # HID: all raw values are positive
             new_m[axis] = AxisSpec(spec.channel, spec.byte1, spec.byte2, 1)
         else:
-            # Z_UP: same translation signs as legacy (x=+1, y=−1, z=−1)
+            # HID_Z_UP: same translation signs as legacy (x=+1, y=−1, z=−1)
             new_m[axis] = spec
 
     # ── Rotation axes ─────────────────────────────────────────────────────────
@@ -155,7 +155,7 @@ def apply_axis_convention(base: DeviceInfo, convention: AxisConvention) -> Devic
             new_m["pitch"] = AxisSpec(hid_ry.channel, hid_ry.byte1, hid_ry.byte2, 1)
         if hid_rz:
             new_m["yaw"] = AxisSpec(hid_rz.channel, hid_rz.byte1, hid_rz.byte2, 1)
-    else:  # Z_UP
+    else:  # HID_Z_UP
         # roll=+HID_Rx, pitch=−HID_Ry, yaw=−HID_Rz
         # Derivation: Z_up = −Z_hid, Y_back = −Y_hid.
         # Rotation around Y_back = −rotation around Y_hid → pitch = −HID_Ry

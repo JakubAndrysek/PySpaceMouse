@@ -34,7 +34,7 @@ class AxisConvention(str, Enum):
             Translation: +X right, +Y toward user, +Z down.
             Rotation: roll=+HID_Rx (around X), pitch=+HID_Ry (around Y),
             yaw=+HID_Rz (positive = clockwise from above).
-        Z_UP: Z-up right-handed convention.
+        HID_Z_UP: Z-up right-handed convention.
             Translation: X=+HID_x, Y=-HID_y (away from user), Z=-HID_z (up).
             Rotation: roll=+HID_Rx (around X), pitch=−HID_Ry (around Y),
             yaw=−HID_Rz (positive = counterclockwise from above).
@@ -42,7 +42,7 @@ class AxisConvention(str, Enum):
 
     LEGACY = "legacy"
     HID = "hid"
-    Z_UP = "z_up"
+    HID_Z_UP = "hid_z_up"
 
 
 @dataclass(frozen=True, slots=True)
