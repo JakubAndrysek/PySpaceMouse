@@ -102,11 +102,33 @@ def _create_and_open_device(
     button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None,
     button_callbacks: Optional[Sequence[ButtonCallback]] = None,
     nonblocking: bool = True,
+    axis_convention: Optional[AxisConvention] = None,
+    is_custom_spec: bool = False,
 ) -> SpaceMouseDevice:
     """Create, configure and open a SpaceMouseDevice.
 
     This is a shared helper to avoid duplication between open() and open_by_path().
     """
+    if is_custom_spec and axis_convention is not None:
+        raise ValueError(
+            "axis_convention and device_spec are mutually exclusive. "
+            "Manually change the axis mapping in the spec if you need to."
+        )
+    if not is_custom_spec:
+        axis_convention = (
+            AxisConvention.LEGACY if axis_convention is None else AxisConvention(axis_convention)
+        )
+        if axis_convention == AxisConvention.LEGACY:
+            warnings.warn(
+                "AxisConvention.LEGACY is deprecated for built-in device specs "
+                "and will be removed in a future release. Pass "
+                "axis_convention=AxisConvention.Z_UP for the recommended "
+                "right-handed Z-up frame, or AxisConvention.HID for raw HID axes.",
+                DeprecationWarning,
+                stacklevel=3,
+            )
+        spec = apply_axis_convention(spec, axis_convention)
+
     mouse = SpaceMouseDevice(info=spec, device=hid_device)
     mouse.configure(
         callback=callback,
@@ -184,8 +206,8 @@ def open_by_path(
         raise FileNotFoundError(f"No HID device found at path '{path}'.")
 
     # Use provided spec or find matching device specification
-    custom_spec = device_spec is not None
-    if custom_spec:
+    is_custom_spec = device_spec is not None
+    if is_custom_spec:
         spec = device_spec
     else:
         all_specs = get_device_specs()
@@ -208,26 +230,6 @@ def open_by_path(
 
     print(f"{spec.name} found at {path}")
 
-    if custom_spec and axis_convention is not None:
-        raise ValueError(
-            "axis_convention and device_spec are mutually exclusive. "
-            "Manually change the axis mapping in the spec if you need to."
-        )
-    if not custom_spec:
-        axis_convention = (
-            AxisConvention.LEGACY if axis_convention is None else AxisConvention(axis_convention)
-        )
-        if axis_convention == AxisConvention.LEGACY:
-            warnings.warn(
-                "AxisConvention.LEGACY is deprecated for built-in device specs "
-                "and will be removed in a future release. Pass "
-                "axis_convention=AxisConvention.Z_UP for the recommended "
-                "right-handed Z-up frame, or AxisConvention.HID for raw HID axes.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-        spec = apply_axis_convention(spec, axis_convention)
-
     return _create_and_open_device(
         spec=spec,
         hid_device=hid_device,
@@ -237,6 +239,8 @@ def open_by_path(
         button_callback=button_callback,
         button_callbacks=button_callbacks,
         nonblocking=nonblocking,
+        axis_convention=axis_convention,
+        is_custom_spec=is_custom_spec,
     )
 
 
@@ -300,27 +304,8 @@ def open(
         raise ValueError(f"Unknown device: '{device}'. Available: {list(device_specs.keys())}")
 
     # Use provided spec exactly as-is, or get from TOML and apply convention.
-    custom_spec = device_spec is not None
-    spec = device_spec if custom_spec else device_specs[device]
-    if custom_spec and axis_convention is not None:
-        raise ValueError(
-            "axis_convention and device_spec are mutually exclusive. "
-            "Manually change the axis mapping in the spec if you need to"
-        )
-    if not custom_spec:
-        axis_convention = (
-            AxisConvention.LEGACY if axis_convention is None else AxisConvention(axis_convention)
-        )
-        if axis_convention == AxisConvention.LEGACY:
-            warnings.warn(
-                "AxisConvention.LEGACY is deprecated for built-in device specs "
-                "and will be removed in a future release. Pass "
-                "axis_convention=AxisConvention.Z_UP for the recommended "
-                "right-handed Z-up frame, or AxisConvention.HID for raw HID axes.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-        spec = apply_axis_convention(spec, axis_convention)
+    is_custom_spec = device_spec is not None
+    spec = device_spec if is_custom_spec else device_specs[device]
 
     # Find matching HID devices
     hid = Enumeration()
@@ -349,6 +334,8 @@ def open(
         button_callback=button_callback,
         button_callbacks=button_callbacks,
         nonblocking=nonblocking,
+        axis_convention=axis_convention,
+        is_custom_spec=is_custom_spec,
     )
 
 
