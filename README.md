@@ -112,6 +112,29 @@ with pyspacemouse.open() as device:
     print(state.t)
 ```
 
+### Axis Conventions
+
+For new code, opt into an axis convention by passing an enum value on device open:
+
+```python
+import pyspacemouse
+from pyspacemouse import AxisConvention
+
+with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP) as device:
+    state = device.read()
+```
+
+<p align="center">
+  <img src="./docs/assets/hid_z_up_axes.svg" alt="HID Z-up axis convention" width="220">
+  <img src="./docs/assets/hid_axes.svg" alt="Raw HID axis convention" width="220">
+  <img src="./docs/assets/legacy_axis.svg" alt="Legacy PySpaceMouse axis convention" width="220">
+</p>
+
+See [Axis Conventions](./docs/mouseApi/index.md#axis-conventions) for the full
+mapping table. Custom
+`device_spec` mappings are used exactly as provided and cannot be combined with
+`axis_convention`.
+
 ### Callbacks
 
 ```python

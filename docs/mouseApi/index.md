@@ -42,7 +42,7 @@ There are also attributes:
     dev.connected       True if the device is connected, False otherwise
     dev.state           Convenience property which returns the same value as read()
 
-## State objects
+## State Objects
 
 State objects returned from `read()` have 7 attributes: [t,x,y,z,roll,pitch,yaw,button].
 
@@ -50,6 +50,40 @@ State objects returned from `read()` have 7 attributes: [t,x,y,z,roll,pitch,yaw,
 * x,y,z: translations in the range [-1.0, 1.0]
 * roll, pitch, yaw: rotations in the range [-1.0, 1.0].
 * buttons: list of button states (0 or 1), in order specified in the device specifier
+
+## Axis Conventions
+
+Built-in device specs can be opened with an explicit axis convention:
+
+```python
+import pyspacemouse
+from pyspacemouse import AxisConvention
+
+with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP) as device:
+    state = device.read()
+```
+
+<p align="center">
+  <img src="../assets/hid_axes.svg" alt="Raw HID axis convention" width="220">
+  <img src="../assets/hid_z_up_axes.svg" alt="HID Z-up axis convention" width="220">
+  <img src="../assets/legacy_axis.svg" alt="Legacy PySpaceMouse axis convention" width="220">
+</p>
+
+The same `axis_convention` argument is available on `open_by_path()` and
+`open_with_config()`.
+
+| Convention | Translation axes | Rotation axes                                  | Notes                                                                                                              |
+|------------|------------------|------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| `AxisConvention.HID` | `+x` right, `+y` toward the user, `+z` down | right-handed                                   | USB HID convention; see [HID Usage Tables, 4.2 Axis Usages](https://usb.org/document-library/hid-usage-tables-17). |
+| `AxisConvention.HID_Z_UP` | `+x` right, `+y` away from the user, `+z` up | right-handed                                   | HID frame, rotated -180 degrees about +X so Z points up                                                            |
+| `AxisConvention.LEGACY` | `x=+HID_x`, `y=-HID_y`, `z=-HID_z` | `roll=-HID_Ry`, `pitch=-HID_Rx`, `yaw=+HID_Rz` | Deprecated. Default for backward compatibility.                                                                    |
+
+For new code, select a convention that matches your need. Use `AxisConvention.LEGACY` only for existing code that
+depends on the old PySpaceMouse signs or labels.
+
+Custom `device_spec` mappings are used exactly as provided. If you pass a
+custom `device_spec`, do not also pass `axis_convention`; adjust the mapping
+with `create_device_info()` or `modify_device_info()` instead.
 
 ## Custom Device Configuration
 
