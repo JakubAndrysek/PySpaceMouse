@@ -9,6 +9,7 @@ This example shows DofCallback for per-axis handling with:
 import time
 
 import pyspacemouse
+from pyspacemouse import AxisConvention
 
 
 def on_x_positive(state, value):
@@ -46,7 +47,10 @@ dof_callbacks = [
     ),
 ]
 
-with pyspacemouse.open(dof_callbacks=dof_callbacks) as device:
+with pyspacemouse.open(
+    dof_callbacks=dof_callbacks,
+    axis_convention=AxisConvention.HID_Z_UP,
+) as device:
     print(f"Connected to: {device.name}")
     print("Move X axis (left/right) or Z axis (up/down)")
     print("Ctrl+C to exit")

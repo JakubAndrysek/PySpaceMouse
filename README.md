@@ -225,7 +225,8 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 | `06_axis_callbacks.py` | Per-axis callbacks with filtering |
 | `07_led.py` | LED control |
 | `08_buttons.py` | Button names and handling |
-| `09_custom_config.py` | Custom axis mappings |
+| `09_invert_rotations.py` | Invert rotations |
+| `10_custom_config_unity.py` | A totally custom device config using the Unity axis convention |
 
 ## Dependencies
 

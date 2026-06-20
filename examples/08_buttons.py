@@ -7,6 +7,7 @@ from devices.toml when buttons are pressed.
 import time
 
 import pyspacemouse
+from pyspacemouse import AxisConvention
 
 
 def on_button_change(state, buttons):
@@ -21,7 +22,10 @@ def on_button_change(state, buttons):
 
 
 # Open device
-with pyspacemouse.open(button_callback=on_button_change) as device:
+with pyspacemouse.open(
+    button_callback=on_button_change,
+    axis_convention=AxisConvention.HID_Z_UP,
+) as device:
     print(f"Connected to: {device.name}")
     print(f"Device has {len(device.info.button_names)} buttons:")
     for i, name in enumerate(device.info.button_names):
