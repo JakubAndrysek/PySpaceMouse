@@ -49,7 +49,8 @@ import pyspacemouse
 with pyspacemouse.open() as device:
     while True:
         state = device.read()
-        print(state.x, state.y, state.z)
+        if state.nonzero(0.01):
+            print(state.x, state.y, state.z, state.roll, state.pitch, state.yaw)
 ```
 
 ## API Reference
@@ -67,7 +68,7 @@ pyspacemouse.get_connected_devices()
 # Returns: ["SpaceNavigator", "SpaceMouse Pro", ...]
 
 # List connected SpaceMouse devices with paths
-pyspacemouse.get_connected_paths_and_names()
+pyspacemouse.get_connected_devices_by_path()
 # Returns: [("/dev/hidraw0", "SpaceNavigator"), ...]
 
 # List all supported device types
@@ -119,6 +120,9 @@ with pyspacemouse.open() as device:
 ### Callbacks
 
 ```python
+import pyspacemouse
+import time
+
 # Button callback
 def on_button(state, buttons, pressed):
     print(f"Button {pressed} pressed!")
@@ -145,6 +149,7 @@ with pyspacemouse.open(
 ) as device:
     while True:
         device.read()  # Triggers callbacks
+        time.sleep(0.001) # NOTE: avoid larger sleeps, which can cause data to buffer
 ```
 
 ### Custom Axis Mapping

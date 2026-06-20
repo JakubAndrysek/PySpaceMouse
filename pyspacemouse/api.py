@@ -323,7 +323,7 @@ def open_with_config(
     )
 
 
-def get_connected_paths_and_names() -> Dict[str, str]:
+def get_connected_devices_by_path() -> Dict[str, str]:
     """Return the paths and names of the supported devices currently connected.
 
     Returns:

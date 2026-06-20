@@ -13,7 +13,7 @@ def print_version_cli():
 
 def list_spacemouse_cli():
     """List connected SpaceMouse devices."""
-    connected = pyspacemouse.get_connected_paths_and_names()
+    connected = pyspacemouse.get_connected_devices_by_path()
     if connected:
         print("Connected SpaceMouse devices:")
         for path, device in connected.items():

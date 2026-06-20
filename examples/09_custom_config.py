@@ -23,7 +23,7 @@ def example_modify_existing():
     print(f"Available devices: {list(specs.keys())}")
 
     # Get connected devices
-    connected = pyspacemouse.get_connected_paths_and_names()
+    connected = pyspacemouse.get_connected_devices_by_path()
     if not connected:
         print("No devices connected!")
         return
@@ -65,7 +65,7 @@ def example_invert_rotations():
     print("Example 2: Fix rotation conventions")
     print("=" * 60)
 
-    connected = pyspacemouse.get_connected_paths_and_names()
+    connected = pyspacemouse.get_connected_devices_by_path()
     if not connected:
         print("No devices connected!")
         return

@@ -15,7 +15,7 @@ def main():
 
     # 1. List connected SpaceMouse devices
     print("Connected SpaceMouse devices:")
-    connected = pyspacemouse.get_connected_paths_and_names()
+    connected = pyspacemouse.get_connected_devices_by_path()
     if connected:
         for name in connected.values():
             print(f"  ✓ {name}")
