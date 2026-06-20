@@ -32,7 +32,7 @@ def main():
 
             while True:
                 state = device.read()
-                if state.nonzero():
+                if state.has_motion():
                     print(
                         f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} "
                         f"r={state.roll:+.2f} p={state.pitch:+.2f} y={state.yaw:+.2f}"

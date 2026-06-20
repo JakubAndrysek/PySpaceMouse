@@ -87,7 +87,7 @@ class SpaceMouseState:
         """Allow dict-like access for backward compatibility."""
         return getattr(self, key)
 
-    def nonzero(self, threshold: float = 0.01) -> bool:
+    def has_motion(self, threshold: float = 0.01) -> bool:
         """
         Check if any axis value exceeds the given threshold.
         Used in example scripts to avoid printing zero values when the device is at rest.

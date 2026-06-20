@@ -59,7 +59,7 @@ def test_connect_cli():
 
             while True:
                 state = device.read()
-                if state.nonzero():
+                if state.has_motion():
                     print(
                         f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} "
                         f"roll={state.roll:+.2f} pitch={state.pitch:+.2f} yaw={state.yaw:+.2f}"

@@ -54,7 +54,7 @@ def example_modify_existing():
 
         for _ in range(500):  # Run for ~5 seconds
             state = device.read()
-            if state.nonzero():
+            if state.has_motion():
                 print(f"x={state.x:+.2f} y={state.y:+.2f} z={state.z:+.2f} (Y/Z inverted)")
             time.sleep(0.01)
 
@@ -90,7 +90,7 @@ def example_invert_rotations():
 
         for _ in range(500):
             state = device.read()
-            if state.nonzero():
+            if state.has_motion():
                 print(f"roll={state.roll:+.2f} pitch={state.pitch:+.2f} yaw={state.yaw:+.2f}")
             time.sleep(0.01)
 

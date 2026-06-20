@@ -35,7 +35,7 @@ def main():
                 left = left_hand.read()
                 right = right_hand.read()
 
-                if left.nonzero() or right.nonzero():
+                if left.has_motion() or right.has_motion():
                     print(
                         f"Left: x={left.x:+.2f} y={left.y:+.2f} z={left.z:+.2f}  |  "
                         f"Right: x={right.x:+.2f} y={right.y:+.2f} z={right.z:+.2f}"
