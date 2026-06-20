@@ -11,9 +11,9 @@ from pyspacemouse import AxisConvention
 
 
 def example_invert_rotations():
-    """Show how to fix rotation axes for specific conventions."""
+    """Show how to fix rotation axes"""
     print("\n" + "=" * 60)
-    print("Example 2: Invert rotation conventions")
+    print("Invert rotations")
     print("=" * 60)
 
     connected = pyspacemouse.get_connected_devices()

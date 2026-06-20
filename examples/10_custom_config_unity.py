@@ -13,7 +13,7 @@ import pyspacemouse
 def example_unity_convention():
     """Create entirely custom device configuration with the Unity convention."""
     print("\n" + "=" * 60)
-    print("Example 3: Create custom device spec (Unity convention)")
+    print("Create custom device spec (Unity convention)")
     print("=" * 60)
 
     # This shows how to create a completely custom device spec
@@ -21,7 +21,7 @@ def example_unity_convention():
     custom_spec = pyspacemouse.create_device_info(
         name="CustomSpaceMouse",
         vendor_id=0x256F,  # 3Dconnexion
-        product_id=0xC63A,  # SpaceMouse Compact
+        product_id=0xC63A,  # SpaceMouse Wireless New
         mappings={
             # Each mapping: (channel, byte1, byte2, scale)
             # Scale: 1 = normal direction, -1 = inverted

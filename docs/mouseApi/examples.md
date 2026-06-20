@@ -83,7 +83,7 @@
 ## 09. Invert Rotations
 
 - File: [09_invert_rotations.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/09_invert_rotations.py)
-- Summary: Example: Modification of device specs
+- Summary: Example: Invert rotation axes
 - Run: `python examples/09_invert_rotations.py`
 
 ```py title="examples/09_invert_rotations.py"
