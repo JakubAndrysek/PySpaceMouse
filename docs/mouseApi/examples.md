@@ -1,16 +1,5 @@
 # Examples
 
-- [01. Basic](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/01_basic.py)
-- [02. Callbacks](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/02_callbacks.py)
-- [03. Multi Device](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/03_multi_device.py)
-- [04. Open By Path](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/04_open_by_path.py)
-- [05. Discovery](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/05_discovery.py)
-- [06. Axis Callbacks](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/06_axis_callbacks.py)
-- [07. Led](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/07_led.py)
-- [08. Buttons](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/08_buttons.py)
-- [09. Invert Rotations](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/09_invert_rotations.py)
-- [10. Custom Config Unity](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/10_custom_config_unity.py)
-
 ## 01. Basic
 
 - File: [01_basic.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/01_basic.py)
