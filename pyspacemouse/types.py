@@ -7,6 +7,7 @@ All types are immutable (frozen dataclasses) for thread safety and clarity.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
 from typing import Literal
 
 # Axis names as a literal type for type safety
@@ -14,6 +15,34 @@ Axis = Literal["x", "y", "z", "roll", "pitch", "yaw"]
 
 # All valid axis names
 AXIS_NAMES: tuple[Axis, ...] = ("x", "y", "z", "roll", "pitch", "yaw")
+
+
+class AxisConvention(str, Enum):
+    """Coordinate convention for SpaceMouse axis values.
+
+    All three conventions produce a valid right-handed coordinate system
+    (except LEGACY, which is kept only for backward compatibility).
+
+    Attributes:
+        LEGACY: The original library convention. Default for backward compat.
+            Translation: X=+HID_x, Y=-HID_y, Z=-HID_z.
+            Rotations are NOT consistent with translation axes: the 'roll' and
+            'pitch' labels are swapped relative to the HID physical axes and
+            yaw sign is wrong. Use only when you cannot update existing code.
+        HID: Raw HID convention per the USB HID Usage Tables (section 4.2).
+            Right-handed, Z down.
+            Translation: +X right, +Y toward user, +Z down.
+            Rotation: roll=+HID_Rx (around X), pitch=+HID_Ry (around Y),
+            yaw=+HID_Rz (positive = clockwise from above).
+        HID_Z_UP: Z-up right-handed convention.
+            Translation: X=+HID_x, Y=-HID_y (away from user), Z=-HID_z (up).
+            Rotation: roll=+HID_Rx (around X), pitch=−HID_Ry (around Y),
+            yaw=−HID_Rz (positive = counterclockwise from above).
+    """
+
+    LEGACY = "legacy"
+    HID = "hid"
+    HID_Z_UP = "hid_z_up"
 
 
 @dataclass(frozen=True, slots=True)

@@ -16,15 +16,17 @@ Usage:
 
 from __future__ import annotations
 
+import warnings
 from pathlib import Path
 from typing import Callable, List, Optional, Sequence, Tuple
 
 from easyhid import Enumeration
 
 from .callbacks import ButtonCallback, Config, DofCallback
+from .config_helpers import apply_axis_convention
 from .device import SpaceMouseDevice
 from .loader import get_device_specs
-from .types import DeviceInfo, SpaceMouseState
+from .types import AxisConvention, DeviceInfo, SpaceMouseState
 
 
 def get_connected_devices() -> List[str]:
@@ -100,11 +102,33 @@ def _create_and_open_device(
     button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None,
     button_callbacks: Optional[Sequence[ButtonCallback]] = None,
     nonblocking: bool = True,
+    axis_convention: Optional[AxisConvention] = None,
+    is_custom_spec: bool = False,
 ) -> SpaceMouseDevice:
     """Create, configure and open a SpaceMouseDevice.
 
     This is a shared helper to avoid duplication between open() and open_by_path().
     """
+    if is_custom_spec and axis_convention is not None:
+        raise ValueError(
+            "axis_convention and device_spec are mutually exclusive. "
+            "Manually change the axis mapping in the spec if you need to."
+        )
+    if not is_custom_spec:
+        axis_convention = (
+            AxisConvention.LEGACY if axis_convention is None else AxisConvention(axis_convention)
+        )
+        if axis_convention == AxisConvention.LEGACY:
+            warnings.warn(
+                "AxisConvention.LEGACY is deprecated for built-in device specs "
+                "and will be removed in a future release. Pass "
+                "axis_convention=AxisConvention.HID_Z_UP for the recommended "
+                "right-handed Z-up frame, or AxisConvention.HID for raw HID axes.",
+                DeprecationWarning,
+                stacklevel=3,
+            )
+        spec = apply_axis_convention(spec, axis_convention)
+
     mouse = SpaceMouseDevice(info=spec, device=hid_device)
     mouse.configure(
         callback=callback,
@@ -127,6 +151,7 @@ def open_by_path(
     button_callbacks: Optional[Sequence[ButtonCallback]] = None,
     nonblocking: bool = True,
     device_spec: Optional[DeviceInfo] = None,
+    axis_convention: Optional[AxisConvention] = None,
 ) -> SpaceMouseDevice:
     """Open a SpaceMouse device by its filesystem path.
 
@@ -143,7 +168,13 @@ def open_by_path(
         nonblocking: If True, use non-blocking reads (required for callbacks)
         device_spec: Optional custom DeviceInfo. If provided, uses this
                      instead of looking up by VID/PID. Useful for custom
-                     axis mappings or unsupported devices.
+                     axis mappings or unsupported devices. Custom specs are
+                     used exactly as provided.
+        axis_convention: Coordinate convention for axis values. If None,
+                         uses the deprecated legacy convention for backward
+                         compatibility. Use AxisConvention.HID_Z_UP for a
+                         right-handed Z-up frame. Mutually exclusive with
+                         device_spec.
 
     Returns:
         SpaceMouseDevice instance (use as context manager for auto-cleanup)
@@ -175,7 +206,8 @@ def open_by_path(
         raise FileNotFoundError(f"No HID device found at path '{path}'.")
 
     # Use provided spec or find matching device specification
-    if device_spec is not None:
+    is_custom_spec = device_spec is not None
+    if is_custom_spec:
         spec = device_spec
     else:
         all_specs = get_device_specs()
@@ -207,6 +239,8 @@ def open_by_path(
         button_callback=button_callback,
         button_callbacks=button_callbacks,
         nonblocking=nonblocking,
+        axis_convention=axis_convention,
+        is_custom_spec=is_custom_spec,
     )
 
 
@@ -220,6 +254,7 @@ def open(
     device: Optional[str] = None,
     device_index: int = 0,
     device_spec: Optional[DeviceInfo] = None,
+    axis_convention: Optional[AxisConvention] = None,
 ) -> SpaceMouseDevice:
     """Open a SpaceMouse device by name or auto-detection.
 
@@ -240,7 +275,14 @@ def open(
         device_spec: Optional custom DeviceInfo. If provided, uses this
                      instead of looking up from TOML. Useful for custom
                      axis mappings. The device/device_index are still used
-                     to find the HID device.
+                     to find the HID device. Custom specs are used exactly
+                     as provided.
+        axis_convention: Coordinate convention for axis values. If None,
+                         uses the deprecated legacy convention for backward
+                         compatibility. Use AxisConvention.HID_Z_UP for a
+                         geometrically consistent right-handed Z-up frame, or
+                         AxisConvention.HID for raw HID values (Z down).
+                         Mutually exclusive with device_spec.
 
     Returns:
         SpaceMouseDevice instance (use as context manager for auto-cleanup)
@@ -261,8 +303,9 @@ def open(
     if device not in device_specs:
         raise ValueError(f"Unknown device: '{device}'. Available: {list(device_specs.keys())}")
 
-    # Use provided spec or get from TOML
-    spec = device_spec if device_spec is not None else device_specs[device]
+    # Use provided spec exactly as-is, or get from TOML and apply convention.
+    is_custom_spec = device_spec is not None
+    spec = device_spec if is_custom_spec else device_specs[device]
 
     # Find matching HID devices
     hid = Enumeration()
@@ -291,6 +334,8 @@ def open(
         button_callback=button_callback,
         button_callbacks=button_callbacks,
         nonblocking=nonblocking,
+        axis_convention=axis_convention,
+        is_custom_spec=is_custom_spec,
     )
 
 
@@ -299,6 +344,7 @@ def open_with_config(
     nonblocking: bool = True,
     device: Optional[str] = None,
     device_index: int = 0,
+    axis_convention: Optional[AxisConvention] = None,
 ) -> SpaceMouseDevice:
     """Open a SpaceMouse device using a Config object.
 
@@ -307,6 +353,7 @@ def open_with_config(
         nonblocking: If True, use non-blocking reads
         device: Device name to open
         device_index: Which instance to open if multiple connected
+        axis_convention: Coordinate convention for axis values (see open()).
 
     Returns:
         SpaceMouseDevice instance (use as context manager for auto-cleanup)
@@ -320,4 +367,5 @@ def open_with_config(
         nonblocking=nonblocking,
         device=device,
         device_index=device_index,
+        axis_convention=axis_convention,
     )
