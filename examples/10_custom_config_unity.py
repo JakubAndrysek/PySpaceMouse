@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Example: Custom device configuration with axis remapping.
+"""Example: Custom device configuration
 
 This example shows how to create entirely custom device configurations,
-in this case following the left-handed Unity convention (Z forward, X right, Y up).
+In this case following the left-handed Unity convention (Z forward, X right, Y up).
 """
 
 import time

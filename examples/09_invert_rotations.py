@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Example: Modification of device specs
+"""Example: Inverting axes
 
-This example shows how to invert translation/rotation on specific axes
+This example shows how to invert specific axes (e.g. x, roll, ... )
 """
 
 import time
