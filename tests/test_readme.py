@@ -44,17 +44,14 @@
 #     callback()
 
 
-import time
-
 import pyspacemouse
 
 success = pyspacemouse.open(
     dof_callback=pyspacemouse.print_state, button_callback=pyspacemouse.print_buttons
 )
 if success:
-    while 1:
+    while True:
         state = pyspacemouse.read()
-        time.sleep(0.01)
 
 # import pyspacemouse
 # import time

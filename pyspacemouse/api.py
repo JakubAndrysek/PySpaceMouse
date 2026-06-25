@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import warnings
 from pathlib import Path
-from typing import Callable, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from easyhid import Enumeration
 
@@ -369,3 +369,32 @@ def open_with_config(
         device_index=device_index,
         axis_convention=axis_convention,
     )
+
+
+def get_connected_devices_by_path() -> Dict[str, str]:
+    """Return the paths and names of the supported devices currently connected.
+
+    Returns:
+        Dict of paths: device names (e.g., {"/dev/hidraw0": "SpaceMouse Pro"}).
+
+    Raises:
+        RuntimeError: If HID API is not installed.
+    """
+    try:
+        hid = Enumeration()
+    except AttributeError as e:
+        raise RuntimeError(
+            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
+        ) from e
+
+    device_specs = get_device_specs()
+    devices_by_path = {}
+
+    # hid.find() is all connected HID devices,
+    # device_specs is all supported Spacemouse devices.
+    for hid_device in hid.find():
+        for name, spec in device_specs.items():
+            if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
+                devices_by_path[hid_device.path] = name
+
+    return devices_by_path

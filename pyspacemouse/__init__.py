@@ -38,6 +38,7 @@ except PackageNotFoundError:
 from .api import (
     get_all_hid_devices,
     get_connected_devices,
+    get_connected_devices_by_path,
     get_supported_devices,
     open,
     open_by_path,
@@ -98,6 +99,7 @@ __all__ = [
     # API
     "get_all_hid_devices",
     "get_connected_devices",
+    "get_connected_devices_by_path",
     "get_supported_devices",
     "open",
     "open_by_path",

@@ -116,6 +116,13 @@ class SpaceMouseState:
         """Allow dict-like access for backward compatibility."""
         return getattr(self, key)
 
+    def has_motion(self, threshold: float = 0.01) -> bool:
+        """
+        Check if any axis value exceeds the given threshold.
+        Used in example scripts to avoid printing zero values when the device is at rest.
+        """
+        return any(abs(getattr(self, axis)) > threshold for axis in AXIS_NAMES)
+
 
 @dataclass(frozen=True, slots=True)
 class DeviceInfo:

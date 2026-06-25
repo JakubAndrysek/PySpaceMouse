@@ -42,6 +42,9 @@ pip install pyspacemouse
 
 ## Quick Start
 
+Here we use `has_motion()` to check if any of the spatial axes have non-zero values.
+The optional argument is the threshold used, and is applied per-axis.
+
 ```python
 import pyspacemouse
 
@@ -49,7 +52,8 @@ import pyspacemouse
 with pyspacemouse.open() as device:
     while True:
         state = device.read()
-        print(state.x, state.y, state.z)
+        if state.has_motion(0.01):
+            print(state.x, state.y, state.z, state.roll, state.pitch, state.yaw)
 ```
 
 ## API Reference
@@ -65,6 +69,10 @@ import pyspacemouse
 # List connected SpaceMouse devices
 pyspacemouse.get_connected_devices()
 # Returns: ["SpaceNavigator", "SpaceMouse Pro", ...]
+
+# List connected SpaceMouse devices with paths
+pyspacemouse.get_connected_devices_by_path()
+# Returns: {"/dev/hidraw0": "SpaceNavigator", ...}
 
 # List all supported device types
 pyspacemouse.get_supported_devices()
@@ -138,6 +146,9 @@ mapping table. Custom
 ### Callbacks
 
 ```python
+import pyspacemouse
+import time
+
 # Button callback
 def on_button(state, buttons, pressed):
     print(f"Button {pressed} pressed!")
@@ -164,6 +175,7 @@ with pyspacemouse.open(
 ) as device:
     while True:
         device.read()  # Triggers callbacks
+        time.sleep(0.001) # NOTE: avoid larger sleeps, which can cause data to buffer
 ```
 
 ### Custom Axis Mapping
