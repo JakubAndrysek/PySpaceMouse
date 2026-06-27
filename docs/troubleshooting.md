@@ -10,7 +10,17 @@ The library applies some axis inversions to make values more intuitive:
 - **Y axis**: Inverted for common conventions
 - **Rotations**: pitch/roll inverted from HID spec
 
-If your application needs different conventions (e.g., ROS, OpenGL), use the `modify_device_info()` function:
+If your application needs a common coordinate convention, pass it when opening the device:
+
+```python
+import pyspacemouse
+from pyspacemouse import AxisConvention
+
+with pyspacemouse.open(axis_convention=AxisConvention.ROS) as device:
+    state = device.read()
+```
+
+For custom conventions, use `modify_device_info()` to remap or invert axes:
 
 ```python
 import pyspacemouse
@@ -18,10 +28,9 @@ import pyspacemouse
 specs = pyspacemouse.get_device_specs()
 base = specs["SpaceNavigator"]
 
-# Customize axes for your application
 custom = pyspacemouse.modify_device_info(
     base,
-    invert_axes=["y", "z", "roll", "yaw"],  # Axes to flip
+    remap_axes={"x": "y", "y": ("x", -1), "yaw": ("yaw", -1)},
 )
 
 with pyspacemouse.open(device_spec=custom) as device:
