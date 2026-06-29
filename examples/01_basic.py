@@ -8,7 +8,7 @@ import pyspacemouse
 from pyspacemouse import AxisConvention
 
 # Using context manager (recommended)
-with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP) as device:
+with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP, nonblocking=False) as device:
     print(f"Connected to: {device.name}")
     print("Move the SpaceMouse to see values (Ctrl+C to exit)")
 

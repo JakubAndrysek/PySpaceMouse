@@ -28,6 +28,7 @@ def main():
     try:
         with pyspacemouse.open_by_path(
             device_path,
+            nonblocking=False,
             axis_convention=AxisConvention.HID_Z_UP,
         ) as device:
             print(f"Connected to: {device.name} at {device_path}")

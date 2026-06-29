@@ -5,8 +5,6 @@ This example shows how to use callbacks for:
 - Axis movements with filtering
 """
 
-import time
-
 import pyspacemouse
 from pyspacemouse import AxisConvention
 
@@ -44,6 +42,7 @@ with pyspacemouse.open(
     dof_callback=pyspacemouse.print_state,  # Built-in DOF printer
     button_callback=on_any_button,
     button_callbacks=button_callbacks,
+    nonblocking=False,
 ) as device:
     print(f"Connected to: {device.name}")
     print("Move the SpaceMouse or press buttons (Ctrl+C to exit)")
@@ -51,4 +50,3 @@ with pyspacemouse.open(
 
     while True:
         device.read()  # Must call read() to process callbacks
-        time.sleep(0.01)
