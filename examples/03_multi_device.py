@@ -26,7 +26,9 @@ def main():
 
     # Open two devices by path
     with pyspacemouse.open_by_path(path0, axis_convention=AxisConvention.HID_Z_UP) as left_hand:
-        with pyspacemouse.open_by_path(path1, axis_convention=AxisConvention.HID_Z_UP) as right_hand:
+        with pyspacemouse.open_by_path(
+            path1, axis_convention=AxisConvention.HID_Z_UP
+        ) as right_hand:
             print(f"Left hand:  {left_hand.name}")
             print(f"Right hand: {right_hand.name}")
             print()
