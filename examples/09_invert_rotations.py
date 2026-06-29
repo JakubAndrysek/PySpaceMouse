@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Example: Inverting axes
+"""Example: Inverting rotations
 
-This example shows how to invert specific axes (e.g. x, roll, ... )
+This example shows how to invert axes, in this case the rotation axes (roll, pitch, yaw).
+Just for demonstration purposes, this would be pretty weird :)
 """
 
 import time
@@ -11,7 +12,7 @@ from pyspacemouse import AxisConvention
 
 
 def example_invert_rotations():
-    """Show how to fix rotation axes"""
+    """Show how to invert rotation axes"""
     print("\n" + "=" * 60)
     print("Invert rotations")
     print("=" * 60)
@@ -25,7 +26,7 @@ def example_invert_rotations():
     base_spec_legacy = specs[connected[0]]
     base_spec = pyspacemouse.apply_axis_convention(base_spec_legacy, AxisConvention.HID_Z_UP)
 
-    # Invert roll, pitch, and yaw so rotations are left-handed
+    # Invert roll, pitch, and yaw
     fixed_spec = pyspacemouse.modify_device_info(
         base_spec,
         name=f"{connected[0]} (Fixed Rotations)",

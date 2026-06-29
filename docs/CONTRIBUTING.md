@@ -107,7 +107,7 @@ Once your device works correctly:
 
 1. Create a branch: `git checkout -b add-device-<name>`
 2. Add your device entry to `devices.toml`
-3. Test thoroughly with the examples in `examples/`
+3. Test thoroughly with the examples in `examples/`. If you add a new example, update the README and `docs/mouseApi/examples.md`.
 4. Submit a PR with your device name and any notes about testing
 
 ### Using Custom Configuration (Without Modifying Library)
