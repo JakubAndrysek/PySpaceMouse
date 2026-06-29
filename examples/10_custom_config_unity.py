@@ -2,7 +2,8 @@
 """Example: Custom device configuration
 
 This example shows how to create entirely custom device configurations,
-In this case following the left-handed Unity convention (Z forward, X right, Y up).
+In this case for a "Spacemouse Wireless New", following the left-handed Unity convention (Z forward, X right, Y up).
+If you have a totally custom HID device, you just need to know the byte layout of the device and you can create a custom configuration for it.
 """
 
 import time
@@ -25,12 +26,12 @@ def example_unity_convention():
         mappings={
             # Each mapping: (channel, byte1, byte2, scale)
             # Scale: 1 = normal direction, -1 = inverted
-            "y": (1, 1, 2, 1),
+            "x": (1, 1, 2, 1),
+            "y": (1, 5, 6, -1),
             "z": (1, 3, 4, -1),
-            "x": (1, 5, 6, 1),
-            "yaw": (1, 7, 8, -1),
-            "roll": (1, 9, 10, -1),
+            "yaw": (1, 9, 10, 1),
             "pitch": (1, 11, 12, 1),
+            "roll": (1, 7, 8, -1),
         },
         buttons={
             "LEFT": (3, 1, 0),
@@ -44,7 +45,7 @@ def example_unity_convention():
     print(f"  Buttons: {custom_spec.button_names}")
 
     with pyspacemouse.open(device_spec=custom_spec) as device:
-        print(f"Connected to: {device.name} with Unity convention")
+        print(f"Connected to: {device.name} with custom spec")
 
         for _ in range(5000):
             state = device.read()
