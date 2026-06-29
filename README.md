@@ -261,8 +261,9 @@ This project includes a `Makefile` with commands for creating a virtual environm
 You will need `hatch` and `pre-commit` for this.
 You can get these by using
 
-```
-pipx install hatch==1.15.1 pre-commit
+```bash
+# Most recently tested with hatch 1.17.0
+pipx install hatch pre-commit
 ```
 
 If you're not familiar with pipx, it lets you install python tools into isolated environments in `~/.local`.
