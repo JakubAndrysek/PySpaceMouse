@@ -1808,7 +1808,8 @@ It interfaces with the controller directly with <code>hidapi</code> and python w
 <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="mf">0.01</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="api-reference">API Reference</h2>
 <p>From version 2.0.0 the API has been modularized and changed.
@@ -1819,6 +1820,10 @@ Please look at the <a href="mouseApi/">API Reference</a> and <a href="https://gi
 <span class="c1"># List connected SpaceMouse devices</span>
 <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
 <span class="c1"># Returns: ["SpaceNavigator", "SpaceMouse Pro", ...]</span>
+
+<span class="c1"># List connected SpaceMouse devices with paths</span>
+<span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_connected_paths_and_names</span><span class="p">()</span>
+<span class="c1"># Returns: [("/dev/hidraw0", "SpaceNavigator"), ...]</span>
 
 <span class="c1"># List all supported device types</span>
 <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_supported_devices</span><span class="p">()</span>
@@ -1860,7 +1865,10 @@ Please look at the <a href="mouseApi/">API Reference</a> and <a href="https://gi
     <span class="nb">print</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="callbacks">Callbacks</h3>
-<div class="highlight"><pre><span></span><code><span class="c1"># Button callback</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="c1"># Button callback</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">on_button</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">buttons</span><span class="p">,</span> <span class="n">pressed</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Button </span><span class="si">{</span><span class="n">pressed</span><span class="si">}</span><span class="s2"> pressed!"</span><span class="p">)</span>
 
@@ -1886,6 +1894,7 @@ Please look at the <a href="mouseApi/">API Reference</a> and <a href="https://gi
 <span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
     <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># Triggers callbacks</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.001</span><span class="p">)</span> <span class="c1"># NOTE: avoid larger sleeps, which can cause data to buffer</span>
 </code></pre></div>
 <h3 id="custom-axis-mapping">Custom Axis Mapping</h3>
 <p>Customize axis directions for specific coordinate conventions (ROS, OpenGL, etc.):</p>
@@ -1981,7 +1990,8 @@ newgrp<span class="w"> </span>plugdev
 <p>This project includes a <code>Makefile</code> with commands for creating a virtual environment (using hatch), and publishing to pypi.</p>
 <p>You will need <code>hatch</code> and <code>pre-commit</code> for this.
 You can get these by using</p>
-<div class="highlight"><pre><span></span><code>pipx install hatch==1.15.1 pre-commit
+<div class="highlight"><pre><span></span><code><span class="c1"># Most recently tested with hatch 1.17.0</span>
+pipx<span class="w"> </span>install<span class="w"> </span>hatch<span class="w"> </span>pre-commit
 </code></pre></div>
 <p>If you're not familiar with pipx, it lets you install python tools into isolated environments in <code>~/.local</code>.</p>
 <p>For building the documentation locally, you will also need <code>doxygen</code> installed and on the path.</p>
@@ -2020,7 +2030,7 @@ You can get these by using</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="February 8, 2026 17:19:05 UTC">February 8, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 25, 2026 11:01:10 UTC">April 25, 2026</span>
   </span>
 
     
