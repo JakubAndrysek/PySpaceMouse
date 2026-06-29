@@ -20,8 +20,7 @@ AXIS_NAMES: tuple[Axis, ...] = ("x", "y", "z", "roll", "pitch", "yaw")
 class AxisConvention(str, Enum):
     """Coordinate convention for SpaceMouse axis values.
 
-    All three conventions produce a valid right-handed coordinate system
-    (except LEGACY, which is kept only for backward compatibility).
+    All conventions except LEGACY produce a consistent coordinate system.
 
     Attributes:
         LEGACY: The original library convention. Default for backward compat.
@@ -38,11 +37,20 @@ class AxisConvention(str, Enum):
             Translation: X=+HID_x, Y=-HID_y (away from user), Z=-HID_z (up).
             Rotation: roll=+HID_Rx (around X), pitch=−HID_Ry (around Y),
             yaw=−HID_Rz (positive = counterclockwise from above).
+        ROS: ROS REP 103 body convention.
+            Translation: X forward, Y left, Z up.
+            Rotation: roll around X, pitch around Y, yaw around Z.
+        UNITY: Unity left-handed convention.
+            Translation: X right, Y up, Z forward.
+            Rotation: roll around X, pitch around Y, yaw around Z using
+            Unity's left-handed positive rotation direction.
     """
 
     LEGACY = "legacy"
     HID = "hid"
     HID_Z_UP = "hid_z_up"
+    ROS = "ros"
+    UNITY = "unity"
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,6 +155,7 @@ class DeviceInfo:
     mappings: dict[Axis, AxisSpec]
     button_specs: tuple[ButtonSpec, ...]
     button_names: tuple[str, ...]
+    convention: AxisConvention | None = AxisConvention.LEGACY
 
     @property
     def hid_id(self) -> tuple[int, int]:

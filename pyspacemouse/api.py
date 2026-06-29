@@ -123,7 +123,8 @@ def _create_and_open_device(
                 "AxisConvention.LEGACY is deprecated for built-in device specs "
                 "and will be removed in a future release. Pass "
                 "axis_convention=AxisConvention.HID_Z_UP for the recommended "
-                "right-handed Z-up frame, or AxisConvention.HID for raw HID axes.",
+                "right-handed Z-up frame, other values on AxisConvention for application-specific frames, or "
+                "AxisConvention.HID for raw HID axes.",
                 DeprecationWarning,
                 stacklevel=3,
             )
@@ -173,8 +174,9 @@ def open_by_path(
         axis_convention: Coordinate convention for axis values. If None,
                          uses the deprecated legacy convention for backward
                          compatibility. Use AxisConvention.HID_Z_UP for a
-                         right-handed Z-up frame. Mutually exclusive with
-                         device_spec.
+                         right-handed Z-up frame, AxisConvention.ROS for ROS,
+                         or AxisConvention.UNITY for Unity. Mutually exclusive
+                         with device_spec.
 
     Returns:
         SpaceMouseDevice instance (use as context manager for auto-cleanup)
@@ -280,8 +282,10 @@ def open(
         axis_convention: Coordinate convention for axis values. If None,
                          uses the deprecated legacy convention for backward
                          compatibility. Use AxisConvention.HID_Z_UP for a
-                         geometrically consistent right-handed Z-up frame, or
-                         AxisConvention.HID for raw HID values (Z down).
+                         geometrically consistent right-handed Z-up frame,
+                         AxisConvention.ROS for ROS, AxisConvention.UNITY for
+                         Unity, or AxisConvention.HID for raw HID values
+                         (Z down).
                          Mutually exclusive with device_spec.
 
     Returns:
