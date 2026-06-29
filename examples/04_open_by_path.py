@@ -10,6 +10,7 @@ Note: Device paths vary by OS:
 """
 
 import pyspacemouse
+from pyspacemouse import AxisConvention
 
 
 def main():
@@ -25,7 +26,10 @@ def main():
     device_path = "/dev/hidraw0"
 
     try:
-        with pyspacemouse.open_by_path(device_path) as device:
+        with pyspacemouse.open_by_path(
+            device_path,
+            axis_convention=AxisConvention.HID_Z_UP,
+        ) as device:
             print(f"Connected to: {device.name} at {device_path}")
             print("Move the device (Ctrl+C to exit)")
             print()

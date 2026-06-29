@@ -9,9 +9,10 @@ Note: Not all devices have controllable LEDs.
 import time
 
 import pyspacemouse
+from pyspacemouse import AxisConvention
 
 # Using context manager (recommended)
-with pyspacemouse.open() as device:
+with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP) as device:
     print(f"Connected to: {device.name}")
     print("LED will blink every 0.5 seconds (Ctrl+C to exit)")
     print()

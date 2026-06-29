@@ -8,6 +8,7 @@ This example shows how to use callbacks for:
 import time
 
 import pyspacemouse
+from pyspacemouse import AxisConvention
 
 
 # Button callbacks receive (state, buttons, pressed_buttons)
@@ -39,6 +40,7 @@ button_callbacks = [
 
 # Open with callbacks
 with pyspacemouse.open(
+    axis_convention=AxisConvention.HID_Z_UP,
     dof_callback=pyspacemouse.print_state,  # Built-in DOF printer
     button_callback=on_any_button,
     button_callbacks=button_callbacks,

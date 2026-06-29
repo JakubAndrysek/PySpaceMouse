@@ -133,8 +133,8 @@ with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP) as device:
 ```
 
 <p align="center">
-  <img src="./assets/hid_axes.svg" alt="Raw HID axis convention" width="220">
   <img src="./assets/hid_z_up_axes.svg" alt="HID Z-up axis convention" width="220">
+  <img src="./assets/hid_axes.svg" alt="Raw HID axis convention" width="220">
   <img src="./assets/legacy_axis.svg" alt="Legacy PySpaceMouse axis convention" width="220">
 </p>
 
@@ -225,7 +225,8 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 | `06_axis_callbacks.py` | Per-axis callbacks with filtering |
 | `07_led.py` | LED control |
 | `08_buttons.py` | Button names and handling |
-| `09_custom_config.py` | Custom axis mappings |
+| `09_invert_rotations.py` | Invert rotations |
+| `10_custom_config_unity.py` | A totally custom device config using the Unity axis convention |
 
 ## Dependencies
 
@@ -260,8 +261,9 @@ This project includes a `Makefile` with commands for creating a virtual environm
 You will need `hatch` and `pre-commit` for this.
 You can get these by using
 
-```
-pipx install hatch==1.15.1 pre-commit
+```bash
+# Most recently tested with hatch 1.17.0
+pipx install hatch pre-commit
 ```
 
 If you're not familiar with pipx, it lets you install python tools into isolated environments in `~/.local`.

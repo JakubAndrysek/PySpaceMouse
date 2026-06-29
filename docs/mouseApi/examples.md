@@ -1,96 +1,101 @@
 # Examples
 
+## 01. Basic
 
-## Basic usage
-[basicExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/basicExample.py)
-````py
-import pyspacemouse
-import time
+- File: [01_basic.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/01_basic.py)
+- Summary: Basic example: Read SpaceMouse input with context manager.
+- Run: `python examples/01_basic.py`
 
-success = pyspacemouse.open()
-if success:
-    while 1:
-        state = pyspacemouse.read()
-        print(state.x, state.y, state.z)
-        time.sleep(0.01)
-````
+```py title="examples/01_basic.py"
+--8<-- "examples/01_basic.py"
+```
 
+## 02. Callbacks
 
-## Usage with callback
-[callbackExample.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/callbackExample.py)
-````py
-import pyspacemouse
-import time
+- File: [02_callbacks.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/02_callbacks.py)
+- Summary: Callbacks example: React to button presses and axis movements.
+- Run: `python examples/02_callbacks.py`
 
+```py title="examples/02_callbacks.py"
+--8<-- "examples/02_callbacks.py"
+```
 
-def button_0(state, buttons, pressed_buttons):
-    print("Button:", pressed_buttons)
+## 03. Multi Device
 
+- File: [03_multi_device.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/03_multi_device.py)
+- Summary: Multi-device example: Connect to multiple SpaceMouse devices.
+- Run: `python examples/03_multi_device.py`
 
-def button_0_1(state, buttons, pressed_buttons):
-    print("Buttons:", pressed_buttons)
+```py title="examples/03_multi_device.py"
+--8<-- "examples/03_multi_device.py"
+```
 
+## 04. Open By Path
 
-def someButton(state, buttons):
-    print("Some button")
+- File: [04_open_by_path.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/04_open_by_path.py)
+- Summary: Open by path example: Connect to a specific HID device by filesystem path.
+- Run: `python examples/04_open_by_path.py`
 
+```py title="examples/04_open_by_path.py"
+--8<-- "examples/04_open_by_path.py"
+```
 
-def callback():
-    button_arr = [pyspacemouse.ButtonCallback(0, button_0),
-                  pyspacemouse.ButtonCallback([1], lambda state, buttons, pressed_buttons: print("Button: 1")),
-                  pyspacemouse.ButtonCallback([0, 1], button_0_1), ]
+## 05. Discovery
 
-    success = pyspacemouse.open(dof_callback=pyspacemouse.print_state, button_callback=someButton,
-                                button_callback_arr=button_arr)
-    if success:
-        while True:
-            pyspacemouse.read()
-            time.sleep(0.01)
+- File: [05_discovery.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/05_discovery.py)
+- Summary: Device discovery example: List and inspect available devices.
+- Run: `python examples/05_discovery.py`
 
+```py title="examples/05_discovery.py"
+--8<-- "examples/05_discovery.py"
+```
 
-if __name__ == '__main__':
-    callback()
-````
+## 06. Axis Callbacks
 
+- File: [06_axis_callbacks.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/06_axis_callbacks.py)
+- Summary: Axis callbacks example: React to specific axis movements.
+- Run: `python examples/06_axis_callbacks.py`
 
-### Callback: print_state
+```py title="examples/06_axis_callbacks.py"
+--8<-- "examples/06_axis_callbacks.py"
+```
 
-Print all axis states
+## 07. Led
 
-    x +0.00    y +0.00    z +0.00 roll +0.00 pitch +0.00  yaw +0.00    t +0.0
+- File: [07_led.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/07_led.py)
+- Summary: LED control example: Blink the SpaceMouse LED.
+- Run: `python examples/07_led.py`
 
-### Callback: print_buttons
+```py title="examples/07_led.py"
+--8<-- "examples/07_led.py"
+```
 
-Print all buttons states
+## 08. Buttons
 
-    [ 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, ]
+- File: [08_buttons.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/08_buttons.py)
+- Summary: Button names example: Show button names when pressed.
+- Run: `python examples/08_buttons.py`
 
+```py title="examples/08_buttons.py"
+--8<-- "examples/08_buttons.py"
+```
 
-## Custom Device Configuration
+## 09. Invert Rotations
 
-[09_custom_config.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/09_custom_config.py)
+- File: [09_invert_rotations.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/09_invert_rotations.py)
+- Summary: Example: Invert rotation axes
+- Run: `python examples/09_invert_rotations.py`
 
-Customize axis mappings for different coordinate conventions (ROS, OpenGL, etc.):
+```py title="examples/09_invert_rotations.py"
+--8<-- "examples/09_invert_rotations.py"
+```
 
-````py
-import pyspacemouse
+## 10. Custom Config Unity
 
-# Get existing device spec and modify it
-specs = pyspacemouse.get_device_specs()
-base = specs["SpaceNavigator"]
+- File: [10_custom_config_unity.py](https://github.com/JakubAndrysek/PySpaceMouse/blob/master/examples/10_custom_config_unity.py)
+- Summary: Example: Custom device configuration with axis remapping.
+- Run: `python examples/10_custom_config_unity.py`
 
-# Invert axes for ROS conventions
-ros_spec = pyspacemouse.modify_device_info(
-    base,
-    name="SpaceNavigator (ROS)",
-    invert_axes=["y", "z", "roll", "yaw"],
-)
-
-# Open with custom configuration
-with pyspacemouse.open(device_spec=ros_spec) as device:
-    while True:
-        state = device.read()
-        print(f"x={state.x:.2f} y={state.y:.2f} z={state.z:.2f}")
-````
-
-See also: `create_device_info()` for creating completely custom device specs.
+```py title="examples/10_custom_config_unity.py"
+--8<-- "examples/10_custom_config_unity.py"
+```
