@@ -5,8 +5,6 @@ This example shows how to invert axes, in this case the rotation axes (roll, pit
 Just for demonstration purposes, this would be pretty weird :)
 """
 
-import time
-
 import pyspacemouse
 from pyspacemouse import AxisConvention
 
@@ -34,7 +32,7 @@ def example_invert_rotations():
         invert_axes=["roll", "pitch", "yaw"],
     )
 
-    with pyspacemouse.open(device_spec=fixed_spec, nonblocking=False) as device:
+    with pyspacemouse.open(device_spec=fixed_spec) as device:
         print(f"Connected to: {device.name}")
         print("Rotations are now inverted!\n")
 

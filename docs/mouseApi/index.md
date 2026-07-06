@@ -8,39 +8,28 @@ More examples can be found in [Examples](./examples.md) page.
 
 ## Module pyspacemouse
 
-The module-level API is as follows:
+As described in the examples, you typically want to start by "opening" a device using one of the open functions, then call one of the "read" functions.
 
-    open(callback=None, button_callback=None, button_callback_arr=None, set_nonblocking_loop=True, device=None)
-        Open a 3D space navigator device. Makes this device the current active device, which enables the module-level read() and close()
-        calls. For multiple devices, use the read() and close() calls on the returned object instead, and don't use the module-level calls.
+### Open Functions
 
-        Parameters:
-            callback: If callback is provided, it is called on each HID update with a copy of the current state namedtuple
-            dof_callback: If dof_callback is provided, it is called only on DOF state changes with the argument (state).
-            button_callback: If button_callback is provided, it is called on each button push, with the arguments (state_tuple, button_state)
-            device: name of device to open, as a string like "SpaceNavigator". Must be one of the values in `supported_devices`.
-                    If `None`, chooses the first supported device found.
-        Returns:
-            Device object if the device was opened successfully
-            None if the device could not be opened
+These are module-level functions (e.g. `pyspacemouse.open()`) and should be used in a `with ... as ...` statement.
 
-    read()              Return a namedtuple giving the current device state (t,x,y,z,roll,pitch,yaw,button)
-    close()             Close the connection to the current device, if it is open
-    list_devices()      Return a list of supported devices found, or an empty list if none found
+- `open()`: By default, returns the "first" supported device it finds. Great when you only have one device.
+- `open_by_path()`: Opens a specific device (from symlink, `udev` rule, hidraw path, etc.). Great when you need stability across re-plugging or multiple devices.
 
-`open()` returns a DeviceSpec object.
-If you have multiple 3Dconnexion devices, you can use the object-oriented API to access them individually.
-Each object has the following API, which functions exactly as the above API, but on a per-device basis:
+### Read Functions
 
-    dev.open()          Opens the connection (this is always called by the module-level open command,
-                        so you should not need to use it unless you have called close())
-    dev.read()          Return the state of the device as namedtuple [t,x,y,z,roll,pitch,yaw,button]
-    dev.close()         Close this device
+These are called on the object returned by the `open` functions.
 
-There are also attributes:
+- `read()`
+- `read_latest()`
 
-    dev.connected       True if the device is connected, False otherwise
-    dev.state           Convenience property which returns the same value as read()
+The main difference is that `read_latest()` handles two comment issues better: old/laggy data, and busy-waiting.
+The function `read_latest()` does one blocking call to `read()` which will keep CPU usage low if the device is stationary at all 0s, but will ensure the buffer is drained of data before returning to you the latest data.
+This ensures you always get the latest data, regardless of how slowly your loop to `read_latest()` is!
+If you use `read()` you must read very quickly (~200Hz in my testing), or the HID/USB buffer does not fill up and you will start to get old data.
+This often shows up as "lag" in your application.
+In short, if you were previously having
 
 ## State Objects
 

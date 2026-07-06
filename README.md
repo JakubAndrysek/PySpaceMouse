@@ -49,7 +49,7 @@ The optional argument is the threshold used, and is applied per-axis.
 import pyspacemouse
 
 # Context manager (recommended) - automatically closes device
-with pyspacemouse.open(nonblocking=False) as device:
+with pyspacemouse.open() as device:
     while True:
         state = device.read()
         if state.has_motion(0.01):
@@ -172,7 +172,6 @@ dof_callbacks = [
 with pyspacemouse.open(
     button_callbacks=button_callbacks,
     dof_callbacks=dof_callbacks,
-    nonblocking=False
 ) as device:
     while True:
         device.read()  # Triggers callbacks
@@ -195,7 +194,7 @@ custom = pyspacemouse.modify_device_info(
     invert_axes=["y", "z", "roll", "yaw"],  # Invert these
 )
 
-with pyspacemouse.open(device_spec=custom, nonblocking=False) as device:
+with pyspacemouse.open(device_spec=custom) as device:
     state = device.read()
 ```
 

@@ -101,7 +101,6 @@ def _create_and_open_device(
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
     button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None,
     button_callbacks: Optional[Sequence[ButtonCallback]] = None,
-    nonblocking: bool = True,
     axis_convention: Optional[AxisConvention] = None,
     is_custom_spec: bool = False,
 ) -> SpaceMouseDevice:
@@ -138,8 +137,7 @@ def _create_and_open_device(
         button_callbacks=button_callbacks,
     )
     mouse.open()
-    hid_device.set_nonblocking(nonblocking)
-    mouse._nonblocking = nonblocking
+    hid_device.set_nonblocking(True)
     return mouse
 
 
@@ -150,7 +148,6 @@ def open_by_path(
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
     button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None,
     button_callbacks: Optional[Sequence[ButtonCallback]] = None,
-    nonblocking: bool = True,
     device_spec: Optional[DeviceInfo] = None,
     axis_convention: Optional[AxisConvention] = None,
 ) -> SpaceMouseDevice:
@@ -166,7 +163,6 @@ def open_by_path(
         dof_callbacks: List of per-axis callbacks
         button_callback: Called on button state changes
         button_callbacks: List of per-button callbacks
-        nonblocking: If True, use non-blocking reads (required for callbacks)
         device_spec: Optional custom DeviceInfo. If provided, uses this
                      instead of looking up by VID/PID. Useful for custom
                      axis mappings or unsupported devices. Custom specs are
@@ -239,7 +235,6 @@ def open_by_path(
         dof_callbacks=dof_callbacks,
         button_callback=button_callback,
         button_callbacks=button_callbacks,
-        nonblocking=nonblocking,
         axis_convention=axis_convention,
         is_custom_spec=is_custom_spec,
     )
@@ -251,7 +246,6 @@ def open(
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
     button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None,
     button_callbacks: Optional[Sequence[ButtonCallback]] = None,
-    nonblocking: bool = True,
     device: Optional[str] = None,
     device_index: int = 0,
     device_spec: Optional[DeviceInfo] = None,
@@ -270,7 +264,6 @@ def open(
         dof_callbacks: List of per-axis callbacks
         button_callback: Called on button state changes
         button_callbacks: List of per-button callbacks
-        nonblocking: If True, use non-blocking reads (required for callbacks)
         device: Device name to open. If None, uses first found device.
         device_index: Which instance to open if multiple same devices connected
         device_spec: Optional custom DeviceInfo. If provided, uses this
@@ -334,7 +327,6 @@ def open(
         dof_callbacks=dof_callbacks,
         button_callback=button_callback,
         button_callbacks=button_callbacks,
-        nonblocking=nonblocking,
         axis_convention=axis_convention,
         is_custom_spec=is_custom_spec,
     )
@@ -342,7 +334,6 @@ def open(
 
 def open_with_config(
     config: Config,
-    nonblocking: bool = True,
     device: Optional[str] = None,
     device_index: int = 0,
     axis_convention: Optional[AxisConvention] = None,
@@ -351,7 +342,6 @@ def open_with_config(
 
     Args:
         config: Configuration with callback definitions
-        nonblocking: If True, use non-blocking reads
         device: Device name to open
         device_index: Which instance to open if multiple connected
         axis_convention: Coordinate convention for axis values (see open()).
@@ -365,7 +355,6 @@ def open_with_config(
         dof_callbacks=config.dof_callbacks,
         button_callback=config.button_callback,
         button_callbacks=config.button_callbacks,
-        nonblocking=nonblocking,
         device=device,
         device_index=device_index,
         axis_convention=axis_convention,

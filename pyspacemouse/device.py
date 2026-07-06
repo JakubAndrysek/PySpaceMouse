@@ -61,7 +61,6 @@ class SpaceMouseDevice:
         "_dof_callbacks",
         "_button_callback",
         "_button_callbacks",
-        "_nonblocking",
         "_product_name",
         "_vendor_name",
         "_version_number",
@@ -88,7 +87,6 @@ class SpaceMouseDevice:
         self._dof_callbacks: Optional[Sequence[DofCallback]] = None
         self._button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None
         self._button_callbacks: Optional[Sequence[ButtonCallback]] = None
-        self._nonblocking = True
 
         # Connection details (populated on open)
         self._product_name: str = ""
@@ -194,24 +192,38 @@ class SpaceMouseDevice:
     # Reading and processing
     # -------------------------------------------------------------------------
 
-    def read_latest(self) -> SpaceMouseState:
+    def read_latest(self, block: bool = False) -> SpaceMouseState:
         """
-        Read and process data from the device.
+        Read and data from the device, ensuring we wait until data is available and always return the lates data
         It tries to ensure the buffer is drained by reading all available data until no more is left.
-        This makes it simpler to read from the device slowly.
-
+        This makes it simpler to read from the device slowly, e.g. in a loop with a sleep, without the data getting old/laggy.
 
         Returns:
             The current state after processing any available data.
         """
-        if not self._nonblocking:
-            raise RuntimeError(
-                "read_latest() cannot be used with nonblocking=False. Use read(), and read quickly enough to avoid buffering."
-            )
+        # if not self._nonblocking:
+        #     raise RuntimeError(
+        #         "read_latest() cannot be used with nonblocking=False."
+        #         "If you want 'blocking' behavior that waits until the device is moved, either"
+        #         "use read() and be sure to call it quickly enough to avoid buffering issues,"
+        #         ", or use nonblocking=True and read_latest() and check state.has_motion() in a while loop to see if any of the axes positions are non-zero."
+        #     )
 
         if not self.connected:
             return self._state
 
+        if block:
+            # First do one blocking read to avoid busy-waiting if no data is being sent from the device
+            # (e.g. the device is stationary, at 0).
+            self._device.set_nonblocking(False)
+            data = self._device.read(self._info.bytes_to_read)
+            if data:
+                self._process(data)
+
+        # However, if `read_latest()` is called too slowly, the data will get buffered,
+        # and just reading once isn't enough to get the latest data.
+        # So we switch to nonblocking mode and read until no more data is available.
+        self._device.set_nonblocking(True)
         while True:
             data = self._device.read(self._info.bytes_to_read)
             if data:

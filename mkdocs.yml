@@ -101,6 +101,7 @@ nav:
   - Home: 'README.md'
   - Contributing: 'CONTRIBUTING.md'
   - Troubleshooting: 'troubleshooting.md'
+  - Changelog: 'CHANGELOG.md'
 
   - API:
       - mouseApi/index.md
