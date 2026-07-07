@@ -20,7 +20,7 @@ AXIS_NAMES: tuple[Axis, ...] = ("x", "y", "z", "roll", "pitch", "yaw")
 class AxisConvention(str, Enum):
     """Coordinate convention for SpaceMouse axis values.
 
-    All conventions except LEGACY produce a consistent coordinate system.
+    All conventions except LEGACY produce a consistently left or right handed coordinate system. LEGACY is neither.
 
     Attributes:
         LEGACY: The original library convention. Default for backward compat.
