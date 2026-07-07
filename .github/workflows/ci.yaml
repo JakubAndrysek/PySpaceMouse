@@ -23,6 +23,25 @@ jobs:
             - name: Run Ruff linting
               run: hatch run ruff check .
 
+    test:
+        needs: lint
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0  # Required for hatch-vcs to determine version
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: "3.12"
+            - name: Install system dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y libhidapi-dev
+            - name: Install Hatch
+              run: pip install hatch
+            - name: Run axis convention tests
+              run: hatch run test:pytest tests/test_axis_conventions.py
+
     # test:
     #     needs: lint
     #     strategy:
