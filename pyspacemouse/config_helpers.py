@@ -31,7 +31,7 @@ from .types import AXIS_NAMES, Axis, AxisConvention, AxisSpec, ButtonSpec, Devic
 AxisRemap = Dict[Axis, Union[Axis, Tuple[Axis, Literal[-1, 1]]]]
 
 # Remaps from the HID convention to each named convention.
-_HID_TO_CONVENTION: dict[AxisConvention, AxisRemap] = {
+_HID_TO_CONVENTION: Dict[AxisConvention, AxisRemap] = {
     AxisConvention.LEGACY: {
         "x": ("x", 1),
         "y": ("y", -1),
