@@ -6,6 +6,7 @@ for handling SpaceMouse events.
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Callable, List, Optional, Sequence, Union
 
@@ -18,8 +19,10 @@ ButtonChangeCallback = Callable[["SpaceMouseState", List[int]], None]
 ButtonPressCallback = Callable[["SpaceMouseState", List[int], Union[int, List[int]]], None]
 DofValueCallback = Callable[["SpaceMouseState", float], None]
 
+_DATACLASS_SLOTS = {"slots": True} if sys.version_info >= (3, 10) else {}
 
-@dataclass(slots=True)
+
+@dataclass(**_DATACLASS_SLOTS)
 class ButtonCallback:
     """Callback triggered when specific button(s) are pressed.
 
@@ -42,7 +45,7 @@ class ButtonCallback:
             raise TypeError("buttons must be int or list of int")
 
 
-@dataclass(slots=True)
+@dataclass(**_DATACLASS_SLOTS)
 class DofCallback:
     """Callback triggered when a specific axis changes.
 
@@ -71,7 +74,7 @@ class DofCallback:
             raise TypeError("callback_minus must be callable or None")
 
 
-@dataclass(slots=True)
+@dataclass(**_DATACLASS_SLOTS)
 class Config:
     """Configuration container for all callback types.
 
