@@ -15,13 +15,11 @@ from __future__ import annotations
 import timeit
 from typing import TYPE_CHECKING, Callable, List, Optional, Sequence
 
-from easyhid import HIDException
-
 from .callbacks import ButtonCallback, Config, DofCallback
 from .types import AXIS_NAMES, ButtonState, DeviceInfo, SpaceMouseState
 
 if TYPE_CHECKING:
-    from easyhid import Device as HIDDevice
+    from hid import Device as HIDDevice
 
 # High-accuracy clock for timing
 high_acc_clock = timeit.default_timer
@@ -53,6 +51,7 @@ class SpaceMouseDevice:
 
     __slots__ = (
         "_info",
+        "_device_info",
         "_device",
         "_state",
         "_last_axis_time",
@@ -68,15 +67,20 @@ class SpaceMouseDevice:
         "_serial_number",
     )
 
-    def __init__(self, info: DeviceInfo, device: Optional[HIDDevice] = None) -> None:
+    def __init__(
+        self, info: DeviceInfo, device: Optional[dict] = None, nonblocking: bool = True
+    ) -> None:
         """Initialize the SpaceMouseDevice.
 
         Args:
             info: Device specification from loader
-            device: Optional HID device instance
+            device: Optional HID device metadata dict (from hid.enumerate()),
+                    used to open the connection
+            nonblocking: If True, reads are non-blocking once opened
         """
         self._info = info
-        self._device = device
+        self._device_info = device
+        self._device: Optional[HIDDevice] = None
 
         # Initialize state
         self._state = SpaceMouseState(buttons=ButtonState([0] * len(info.button_specs)))
@@ -88,7 +92,7 @@ class SpaceMouseDevice:
         self._dof_callbacks: Optional[Sequence[DofCallback]] = None
         self._button_callback: Optional[Callable[[SpaceMouseState, List[int]], None]] = None
         self._button_callbacks: Optional[Sequence[ButtonCallback]] = None
-        self._nonblocking = True
+        self._nonblocking = nonblocking
 
         # Connection details (populated on open)
         self._product_name: str = ""
@@ -167,21 +171,25 @@ class SpaceMouseDevice:
 
     def open(self) -> None:
         """Open the connection to the device."""
-        if self._device is None:
+        if self._device_info is None:
             raise RuntimeError("No HID device assigned to this SpaceMouseDevice")
 
+        import hid
+
         try:
-            self._device.open()
-        except HIDException as e:
+            self._device = hid.Device(path=self._device_info["path"])
+        except hid.HIDException as e:
             raise RuntimeError("Failed to open device") from e
 
+        self._device.nonblocking = self._nonblocking
+
         # Copy product details
-        self._product_name = self._device.product_string or ""
-        self._vendor_name = self._device.manufacturer_string or ""
-        self._version_number = str(self._device.release_number or "")
+        self._product_name = self._device.product or ""
+        self._vendor_name = self._device.manufacturer or ""
+        self._version_number = str(self._device_info.get("release_number") or "")
 
         # Convert serial number to hex
-        serial = self._device.serial_number or ""
+        serial = self._device.serial or ""
         self._serial_number = "".join(f"{ord(c):02X}" for c in serial)
 
     def close(self) -> None:
@@ -304,7 +312,7 @@ class SpaceMouseDevice:
         report_id, on_value = self._info.led_id
         led_value = on_value if state else 0x00
         try:
-            self._device.write(bytearray([report_id, led_value]))
+            self._device.write(bytes([report_id, led_value]))
         except Exception:
             pass  # Silently fail if LED control not supported
 

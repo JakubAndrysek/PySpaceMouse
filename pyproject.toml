@@ -39,7 +39,7 @@ classifiers = [
     "Operating System :: OS Independent",
     "Topic :: System :: Hardware :: Universal Serial Bus (USB) :: Human Interface Device (HID)",
 ]
-dependencies = ["easyhid", "tomli; python_version < '3.11'"]
+dependencies = ["hid", "tomli; python_version < '3.11'"]
 
 [project.urls]
 Documentation = "https://spacemouse.kubaandrysek.cz"

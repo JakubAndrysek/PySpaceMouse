@@ -20,13 +20,32 @@ import warnings
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
-from easyhid import Enumeration
-
 from .callbacks import ButtonCallback, Config, DofCallback
 from .config_helpers import apply_axis_convention
 from .device import SpaceMouseDevice
 from .loader import get_device_specs
 from .types import AxisConvention, DeviceInfo, SpaceMouseState
+
+
+def _import_hid():
+    """Lazily import the `hid` package.
+
+    Deferred so that hardware-free parts of pyspacemouse (types, config
+    helpers, etc.) remain usable even when the native hidapi library isn't
+    installed.
+    """
+    try:
+        import hid
+    except ImportError as e:
+        raise ImportError(
+            "hidapi C library not found. Install it via your OS package manager "
+            "(e.g. `apt install libhidapi-hidraw0` on Debian/Ubuntu, `brew install "
+            "hidapi` on macOS, or download from "
+            "https://github.com/libusb/hidapi/releases on Windows) and make sure "
+            "the `hid` Python package is installed (`pip install hid`). See "
+            "https://spacemouse.kubaandrysek.cz for details."
+        ) from e
+    return hid
 
 
 def get_connected_devices() -> List[str]:
@@ -37,21 +56,18 @@ def get_connected_devices() -> List[str]:
         Empty list if no supported devices are found.
 
     Raises:
-        RuntimeError: If HID API is not installed.
+        ImportError: If the hidapi C library is not installed.
     """
-    try:
-        hid = Enumeration()
-    except AttributeError as e:
-        raise RuntimeError(
-            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
-        ) from e
-
+    hid = _import_hid()
     device_specs = get_device_specs()
     devices = []
 
-    for hid_device in hid.find():
+    for hid_device in hid.enumerate():
         for name, spec in device_specs.items():
-            if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
+            if (
+                hid_device["vendor_id"] == spec.vendor_id
+                and hid_device["product_id"] == spec.product_id
+            ):
                 devices.append(name)
 
     return devices
@@ -73,23 +89,17 @@ def get_all_hid_devices() -> List[Tuple[str, str, int, int]]:
         List of tuples: (product_string, manufacturer_string, vendor_id, product_id)
 
     Raises:
-        RuntimeError: If HID API is not installed.
+        ImportError: If the hidapi C library is not installed.
     """
-    try:
-        hid = Enumeration()
-    except AttributeError as e:
-        raise RuntimeError(
-            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
-        ) from e
-
+    hid = _import_hid()
     return [
         (
-            dev.product_string or "",
-            dev.manufacturer_string or "",
-            dev.vendor_id,
-            dev.product_id,
+            dev["product_string"] or "",
+            dev["manufacturer_string"] or "",
+            dev["vendor_id"],
+            dev["product_id"],
         )
-        for dev in hid.find()
+        for dev in hid.enumerate()
     ]
 
 
@@ -130,7 +140,7 @@ def _create_and_open_device(
             )
         spec = apply_axis_convention(spec, axis_convention)
 
-    mouse = SpaceMouseDevice(info=spec, device=hid_device)
+    mouse = SpaceMouseDevice(info=spec, device=hid_device, nonblocking=nonblocking)
     mouse.configure(
         callback=callback,
         dof_callback=dof_callback,
@@ -139,7 +149,6 @@ def _create_and_open_device(
         button_callbacks=button_callbacks,
     )
     mouse.open()
-    hid_device.set_nonblocking(nonblocking)
     return mouse
 
 
@@ -185,7 +194,9 @@ def open_by_path(
         FileNotFoundError: If the specified path does not exist
         ValueError: If the device at path is not a supported SpaceMouse
                     (unless device_spec is provided)
+        ImportError: If the hidapi C library is not installed.
     """
+    hid = _import_hid()
     path = Path(path)
 
     if not path.exists():
@@ -195,11 +206,10 @@ def open_by_path(
     path = path.resolve()
 
     # Find the HID device at this path
-    hid = Enumeration()
     hid_device = None
 
-    for dev in hid.device_list:
-        dev_path = Path(dev.path).resolve()
+    for dev in hid.enumerate():
+        dev_path = Path(dev["path"].decode()).resolve()
         if dev_path == path:
             hid_device = dev
             break
@@ -217,16 +227,16 @@ def open_by_path(
 
         for device_s in all_specs.values():
             if (
-                hid_device.vendor_id == device_s.vendor_id
-                and hid_device.product_id == device_s.product_id
+                hid_device["vendor_id"] == device_s.vendor_id
+                and hid_device["product_id"] == device_s.product_id
             ):
                 spec = device_s
                 break
 
         if spec is None:
             raise ValueError(
-                f"Device at '{path}' (VID={hid_device.vendor_id:#06x}, "
-                f"PID={hid_device.product_id:#06x}) is not a supported SpaceMouse. "
+                f"Device at '{path}' (VID={hid_device['vendor_id']:#06x}, "
+                f"PID={hid_device['product_id']:#06x}) is not a supported SpaceMouse. "
                 f"Use device_spec parameter for custom/unsupported devices."
             )
 
@@ -294,7 +304,9 @@ def open(
     Raises:
         RuntimeError: If no device is found
         ValueError: If the specified device name is not recognized
+        ImportError: If the hidapi C library is not installed.
     """
+    hid = _import_hid()
     device_specs = get_device_specs()
 
     # Auto-detect device if not specified
@@ -312,11 +324,10 @@ def open(
     spec = device_spec if is_custom_spec else device_specs[device]
 
     # Find matching HID devices
-    hid = Enumeration()
     found = []
 
-    for hid_dev in hid.find():
-        if hid_dev.vendor_id == spec.vendor_id and hid_dev.product_id == spec.product_id:
+    for hid_dev in hid.enumerate():
+        if hid_dev["vendor_id"] == spec.vendor_id and hid_dev["product_id"] == spec.product_id:
             found.append(hid_dev)
 
     if not found:
@@ -382,23 +393,20 @@ def get_connected_devices_by_path() -> Dict[str, str]:
         Dict of paths: device names (e.g., {"/dev/hidraw0": "SpaceMouse Pro"}).
 
     Raises:
-        RuntimeError: If HID API is not installed.
+        ImportError: If the hidapi C library is not installed.
     """
-    try:
-        hid = Enumeration()
-    except AttributeError as e:
-        raise RuntimeError(
-            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
-        ) from e
-
+    hid = _import_hid()
     device_specs = get_device_specs()
     devices_by_path = {}
 
-    # hid.find() is all connected HID devices,
+    # hid.enumerate() is all connected HID devices,
     # device_specs is all supported Spacemouse devices.
-    for hid_device in hid.find():
+    for hid_device in hid.enumerate():
         for name, spec in device_specs.items():
-            if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
-                devices_by_path[hid_device.path] = name
+            if (
+                hid_device["vendor_id"] == spec.vendor_id
+                and hid_device["product_id"] == spec.product_id
+            ):
+                devices_by_path[hid_device["path"].decode()] = name
 
     return devices_by_path

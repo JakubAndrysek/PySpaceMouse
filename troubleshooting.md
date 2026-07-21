@@ -33,11 +33,11 @@ See [Custom Device Configuration](https://spacemouse.kubaandrysek.cz/mouseApi#cu
 
 ## Common issues
 
-### ModuleNotFoundError: No module named 'easyhid'
+### ModuleNotFoundError: No module named 'hid'
 
-- Install `easyhid` by `pip install easyhid`.
+- Install `hid` by `pip install hid`.
 
-### AttributeError: function/symbol 'hid_enumerate' not found in library '<None>': python3: undefined symbol: hid_enumerate
+### ImportError: hidapi C library not found / Unable to load any of the following libraries
 
 - HID C library is not installed or not found in PATH.
 - Follow the instructions in [requirements](./README.md#dependencies).
