@@ -16,6 +16,7 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import warnings
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
@@ -62,11 +63,11 @@ def get_connected_devices() -> List[str]:
     device_specs = get_device_specs()
     devices = []
 
-    for hid_device in hid.enumerate():
+    for hid_info in hid.enumerate():
         for name, spec in device_specs.items():
             if (
-                hid_device["vendor_id"] == spec.vendor_id
-                and hid_device["product_id"] == spec.product_id
+                hid_info["vendor_id"] == spec.vendor_id
+                and hid_info["product_id"] == spec.product_id
             ):
                 devices.append(name)
 
@@ -94,18 +95,18 @@ def get_all_hid_devices() -> List[Tuple[str, str, int, int]]:
     hid = _import_hid()
     return [
         (
-            dev["product_string"] or "",
-            dev["manufacturer_string"] or "",
-            dev["vendor_id"],
-            dev["product_id"],
+            hid_info["product_string"] or "",
+            hid_info["manufacturer_string"] or "",
+            hid_info["vendor_id"],
+            hid_info["product_id"],
         )
-        for dev in hid.enumerate()
+        for hid_info in hid.enumerate()
     ]
 
 
 def _create_and_open_device(
     spec: DeviceInfo,
-    hid_device,
+    hid_info,
     callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
@@ -140,7 +141,7 @@ def _create_and_open_device(
             )
         spec = apply_axis_convention(spec, axis_convention)
 
-    mouse = SpaceMouseDevice(info=spec, device=hid_device, nonblocking=nonblocking)
+    mouse = SpaceMouseDevice(info=spec, hid_info=hid_info, nonblocking=nonblocking)
     mouse.configure(
         callback=callback,
         dof_callback=dof_callback,
@@ -206,15 +207,15 @@ def open_by_path(
     path = path.resolve()
 
     # Find the HID device at this path
-    hid_device = None
+    hid_info = None
 
-    for dev in hid.enumerate():
-        dev_path = Path(dev["path"].decode()).resolve()
-        if dev_path == path:
-            hid_device = dev
+    for candidate in hid.enumerate():
+        candidate_path = Path(os.fsdecode(candidate["path"])).resolve()
+        if candidate_path == path:
+            hid_info = candidate
             break
 
-    if hid_device is None:
+    if hid_info is None:
         raise FileNotFoundError(f"No HID device found at path '{path}'.")
 
     # Use provided spec or find matching device specification
@@ -227,16 +228,16 @@ def open_by_path(
 
         for device_s in all_specs.values():
             if (
-                hid_device["vendor_id"] == device_s.vendor_id
-                and hid_device["product_id"] == device_s.product_id
+                hid_info["vendor_id"] == device_s.vendor_id
+                and hid_info["product_id"] == device_s.product_id
             ):
                 spec = device_s
                 break
 
         if spec is None:
             raise ValueError(
-                f"Device at '{path}' (VID={hid_device['vendor_id']:#06x}, "
-                f"PID={hid_device['product_id']:#06x}) is not a supported SpaceMouse. "
+                f"Device at '{path}' (VID={hid_info['vendor_id']:#06x}, "
+                f"PID={hid_info['product_id']:#06x}) is not a supported SpaceMouse. "
                 f"Use device_spec parameter for custom/unsupported devices."
             )
 
@@ -244,7 +245,7 @@ def open_by_path(
 
     return _create_and_open_device(
         spec=spec,
-        hid_device=hid_device,
+        hid_info=hid_info,
         callback=callback,
         dof_callback=dof_callback,
         dof_callbacks=dof_callbacks,
@@ -326,9 +327,9 @@ def open(
     # Find matching HID devices
     found = []
 
-    for hid_dev in hid.enumerate():
-        if hid_dev["vendor_id"] == spec.vendor_id and hid_dev["product_id"] == spec.product_id:
-            found.append(hid_dev)
+    for hid_info in hid.enumerate():
+        if hid_info["vendor_id"] == spec.vendor_id and hid_info["product_id"] == spec.product_id:
+            found.append(hid_info)
 
     if not found:
         raise RuntimeError(f"Device '{device}' not found.")
@@ -337,12 +338,12 @@ def open(
     if device_index >= len(found):
         device_index = 0
 
-    hid_dev = found[device_index]
+    hid_info = found[device_index]
     print(f"{device} found")
 
     return _create_and_open_device(
         spec=spec,
-        hid_device=hid_dev,
+        hid_info=hid_info,
         callback=callback,
         dof_callback=dof_callback,
         dof_callbacks=dof_callbacks,
@@ -401,12 +402,12 @@ def get_connected_devices_by_path() -> Dict[str, str]:
 
     # hid.enumerate() is all connected HID devices,
     # device_specs is all supported Spacemouse devices.
-    for hid_device in hid.enumerate():
+    for hid_info in hid.enumerate():
         for name, spec in device_specs.items():
             if (
-                hid_device["vendor_id"] == spec.vendor_id
-                and hid_device["product_id"] == spec.product_id
+                hid_info["vendor_id"] == spec.vendor_id
+                and hid_info["product_id"] == spec.product_id
             ):
-                devices_by_path[hid_device["path"].decode()] = name
+                devices_by_path[os.fsdecode(hid_info["path"])] = name
 
     return devices_by_path

@@ -13,13 +13,15 @@ Supports context manager protocol for safe resource cleanup:
 from __future__ import annotations
 
 import timeit
-from typing import TYPE_CHECKING, Callable, List, Optional, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Sequence
 
 from .callbacks import ButtonCallback, Config, DofCallback
 from .types import AXIS_NAMES, ButtonState, DeviceInfo, SpaceMouseState
 
 if TYPE_CHECKING:
     from hid import Device as HIDDevice
+
+    HIDInfo = Dict[str, Any]
 
 # High-accuracy clock for timing
 high_acc_clock = timeit.default_timer
@@ -51,7 +53,7 @@ class SpaceMouseDevice:
 
     __slots__ = (
         "_info",
-        "_device_info",
+        "_hid_info",
         "_device",
         "_state",
         "_last_axis_time",
@@ -68,18 +70,21 @@ class SpaceMouseDevice:
     )
 
     def __init__(
-        self, info: DeviceInfo, device: Optional[dict] = None, nonblocking: bool = True
+        self,
+        info: DeviceInfo,
+        hid_info: Optional[HIDInfo] = None,
+        nonblocking: bool = True,
     ) -> None:
         """Initialize the SpaceMouseDevice.
 
         Args:
             info: Device specification from loader
-            device: Optional HID device metadata dict (from hid.enumerate()),
-                    used to open the connection
+            hid_info: Optional HID device metadata dict (from hid.enumerate()),
+                      used to open the connection
             nonblocking: If True, reads are non-blocking once opened
         """
         self._info = info
-        self._device_info = device
+        self._hid_info = hid_info
         self._device: Optional[HIDDevice] = None
 
         # Initialize state
@@ -171,13 +176,15 @@ class SpaceMouseDevice:
 
     def open(self) -> None:
         """Open the connection to the device."""
-        if self._device_info is None:
+        if self._hid_info is None:
             raise RuntimeError("No HID device assigned to this SpaceMouseDevice")
 
-        import hid
+        from .api import _import_hid
+
+        hid = _import_hid()
 
         try:
-            self._device = hid.Device(path=self._device_info["path"])
+            self._device = hid.Device(path=self._hid_info["path"])
         except hid.HIDException as e:
             raise RuntimeError("Failed to open device") from e
 
@@ -186,7 +193,7 @@ class SpaceMouseDevice:
         # Copy product details
         self._product_name = self._device.product or ""
         self._vendor_name = self._device.manufacturer or ""
-        self._version_number = str(self._device_info.get("release_number") or "")
+        self._version_number = str(self._hid_info.get("release_number") or "")
 
         # Convert serial number to hex
         serial = self._device.serial or ""
