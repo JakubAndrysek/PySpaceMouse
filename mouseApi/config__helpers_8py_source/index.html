@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../assets/logo.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
@@ -1298,12 +1298,11 @@
 
 <span class="sd">Example:</span>
 <span class="sd">    import pyspacemouse</span>
-<span class="sd">    from pyspacemouse import create_device_info, modify_device_info</span>
+<span class="sd">    from pyspacemouse import modify_device_info</span>
 
-<span class="sd">    # Modify existing device to invert Y axis</span>
+<span class="sd">    # Grab a built-in spec and invert Y in its current convention.</span>
 <span class="sd">    specs = pyspacemouse.get_device_specs()</span>
-<span class="sd">    base = specs["SpaceNavigator"]</span>
-<span class="sd">    custom = modify_device_info(base, invert_axes=["y", "pitch"])</span>
+<span class="sd">    custom = modify_device_info(specs["SpaceNavigator"], invert_axes=["y"])</span>
 
 <span class="sd">    with pyspacemouse.open(device_spec=custom) as device:</span>
 <span class="sd">        state = device.read()</span>
@@ -1311,7 +1310,120 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span><span class="p">,</span> <span class="n">AxisSpec</span><span class="p">,</span> <span class="n">ButtonSpec</span><span class="p">,</span> <span class="n">DeviceInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AXIS_NAMES</span><span class="p">,</span> <span class="n">Axis</span><span class="p">,</span> <span class="n">AxisConvention</span><span class="p">,</span> <span class="n">AxisSpec</span><span class="p">,</span> <span class="n">ButtonSpec</span><span class="p">,</span> <span class="n">DeviceInfo</span>
+
+<span class="c1"># Maps each *output* axis to the *source* axis whose data it should read,</span>
+<span class="c1"># optionally with a sign. Direction is output &lt;- source:</span>
+<span class="c1">#   {"x": "z"}            output x reads source z          (sign +1)</span>
+<span class="c1">#   {"x": ("z", -1)}      output x reads source z, negated</span>
+<span class="c1">#   {"x": "y", "y": "x"}  swap x and y (applied atomically; see modify_device_info)</span>
+<span class="c1"># typing.Dict/Tuple/Union (not PEP 604) is required: this alias is evaluated at</span>
+<span class="c1"># runtime and must import on Python 3.8.</span>
+<span class="n">AxisRemap</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]]</span>
+
+<span class="c1"># Remaps from the HID convention to each named convention.</span>
+<span class="n">_HID_TO_CONVENTION</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AxisConvention</span><span class="p">,</span> <span class="n">AxisRemap</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">AxisConvention</span><span class="o">.</span><span class="n">LEGACY</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"z"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"roll"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"pitch"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"pitch"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"roll"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"yaw"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"yaw"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"z"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"roll"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"roll"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"pitch"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"pitch"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"yaw"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"yaw"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">AxisConvention</span><span class="o">.</span><span class="n">ROS</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"z"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"roll"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"pitch"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"pitch"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"roll"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"yaw"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"yaw"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="n">AxisConvention</span><span class="o">.</span><span class="n">UNITY</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"x"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"y"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"z"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"z"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"y"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"roll"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"roll"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"pitch"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"yaw"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="s2">"yaw"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"pitch"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_axis_remap</span><span class="p">(</span>
+    <span class="n">target_axis</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">remap</span><span class="p">:</span> <span class="n">Axis</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Axis</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="n">target_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AXIS_NAMES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown target axis: </span><span class="si">{</span><span class="n">target_axis</span><span class="si">!r}</span><span class="s2">. Valid axes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">AXIS_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">remap</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">source_axis</span><span class="p">,</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">remap</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">source_axis</span><span class="p">,</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">remap</span><span class="p">,</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">source_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AXIS_NAMES</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown source axis: </span><span class="si">{</span><span class="n">source_axis</span><span class="si">!r}</span><span class="s2">. Valid axes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">AXIS_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sign</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Axis remap sign for </span><span class="si">{</span><span class="n">target_axis</span><span class="si">!r}</span><span class="s2"> must be 1 or -1."</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">source_axis</span><span class="p">,</span> <span class="n">sign</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_copy_axis_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">AxisSpec</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AxisSpec</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">AxisSpec</span><span class="p">(</span>
+        <span class="n">channel</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span>
+        <span class="n">byte1</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span>
+        <span class="n">byte2</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span>
+        <span class="n">scale</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">sign</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_to_hid</span><span class="p">(</span><span class="n">spec</span><span class="p">:</span> <span class="n">DeviceInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Convert any named-convention DeviceInfo to HID convention.</span>
+
+<span class="sd">    For LEGACY input, applies the LEGACY→HID forward remap.</span>
+<span class="sd">    For any other named convention C, inverts the HID→C remap: because</span>
+<span class="sd">    sign ∈ {-1, 1}, the inverse has the same sign, only source and target</span>
+<span class="sd">    are swapped.</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">convention</span> <span class="o">==</span> <span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">spec</span>
+
+    <span class="k">if</span> <span class="n">spec</span><span class="o">.</span><span class="n">convention</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_HID_TO_CONVENTION</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Cannot normalize </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">convention</span><span class="si">!r}</span><span class="s2"> to HID — only named conventions "</span>
+            <span class="s2">"can be automatically normalized. "</span>
+            <span class="s2">"A spec with no convention (None) has no defined inverse."</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Invert HID→C to get C→HID:</span>
+    <span class="c1"># HID[hid_target] = C[c_source] * sign  →  C[c_source] = HID[hid_target] * sign</span>
+    <span class="n">new_mappings</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">hid_target</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">_HID_TO_CONVENTION</span><span class="p">[</span><span class="n">spec</span><span class="o">.</span><span class="n">convention</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">c_source</span><span class="p">,</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">_parse_axis_remap</span><span class="p">(</span><span class="n">hid_target</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+        <span class="n">new_mappings</span><span class="p">[</span><span class="n">hid_target</span><span class="p">]</span> <span class="o">=</span> <span class="n">_copy_axis_spec</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="n">c_source</span><span class="p">],</span> <span class="n">sign</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">DeviceInfo</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">vendor_id</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">vendor_id</span><span class="p">,</span>
+        <span class="n">product_id</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">product_id</span><span class="p">,</span>
+        <span class="n">led_id</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">led_id</span><span class="p">,</span>
+        <span class="n">axis_scale</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">axis_scale</span><span class="p">,</span>
+        <span class="n">mappings</span><span class="o">=</span><span class="n">new_mappings</span><span class="p">,</span>
+        <span class="n">button_specs</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">button_specs</span><span class="p">,</span>
+        <span class="n">button_names</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">button_names</span><span class="p">,</span>
+        <span class="n">convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID</span><span class="p">,</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">create_device_info</span><span class="p">(</span>
@@ -1322,6 +1434,7 @@
     <span class="n">buttons</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">led_id</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">axis_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">350.0</span><span class="p">,</span>
+    <span class="n">convention</span><span class="p">:</span> <span class="n">AxisConvention</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create a DeviceInfo from Python dictionaries.</span>
 
@@ -1337,6 +1450,8 @@
 <span class="sd">        buttons: Optional dict mapping button names to (channel, byte, bit)</span>
 <span class="sd">        led_id: Optional tuple (report_id, on_value) for LED control</span>
 <span class="sd">        axis_scale: Scaling factor for axis values (default 350.0)</span>
+<span class="sd">        convention: Axis convention used by the spec, or None for a spec</span>
+<span class="sd">                    that follows no named convention (default None).</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        DeviceInfo instance ready for use with open()</span>
@@ -1357,7 +1472,6 @@
 <span class="sd">            buttons={"LEFT": (3, 1, 0), "RIGHT": (3, 1, 1)},</span>
 <span class="sd">        )</span>
 <span class="sd">    """</span>
-    <span class="c1"># Parse mappings</span>
     <span class="n">axis_specs</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">mappings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">axis_specs</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span>
@@ -1367,7 +1481,6 @@
             <span class="n">scale</span><span class="o">=</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
         <span class="p">)</span>
 
-    <span class="c1"># Parse buttons</span>
     <span class="n">button_specs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">button_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">if</span> <span class="n">buttons</span><span class="p">:</span>
@@ -1384,81 +1497,44 @@
         <span class="n">mappings</span><span class="o">=</span><span class="n">axis_specs</span><span class="p">,</span>
         <span class="n">button_specs</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">button_specs</span><span class="p">),</span>
         <span class="n">button_names</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">button_names</span><span class="p">),</span>
+        <span class="n">convention</span><span class="o">=</span><span class="n">convention</span><span class="p">,</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_axis_convention</span><span class="p">(</span><span class="n">base</span><span class="p">:</span> <span class="n">DeviceInfo</span><span class="p">,</span> <span class="n">convention</span><span class="p">:</span> <span class="n">AxisConvention</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceInfo</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Apply an axis convention to a DeviceInfo, returning a corrected copy.</span>
+<span class="w">    </span><span class="sd">"""Convert a DeviceInfo from any named convention to another.</span>
 
-<span class="sd">    This function understands the internal structure of specs loaded from</span>
-<span class="sd">    devices.toml (the *legacy* convention) and remaps byte assignments and</span>
-<span class="sd">    scales to produce a geometrically consistent coordinate frame.</span>
-
-<span class="sd">    Legacy byte layout (assumed for all devices.toml entries):</span>
-<span class="sd">      - 'x'     bytes → HID Tx  (scale +1)</span>
-<span class="sd">      - 'y'     bytes → HID Ty  (scale −1, inverted)</span>
-<span class="sd">      - 'z'     bytes → HID Tz  (scale −1, inverted)</span>
-<span class="sd">      - 'pitch' bytes → HID Rx  (scale −1)   ← label is intentionally "wrong"</span>
-<span class="sd">      - 'roll'  bytes → HID Ry  (scale −1)   ← label is intentionally "wrong"</span>
-<span class="sd">      - 'yaw'   bytes → HID Rz  (scale +1)</span>
-
-<span class="sd">    Do NOT call this on a DeviceInfo that was already produced by this function</span>
-<span class="sd">    or that uses a non-legacy mapping — the result would be incorrect.</span>
+<span class="sd">    Normalizes the input to HID first (via _normalize_to_hid), then applies</span>
+<span class="sd">    the HID→target remap from _HID_TO_CONVENTION.  Works for any pair of named</span>
+<span class="sd">    conventions.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        base: DeviceInfo from get_device_specs() (legacy convention).</span>
+<span class="sd">        base: DeviceInfo in any named convention (LEGACY, HID, ROS, …).</span>
 <span class="sd">        convention: Target AxisConvention.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        New DeviceInfo with remapped axes.  LEGACY returns *base* unchanged.</span>
+<span class="sd">        New DeviceInfo in the requested convention.  Returns *base* unchanged</span>
+<span class="sd">        if it is already in the requested convention.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If base has no named convention (convention is None) and so</span>
+<span class="sd">            cannot be normalized to HID.</span>
 <span class="sd">    """</span>
     <span class="n">convention</span> <span class="o">=</span> <span class="n">AxisConvention</span><span class="p">(</span><span class="n">convention</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">convention</span> <span class="o">==</span> <span class="n">AxisConvention</span><span class="o">.</span><span class="n">LEGACY</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">base</span><span class="o">.</span><span class="n">convention</span> <span class="o">==</span> <span class="n">convention</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">base</span>
 
-    <span class="n">m</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">mappings</span>
-    <span class="n">new_m</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="c1"># ── Translation axes ──────────────────────────────────────────────────────</span>
-    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">m</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">convention</span> <span class="o">==</span> <span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID</span><span class="p">:</span>
-            <span class="c1"># HID: all raw values are positive</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">spec</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># HID_Z_UP: same translation signs as legacy (x=+1, y=−1, z=−1)</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span>
-
-    <span class="c1"># ── Rotation axes ─────────────────────────────────────────────────────────</span>
-    <span class="c1"># In the legacy TOML the byte *positions* are correct but the names and</span>
-    <span class="c1"># signs are wrong.  The bytes labelled 'pitch' hold raw HID Rx (rotation</span>
-    <span class="c1"># around X), 'roll' holds HID Ry, and 'yaw' holds HID Rz.</span>
-    <span class="n">hid_rx</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pitch"</span><span class="p">)</span>  <span class="c1"># legacy 'pitch' bytes  =  HID Rx</span>
-    <span class="n">hid_ry</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"roll"</span><span class="p">)</span>  <span class="c1"># legacy 'roll'  bytes  =  HID Ry</span>
-    <span class="n">hid_rz</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"yaw"</span><span class="p">)</span>  <span class="c1"># legacy 'yaw'   bytes  =  HID Rz</span>
+    <span class="n">hid_base</span> <span class="o">=</span> <span class="n">_normalize_to_hid</span><span class="p">(</span><span class="n">base</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">convention</span> <span class="o">==</span> <span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID</span><span class="p">:</span>
-        <span class="c1"># roll=+HID_Rx, pitch=+HID_Ry, yaw=+HID_Rz  (all positive)</span>
-        <span class="k">if</span> <span class="n">hid_rx</span><span class="p">:</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="s2">"roll"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">hid_rx</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">hid_rx</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">hid_rx</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">hid_ry</span><span class="p">:</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="s2">"pitch"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">hid_ry</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">hid_ry</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">hid_ry</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">hid_rz</span><span class="p">:</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="s2">"yaw"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">hid_rz</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">hid_rz</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">hid_rz</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># HID_Z_UP</span>
-        <span class="c1"># roll=+HID_Rx, pitch=−HID_Ry, yaw=−HID_Rz</span>
-        <span class="c1"># Derivation: Z_up = −Z_hid, Y_back = −Y_hid.</span>
-        <span class="c1"># Rotation around Y_back = −rotation around Y_hid → pitch = −HID_Ry</span>
-        <span class="c1"># Rotation around Z_up   = −rotation around Z_hid → yaw   = −HID_Rz</span>
-        <span class="k">if</span> <span class="n">hid_rx</span><span class="p">:</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="s2">"roll"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">hid_rx</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">hid_rx</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">hid_rx</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">hid_ry</span><span class="p">:</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="s2">"pitch"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">hid_ry</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">hid_ry</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">hid_ry</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">hid_rz</span><span class="p">:</span>
-            <span class="n">new_m</span><span class="p">[</span><span class="s2">"yaw"</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span><span class="n">hid_rz</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span> <span class="n">hid_rz</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span> <span class="n">hid_rz</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hid_base</span>
+
+    <span class="n">remap</span> <span class="o">=</span> <span class="n">_HID_TO_CONVENTION</span><span class="p">[</span><span class="n">convention</span><span class="p">]</span>
+    <span class="n">new_mappings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">hid_base</span><span class="o">.</span><span class="n">mappings</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">target_axis</span><span class="p">,</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">remap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">source_axis</span><span class="p">,</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">_parse_axis_remap</span><span class="p">(</span><span class="n">target_axis</span><span class="p">,</span> <span class="n">src</span><span class="p">)</span>
+        <span class="n">new_mappings</span><span class="p">[</span><span class="n">target_axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">_copy_axis_spec</span><span class="p">(</span><span class="n">hid_base</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="n">source_axis</span><span class="p">],</span> <span class="n">sign</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">DeviceInfo</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
@@ -1466,59 +1542,80 @@
         <span class="n">product_id</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">product_id</span><span class="p">,</span>
         <span class="n">led_id</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">led_id</span><span class="p">,</span>
         <span class="n">axis_scale</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">axis_scale</span><span class="p">,</span>
-        <span class="n">mappings</span><span class="o">=</span><span class="n">new_m</span><span class="p">,</span>
+        <span class="n">mappings</span><span class="o">=</span><span class="n">new_mappings</span><span class="p">,</span>
         <span class="n">button_specs</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">button_specs</span><span class="p">,</span>
         <span class="n">button_names</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">button_names</span><span class="p">,</span>
+        <span class="n">convention</span><span class="o">=</span><span class="n">convention</span><span class="p">,</span>
     <span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">modify_device_info</span><span class="p">(</span>
     <span class="n">base</span><span class="p">:</span> <span class="n">DeviceInfo</span><span class="p">,</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">invert_axes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">remap_axes</span><span class="p">:</span> <span class="n">AxisRemap</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">invert_axes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Axis</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">axis_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DeviceInfo</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Create a modified DeviceInfo from an existing one.</span>
 
-<span class="sd">    This is useful for adjusting axis conventions without redefining</span>
-<span class="sd">    the entire device configuration.</span>
+<span class="sd">    remap_axes and invert_axes operate directly on the slots of the input spec</span>
+<span class="sd">    in its current convention. The input convention is preserved for name/scale-only</span>
+<span class="sd">    changes; convention is set to None when axes are modified.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        base: Existing DeviceInfo to modify</span>
-<span class="sd">        name: Optional new name for the device</span>
-<span class="sd">        invert_axes: List of axis names to invert (e.g., ["y", "roll"])</span>
-<span class="sd">        axis_scale: Optional new axis scale value</span>
+<span class="sd">        base: Existing DeviceInfo to modify.</span>
+<span class="sd">        name: Optional new name for the device.</span>
+<span class="sd">        remap_axes: Optional mapping of each output axis to the source axis whose</span>
+<span class="sd">                    data it should read (direction: output &lt;- source). A value is</span>
+<span class="sd">                    either a source axis name, or an (axis, sign) tuple to flip</span>
+<span class="sd">                    sign in the same step. Reads are taken from the *original*</span>
+<span class="sd">                    spec, so swaps such as {"x": "y", "y": "x"} apply atomically.</span>
+<span class="sd">                    Example: {"x": ("z", -1)} makes output x read negated z.</span>
+<span class="sd">        invert_axes: Axis names to negate, e.g. ["y", "roll"]. A convenience for</span>
+<span class="sd">                     the common case; invert_axes=["y"] equals</span>
+<span class="sd">                     remap_axes={"y": ("y", -1)}. Mutually exclusive with</span>
+<span class="sd">                     remap_axes — when remapping, express inversions as (axis, -1)</span>
+<span class="sd">                     tuples there instead.</span>
+<span class="sd">        axis_scale: Optional new axis scale value.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        New DeviceInfo with modifications applied</span>
+<span class="sd">        New DeviceInfo with modifications applied.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If both remap_axes and invert_axes are given.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        # Get existing device spec and invert axes for ROS conventions</span>
 <span class="sd">        specs = pyspacemouse.get_device_specs()</span>
-<span class="sd">        base = specs["SpaceNavigator"]</span>
-<span class="sd">        ros_compatible = modify_device_info(</span>
-<span class="sd">            base,</span>
-<span class="sd">            name="SpaceNavigator (ROS)",</span>
-<span class="sd">            invert_axes=["y", "z", "roll", "yaw"],</span>
+<span class="sd">        tweaked = modify_device_info(</span>
+<span class="sd">            specs["SpaceNavigator"],</span>
+<span class="sd">            invert_axes=["y"],</span>
 <span class="sd">        )</span>
 <span class="sd">    """</span>
-    <span class="c1"># Start with base values</span>
+    <span class="k">if</span> <span class="n">remap_axes</span> <span class="ow">and</span> <span class="n">invert_axes</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"remap_axes and invert_axes are mutually exclusive; express inversions "</span>
+            <span class="s2">"as (axis, -1) tuples inside remap_axes instead, e.g. {'z': ('z', -1)}."</span>
+        <span class="p">)</span>
+
     <span class="n">new_name</span> <span class="o">=</span> <span class="n">name</span> <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">name</span>
     <span class="n">new_scale</span> <span class="o">=</span> <span class="n">axis_scale</span> <span class="k">if</span> <span class="n">axis_scale</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">axis_scale</span>
 
-    <span class="c1"># Copy and optionally invert mappings</span>
-    <span class="n">new_mappings</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">axis</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">mappings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">invert_axes</span> <span class="ow">and</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">invert_axes</span><span class="p">:</span>
-            <span class="n">new_mappings</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">AxisSpec</span><span class="p">(</span>
-                <span class="n">channel</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">channel</span><span class="p">,</span>
-                <span class="n">byte1</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">byte1</span><span class="p">,</span>
-                <span class="n">byte2</span><span class="o">=</span><span class="n">spec</span><span class="o">.</span><span class="n">byte2</span><span class="p">,</span>
-                <span class="n">scale</span><span class="o">=-</span><span class="n">spec</span><span class="o">.</span><span class="n">scale</span><span class="p">,</span>  <span class="c1"># Invert</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">new_mappings</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">spec</span>
+    <span class="n">new_mappings</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">mappings</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">remap_axes</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">target_axis</span><span class="p">,</span> <span class="n">remap</span> <span class="ow">in</span> <span class="n">remap_axes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">source_axis</span><span class="p">,</span> <span class="n">sign</span> <span class="o">=</span> <span class="n">_parse_axis_remap</span><span class="p">(</span><span class="n">target_axis</span><span class="p">,</span> <span class="n">remap</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">source_axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">mappings</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot remap missing source axis: </span><span class="si">{</span><span class="n">source_axis</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
+            <span class="n">new_mappings</span><span class="p">[</span><span class="n">target_axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">_copy_axis_spec</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">mappings</span><span class="p">[</span><span class="n">source_axis</span><span class="p">],</span> <span class="n">sign</span><span class="p">)</span>
 
+    <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">invert_axes</span> <span class="ow">or</span> <span class="p">[]:</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">AXIS_NAMES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown axis to invert: </span><span class="si">{</span><span class="n">axis</span><span class="si">!r}</span><span class="s2">. Valid axes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">AXIS_NAMES</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">axis</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">new_mappings</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cannot invert missing axis: </span><span class="si">{</span><span class="n">axis</span><span class="si">!r}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="n">new_mappings</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="n">_copy_axis_spec</span><span class="p">(</span><span class="n">new_mappings</span><span class="p">[</span><span class="n">axis</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">axes_modified</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">remap_axes</span> <span class="ow">or</span> <span class="n">invert_axes</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">DeviceInfo</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">new_name</span><span class="p">,</span>
         <span class="n">vendor_id</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">vendor_id</span><span class="p">,</span>
@@ -1528,6 +1625,7 @@
         <span class="n">mappings</span><span class="o">=</span><span class="n">new_mappings</span><span class="p">,</span>
         <span class="n">button_specs</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">button_specs</span><span class="p">,</span>
         <span class="n">button_names</span><span class="o">=</span><span class="n">base</span><span class="o">.</span><span class="n">button_names</span><span class="p">,</span>
+        <span class="n">convention</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">axes_modified</span> <span class="k">else</span> <span class="n">base</span><span class="o">.</span><span class="n">convention</span><span class="p">,</span>
     <span class="p">)</span>
 </code></pre></div>
 
@@ -1550,7 +1648,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 29, 2026 19:18:08 UTC">June 29, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 2, 2026 14:39:10 UTC">August 2, 2026</span>
   </span>
 
     
@@ -1653,7 +1751,7 @@
       <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.top", "content.action.edit", "content.action.view", "navigation.tracking", "navigation.tabs", "navigation.expand"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
       
         <script src="../../js/open_in_new_tab.js"></script>
       
