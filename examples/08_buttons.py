@@ -36,4 +36,4 @@ with pyspacemouse.open(
 
     while True:
         device.read()
-        time.sleep(0.01)
+        time.sleep(0.001)

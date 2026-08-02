@@ -175,7 +175,6 @@ with pyspacemouse.open(
 ) as device:
     while True:
         device.read()  # Triggers callbacks
-        time.sleep(0.001) # NOTE: avoid larger sleeps, which can cause data to buffer
 ```
 
 ### Custom Axis Mapping
@@ -209,6 +208,34 @@ with pyspacemouse.open(device_spec=custom) as device:
 ```
 
 See [Custom Device Configuration](./docs/mouseApi/index.md#custom-device-configuration) for full API.
+
+## Laggy data and sleeps
+
+If you put `read()` in a loop with some slow code, or `sleep()` more than ~0.01, you might see the data returned by `read()` start to "lag".
+Consider the follow extreme example of what NOT to do:
+```python
+with pyspacemouse.open() as device:
+    state = device.read()
+    if state.nonzero():
+        print(state)
+    # VERY BAD!
+    time.sleep(0.1)
+```
+If you run this, press the space mouse down, then release, you will see it takes a long time for the state to go back to zero!
+This is because `read()` only reads exactly one message from the device, but the OS (at least on linux) will buffer the data for you so no data is dropped.
+During the 100ms you are sleeping, many messages can be received and buffered, and this buffer can be surprisingly large.
+Then when you release the spacemouse, you have to call `read()` many many times to drain the buffer before you get the final message saying the spacemouse state is all 0s again.
+If you would like to run a low-frequency (<100Hz) loop without this buffering behavior, use `read_latest()` instead.
+
+### Solution -- `read_latest()`
+```
+with pyspacemouse.open() as device:
+    state = device.read_latest()  # <--
+    if state.nonzero():
+        print(state)
+    time.sleep(0.1)
+```
+Now you have no problems anymore, because `read_latest()` will keep reading until the buffer is empty, and only then return you the latest state.
 
 ## CLI
 

@@ -81,6 +81,7 @@ fixRelativeLinkDocs:
 	sed  's/\.\/docs/\./g'  README.md > docs/README.md
 	sed  's/\.\/docs/\./g'  CONTRIBUTING.md > docs/CONTRIBUTING.md
 	sed  's/\.\/docs/\./g'  troubleshooting.md > docs/troubleshooting.md
+	sed  's/\.\/docs/\./g'  CHANGELOG.md > docs/CHANGELOG.md
 
 # Docs
 docs-build: install-doxygen fixRelativeLinkDocs

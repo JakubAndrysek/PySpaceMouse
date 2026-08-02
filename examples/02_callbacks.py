@@ -5,8 +5,6 @@ This example shows how to use callbacks for:
 - Axis movements with filtering
 """
 
-import time
-
 import pyspacemouse
 from pyspacemouse import AxisConvention
 
@@ -50,5 +48,4 @@ with pyspacemouse.open(
     print()
 
     while True:
-        device.read()  # Must call read() to process callbacks
-        time.sleep(0.01)
+        device.read_latest()  # Must call read_latest() or read() to process callbacks

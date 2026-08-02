@@ -1,9 +1,9 @@
 """PySpaceMouse command-line interface."""
 
 import argparse
-import time
 
 import pyspacemouse
+from pyspacemouse.types import AxisConvention
 
 
 def print_version_cli():
@@ -51,11 +51,10 @@ def list_supported_devices_cli():
 def test_connect_cli():
     """Test connection to the first available device."""
     try:
-        with pyspacemouse.open() as device:
+        with pyspacemouse.open(axis_convention=AxisConvention.HID_Z_UP) as device:
             print(f"Connected to: {device.name}")
             print("Reading x, y, z values (Ctrl+C to exit)...")
             print("Move the SpaceMouse to see values")
-            time.sleep(0.5)
 
             while True:
                 state = device.read()
