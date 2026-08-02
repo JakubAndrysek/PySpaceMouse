@@ -76,6 +76,8 @@ The same `axis_convention` argument is available on `open_by_path()` and
 |------------|------------------|------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|
 | `AxisConvention.HID` | `+x` right, `+y` toward the user, `+z` down | right-handed                                   | USB HID convention; see [HID Usage Tables, 4.2 Axis Usages](https://usb.org/document-library/hid-usage-tables-17). |
 | `AxisConvention.HID_Z_UP` | `+x` right, `+y` away from the user, `+z` up | right-handed                                   | HID frame, rotated -180 degrees about +X so Z points up                                                            |
+| `AxisConvention.ROS` | `+x` forward, `+y` left, `+z` up | right-handed                                   | ROS REP 103 body frame.                                                                                            |
+| `AxisConvention.UNITY` | `+x` right, `+y` up, `+z` forward | left-handed                                    | Unity world/object frame.                                                                                          |
 | `AxisConvention.LEGACY` | `x=+HID_x`, `y=-HID_y`, `z=-HID_z` | `roll=-HID_Ry`, `pitch=-HID_Rx`, `yaw=+HID_Rz` | Deprecated. Default for backward compatibility.                                                                    |
 
 For new code, select a convention that matches your need. Use `AxisConvention.LEGACY` only for existing code that
@@ -112,17 +114,20 @@ custom = pyspacemouse.create_device_info(
 
 ### `modify_device_info()`
 
-Modify an existing device spec (e.g., to invert axes):
+Modify an existing device spec (e.g., to remap or invert axes):
 
 ```python
 specs = pyspacemouse.get_device_specs()
 base = specs["SpaceNavigator"]
 
-# Invert Y and Z for ROS conventions
-ros_spec = pyspacemouse.modify_device_info(
+custom = pyspacemouse.modify_device_info(
     base,
-    name="SpaceNavigator (ROS)",
-    invert_axes=["y", "z", "roll", "yaw"],
+    name="SpaceNavigator (Custom)",
+    remap_axes={
+        "x": "y",
+        "y": ("x", -1),
+        "yaw": ("yaw", -1),
+    },
 )
 ```
 

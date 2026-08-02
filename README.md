@@ -180,7 +180,17 @@ with pyspacemouse.open(
 
 ### Custom Axis Mapping
 
-Customize axis directions for specific coordinate conventions (ROS, OpenGL, etc.):
+Choose a built-in convention for common application frames:
+
+```python
+import pyspacemouse
+from pyspacemouse import AxisConvention
+
+with pyspacemouse.open(axis_convention=AxisConvention.ROS) as device:
+    state = device.read()
+```
+
+For custom coordinate frames, remap or invert axes explicitly:
 
 ```python
 import pyspacemouse
@@ -189,10 +199,9 @@ import pyspacemouse
 specs = pyspacemouse.get_device_specs()
 base = specs["SpaceNavigator"]
 
-# Invert axes for your application
 custom = pyspacemouse.modify_device_info(
     base,
-    invert_axes=["y", "z", "roll", "yaw"],  # Invert these
+    remap_axes={"x": "y", "y": ("x", -1), "yaw": ("yaw", -1)},
 )
 
 with pyspacemouse.open(device_spec=custom) as device:
