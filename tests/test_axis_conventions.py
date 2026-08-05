@@ -30,7 +30,14 @@ def test_each_axis_convention_round_trips_through_hid() -> None:
         round_tripped = apply_axis_convention(converted, AxisConvention.HID)
 
         assert round_tripped.convention == AxisConvention.HID
-        assert round_tripped.mappings == hid_spec.mappings
+        # Full equality so a round trip can't quietly drop an unrelated field
+        assert round_tripped == hid_spec
+
+
+def test_applying_the_current_convention_returns_the_same_spec() -> None:
+    hid_spec = _hid_spec()
+
+    assert apply_axis_convention(hid_spec, AxisConvention.HID) is hid_spec
 
 
 def test_axis_conventions_round_trip_between_non_hid_frames() -> None:
@@ -40,4 +47,4 @@ def test_axis_conventions_round_trip_between_non_hid_frames() -> None:
     round_tripped = apply_axis_convention(ros_spec, AxisConvention.HID_Z_UP)
 
     assert round_tripped.convention == AxisConvention.HID_Z_UP
-    assert round_tripped.mappings == hid_z_up_spec.mappings
+    assert round_tripped == hid_z_up_spec
