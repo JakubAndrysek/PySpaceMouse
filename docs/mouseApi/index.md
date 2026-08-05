@@ -101,8 +101,8 @@ custom = pyspacemouse.create_device_info(
     vendor_id=0x256F,
     product_id=0xC635,
     mappings={
-        "x": (1, 1, 2, 1),      # (channel, byte1, byte2, scale)
-        "y": (1, 3, 4, -1),     # Inverted
+        "x": (1, 1, 2, 1),  # (channel, byte1, byte2, scale)
+        "y": (1, 3, 4, -1),  # Inverted
         "z": (1, 5, 6, -1),
         "pitch": (2, 1, 2, -1),
         "roll": (2, 3, 4, -1),
