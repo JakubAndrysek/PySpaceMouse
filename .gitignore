@@ -65,3 +65,6 @@ html
 .DS_Store
 .mkdoxy
 site/
+
+# JetBrains IDE
+.idea/
