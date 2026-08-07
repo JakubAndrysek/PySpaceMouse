@@ -4,7 +4,7 @@
 
 3Dconnexion Space Mouse in Python using raw HID.
 Note: you **don't** need to install or use any of the drivers or 3Dconnexion software to use this package.
-It interfaces with the controller directly with `hidapi` and python wrapper library `easyhid`.
+It interfaces with the controller directly with `hidapi`, via the [`hidapi`](https://pypi.org/project/hidapi/) Python bindings.
 
 <p align="center">
 <a href="https://hit.kubaandrysek.cz/?url=https%3A%2F%2Fgithub.com%2FJakubAndrysek%2Fpyspacemouse&chart=true"><img src="https://hit.kubaandrysek.cz/?url=https%3A%2F%2Fgithub.com%2FJakubAndrysek%2Fpyspacemouse"/></a>
@@ -241,11 +241,9 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 
 ## Dependencies
 
-### hidapi (C library)
-
-- **Linux**: `sudo apt-get install libhidapi-dev`
-- **macOS**: `brew install hidapi`
-- **Windows**: Download from [hidapi releases](https://github.com/libusb/hidapi/releases)
+`pip install pyspacemouse` pulls in the [`hidapi`](https://pypi.org/project/hidapi/) package,
+whose wheels bundle the hidapi C library. There is nothing else to install on Linux, macOS
+or Windows.
 
 ### Linux permissions
 
@@ -253,12 +251,6 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
 sudo usermod -aG plugdev $USER
 newgrp plugdev
-```
-
-### macOS PATH
-
-```bash
-export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/<VERSION>/lib:$DYLD_LIBRARY_PATH
 ```
 
 ## Troubleshooting

@@ -21,11 +21,22 @@ lsusb
 # VID = 256f, PID = c652
 ```
 
+**Using pyspacemouse itself:**
+```bash
+pyspacemouse --list-hid
+# Example: - SpaceMouse Compact by 3Dconnexion [VID: 0x256f, PID: 0xc635]
+```
+
 **Using [hidapitester](https://github.com/todbot/hidapitester):**
 ```bash
 ./hidapitester --list
 # Example: 046D/C626: 3Dconnexion - SpaceNavigator
 ```
+
+Note that hidapitester links its own copy of hidapi, while pyspacemouse uses the one bundled
+in the `hidapi` wheel - and on Linux it uses the `hidraw` backend rather than libusb. The
+two can therefore report devices differently; `pyspacemouse --list-hid` is what the library
+actually sees.
 
 ### 2. Analyze HID Data
 
@@ -42,6 +53,23 @@ Move the SpaceMouse knob in each direction and identify which bytes change:
 - **Channel 3**: Button data
 
 Each axis is typically a signed 16-bit value (2 bytes, little-endian).
+
+The report descriptor is useful when the layout isn't obvious from the input reports:
+
+```bash
+./hidapitester --vidpid <VID/PID> --open --get-report-descriptor
+```
+
+??? note "My output"
+    ```bash
+    ./hidapitester --vidpid 046D/C626 --open --get-report-descriptor
+    Opening device, vid/pid: 0x046D/0xC626
+    Report Descriptor:
+    05 01 09 08 A1 01 A1 00 85 01 16 A2 FE 26 5E 01 36 88 FA 46 78 05 55 0C 65 11 09 30 09 31 09 32
+    75 10 95 03 81 06 C0 A1 00 85 02 09 33 09 34 09 35 75 10 95 03 81 06 C0 A1 02 85 03 05 01 05 09
+    ...
+    Closing device
+    ```
 
 ### 3. Add Device to `devices.toml`
 
