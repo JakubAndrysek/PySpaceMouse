@@ -135,7 +135,7 @@ def _create_and_open_device(
 
 
 def open_by_path(
-    path: str | Path,
+    path: str | bytes | Path,
     callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
@@ -145,13 +145,21 @@ def open_by_path(
     device_spec: Optional[DeviceInfo] = None,
     axis_convention: Optional[AxisConvention] = None,
 ) -> SpaceMouseDevice:
-    """Open a SpaceMouse device by its filesystem path.
+    """Open a SpaceMouse device by its HID path.
 
     This is mutually exclusive with open() - use this when you know the
     exact device path, use open() for automatic device discovery.
 
+    Only Linux reports HID paths that are filesystem paths. macOS reports
+    opaque service IDs ("DevSrvsID:4296357093") and Windows reports device
+    interface paths ("\\\\?\\HID#VID_256F..."), so the value is matched against
+    hid.enumerate() as an opaque string first. Any path from
+    get_connected_devices_by_path() therefore works on every platform, while
+    on Linux symlinks and relative paths still resolve as before.
+
     Args:
-        path: Filesystem path to the HID device (e.g., "/dev/hidraw0")
+        path: HID path of the device, as reported by
+              get_connected_devices_by_path() (e.g., "/dev/hidraw0" on Linux)
         callback: Called on every state change
         dof_callback: Called on axis state changes
         dof_callbacks: List of per-axis callbacks
@@ -173,27 +181,34 @@ def open_by_path(
         SpaceMouseDevice instance (use as context manager for auto-cleanup)
 
     Raises:
-        FileNotFoundError: If the specified path does not exist
+        FileNotFoundError: If no connected HID device has that path
         ValueError: If the device at path is not a supported SpaceMouse
                     (unless device_spec is provided)
         ImportError: If the hidapi bindings are not installed.
     """
     hid = get_hid()
-    path = Path(path)
-
-    if not path.exists():
-        raise FileNotFoundError(f"Device path '{path}' does not exist.")
-
-    # Resolve path in case it's relative or a symlink
-    path = path.resolve()
-
-    # Find the HID device at this path
+    path = os.fsdecode(path) if isinstance(path, bytes) else str(path)
+    candidates = hid.enumerate()
     hid_info = None
 
-    for candidate in hid.enumerate():
-        if Path(os.fsdecode(candidate["path"])).resolve() == path:
+    # A HID path is an opaque string, so try an exact match first - that is the
+    # only thing that works on macOS and Windows.
+    for candidate in candidates:
+        if os.fsdecode(candidate["path"]) == path:
             hid_info = candidate
             break
+
+    # Otherwise fall back to filesystem resolution, so Linux callers can pass a
+    # symlink or a relative path to a /dev/hidrawN node.
+    if hid_info is None and Path(path).exists():
+        resolved = Path(path).resolve()
+        for candidate in candidates:
+            try:
+                if Path(os.fsdecode(candidate["path"])).resolve() == resolved:
+                    hid_info = candidate
+                    break
+            except Exception:
+                continue  # Not a path the filesystem can make sense of.
 
     if hid_info is None:
         raise FileNotFoundError(f"No HID device found at path '{path}'.")
