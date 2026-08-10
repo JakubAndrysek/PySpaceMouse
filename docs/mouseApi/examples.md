@@ -7,7 +7,7 @@
 - Run: `python examples/01_basic.py`
 
 ```py title="examples/01_basic.py"
---8<-- "examples/01_basic.py"
+--8 < --"examples/01_basic.py"
 ```
 
 ## 02. Callbacks
@@ -17,7 +17,7 @@
 - Run: `python examples/02_callbacks.py`
 
 ```py title="examples/02_callbacks.py"
---8<-- "examples/02_callbacks.py"
+--8 < --"examples/02_callbacks.py"
 ```
 
 ## 03. Multi Device
@@ -27,7 +27,7 @@
 - Run: `python examples/03_multi_device.py`
 
 ```py title="examples/03_multi_device.py"
---8<-- "examples/03_multi_device.py"
+--8 < --"examples/03_multi_device.py"
 ```
 
 ## 04. Open By Path
@@ -37,7 +37,7 @@
 - Run: `python examples/04_open_by_path.py`
 
 ```py title="examples/04_open_by_path.py"
---8<-- "examples/04_open_by_path.py"
+--8 < --"examples/04_open_by_path.py"
 ```
 
 ## 05. Discovery
@@ -47,7 +47,7 @@
 - Run: `python examples/05_discovery.py`
 
 ```py title="examples/05_discovery.py"
---8<-- "examples/05_discovery.py"
+--8 < --"examples/05_discovery.py"
 ```
 
 ## 06. Axis Callbacks
@@ -57,7 +57,7 @@
 - Run: `python examples/06_axis_callbacks.py`
 
 ```py title="examples/06_axis_callbacks.py"
---8<-- "examples/06_axis_callbacks.py"
+--8 < --"examples/06_axis_callbacks.py"
 ```
 
 ## 07. Led
@@ -67,7 +67,7 @@
 - Run: `python examples/07_led.py`
 
 ```py title="examples/07_led.py"
---8<-- "examples/07_led.py"
+--8 < --"examples/07_led.py"
 ```
 
 ## 08. Buttons
@@ -77,7 +77,7 @@
 - Run: `python examples/08_buttons.py`
 
 ```py title="examples/08_buttons.py"
---8<-- "examples/08_buttons.py"
+--8 < --"examples/08_buttons.py"
 ```
 
 ## 09. Invert Rotations
@@ -87,7 +87,7 @@
 - Run: `python examples/09_invert_rotations.py`
 
 ```py title="examples/09_invert_rotations.py"
---8<-- "examples/09_invert_rotations.py"
+--8 < --"examples/09_invert_rotations.py"
 ```
 
 ## 10. Custom Config Unity
@@ -97,5 +97,5 @@
 - Run: `python examples/10_custom_config_unity.py`
 
 ```py title="examples/10_custom_config_unity.py"
---8<-- "examples/10_custom_config_unity.py"
+--8 < --"examples/10_custom_config_unity.py"
 ```

@@ -110,7 +110,7 @@ with pyspacemouse.open() as device:
     state = device.read()
 
     # 6-DOF axes (range: -1.0 to 1.0)
-    print(state.x, state.y, state.z)       # Translation
+    print(state.x, state.y, state.z)  # Translation
     print(state.roll, state.pitch, state.yaw)  # Rotation
 
     # Buttons (list of 0/1)
@@ -149,9 +149,11 @@ mapping table. Custom
 import pyspacemouse
 import time
 
+
 # Button callback
 def on_button(state, buttons, pressed):
     print(f"Button {pressed} pressed!")
+
 
 button_callbacks = [
     pyspacemouse.ButtonCallback(0, on_button),  # Button 0
@@ -175,7 +177,7 @@ with pyspacemouse.open(
 ) as device:
     while True:
         device.read()  # Triggers callbacks
-        time.sleep(0.001) # NOTE: avoid larger sleeps, which can cause data to buffer
+        time.sleep(0.001)  # NOTE: avoid larger sleeps, which can cause data to buffer
 ```
 
 ### Custom Axis Mapping

@@ -6,6 +6,7 @@ All types are immutable (frozen dataclasses) for thread safety and clarity.
 
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Literal
@@ -15,6 +16,8 @@ Axis = Literal["x", "y", "z", "roll", "pitch", "yaw"]
 
 # All valid axis names
 AXIS_NAMES: tuple[Axis, ...] = ("x", "y", "z", "roll", "pitch", "yaw")
+
+_DATACLASS_SLOTS = {"slots": True} if sys.version_info >= (3, 10) else {}
 
 
 class AxisConvention(str, Enum):
@@ -53,7 +56,7 @@ class AxisConvention(str, Enum):
     UNITY = "unity"
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, **_DATACLASS_SLOTS)
 class AxisSpec:
     """Specification for reading an axis value from HID data.
 
@@ -70,7 +73,7 @@ class AxisSpec:
     scale: int
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, **_DATACLASS_SLOTS)
 class ButtonSpec:
     """Specification for reading a button state from HID data.
 
@@ -96,7 +99,7 @@ class ButtonState(list):
         return sum((b << i) for (i, b) in enumerate(reversed(self)))
 
 
-@dataclass(slots=True)
+@dataclass(**_DATACLASS_SLOTS)
 class SpaceMouseState:
     """Current state of the SpaceMouse device.
 
@@ -132,7 +135,7 @@ class SpaceMouseState:
         return any(abs(getattr(self, axis)) > threshold for axis in AXIS_NAMES)
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True, **_DATACLASS_SLOTS)
 class DeviceInfo:
     """Static information about a device type.
 

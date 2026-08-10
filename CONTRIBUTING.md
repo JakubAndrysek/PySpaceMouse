@@ -117,23 +117,25 @@ If you don't want to modify the library, use `create_device_info()`:
 ```python
 import pyspacemouse
 
-device_spec = pyspacemouse.create_device_info({
-    "name": "MyCustomDevice",
-    "hid_id": [0x256F, 0xC652],
-    "axis_scale": 350.0,
-    "mappings": {
-        "x": [1, 1, 2, 1],
-        "y": [1, 3, 4, -1],
-        "z": [1, 5, 6, -1],
-        "pitch": [2, 1, 2, -1],
-        "roll": [2, 3, 4, -1],
-        "yaw": [2, 5, 6, 1],
-    },
-    "buttons": {
-        "LEFT": [3, 1, 0],
-        "RIGHT": [3, 1, 1],
-    },
-})
+device_spec = pyspacemouse.create_device_info(
+    {
+        "name": "MyCustomDevice",
+        "hid_id": [0x256F, 0xC652],
+        "axis_scale": 350.0,
+        "mappings": {
+            "x": [1, 1, 2, 1],
+            "y": [1, 3, 4, -1],
+            "z": [1, 5, 6, -1],
+            "pitch": [2, 1, 2, -1],
+            "roll": [2, 3, 4, -1],
+            "yaw": [2, 5, 6, 1],
+        },
+        "buttons": {
+            "LEFT": [3, 1, 0],
+            "RIGHT": [3, 1, 1],
+        },
+    }
+)
 
 with pyspacemouse.open(device_spec=device_spec) as device:
     state = device.read()
