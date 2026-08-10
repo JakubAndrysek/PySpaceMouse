@@ -1579,28 +1579,7 @@
 <li>Summary: Basic example: Read SpaceMouse input with context manager.</li>
 <li>Run: <code>python examples/01_basic.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/01_basic.py</span><pre><span></span><code><span class="sd">"""Basic example: Read SpaceMouse input with context manager.</span>
-
-<span class="sd">This is the simplest way to use PySpaceMouse. The context manager</span>
-<span class="sd">ensures the device is properly closed when you're done.</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-<span class="c1"># Using context manager (recommended)</span>
-<span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Move the SpaceMouse to see values (Ctrl+C to exit)"</span><span class="p">)</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">has_motion</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"x=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> "</span>
-                <span class="sa">f</span><span class="s2">"roll=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> pitch=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> yaw=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span>
-            <span class="p">)</span>
+<div class="highlight"><span class="filename">examples/01_basic.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/01_basic.py"</span>
 </code></pre></div>
 <h2 id="02-callbacks">02. Callbacks</h2>
 <ul>
@@ -1608,60 +1587,7 @@
 <li>Summary: Callbacks example: React to button presses and axis movements.</li>
 <li>Run: <code>python examples/02_callbacks.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/02_callbacks.py</span><pre><span></span><code><span class="sd">"""Callbacks example: React to button presses and axis movements.</span>
-
-<span class="sd">This example shows how to use callbacks for:</span>
-<span class="sd">- Button presses (individual or combinations)</span>
-<span class="sd">- Axis movements with filtering</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-
-<span class="c1"># Button callbacks receive (state, buttons, pressed_buttons)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">on_button_left</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">buttons</span><span class="p">,</span> <span class="n">pressed</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"LEFT button pressed!"</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">on_button_right</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">buttons</span><span class="p">,</span> <span class="n">pressed</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"RIGHT button pressed!"</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">on_both_buttons</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">buttons</span><span class="p">,</span> <span class="n">pressed</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"BOTH buttons pressed together!"</span><span class="p">)</span>
-
-
-<span class="c1"># General button callback for any button change</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">on_any_button</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">buttons</span><span class="p">):</span>
-    <span class="n">active</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span> <span class="k">if</span> <span class="n">b</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">active</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Buttons active: </span><span class="si">{</span><span class="n">active</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="c1"># Configure button callbacks</span>
-<span class="n">button_callbacks</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">ButtonCallback</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">on_button_left</span><span class="p">),</span>
-    <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">ButtonCallback</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">on_button_right</span><span class="p">),</span>
-    <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">ButtonCallback</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">on_both_buttons</span><span class="p">),</span>  <span class="c1"># Both at once</span>
-<span class="p">]</span>
-
-<span class="c1"># Open with callbacks</span>
-<span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-    <span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">,</span>
-    <span class="n">dof_callback</span><span class="o">=</span><span class="n">pyspacemouse</span><span class="o">.</span><span class="n">print_state</span><span class="p">,</span>  <span class="c1"># Built-in DOF printer</span>
-    <span class="n">button_callback</span><span class="o">=</span><span class="n">on_any_button</span><span class="p">,</span>
-    <span class="n">button_callbacks</span><span class="o">=</span><span class="n">button_callbacks</span><span class="p">,</span>
-<span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Move the SpaceMouse or press buttons (Ctrl+C to exit)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>  <span class="c1"># Must call read() to process callbacks</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<div class="highlight"><span class="filename">examples/02_callbacks.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/02_callbacks.py"</span>
 </code></pre></div>
 <h2 id="03-multi-device">03. Multi Device</h2>
 <ul>
@@ -1669,57 +1595,7 @@
 <li>Summary: Multi-device example: Connect to multiple SpaceMouse devices.</li>
 <li>Run: <code>python examples/03_multi_device.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/03_multi_device.py</span><pre><span></span><code><span class="sd">"""Multi-device example: Connect to multiple SpaceMouse devices.</span>
-
-<span class="sd">This example shows how to open two SpaceMouse devices simultaneously,</span>
-<span class="sd">useful for dual-hand control or controlling multiple robots.</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-    <span class="c1"># First, discover connected devices</span>
-    <span class="n">connected</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_connected_devices_by_path</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">connected</span><span class="p">)</span><span class="si">}</span><span class="s2"> spacemouse device(s): </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">connected</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">connected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"This example requires 2 SpaceMouse devices connected."</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Tip: Use a 3Dconnexion Universal Receiver with device_index parameter"</span><span class="p">)</span>
-        <span class="k">return</span>
-
-    <span class="c1"># Arbitrarily take the first two devices found</span>
-    <span class="n">path0</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">connected</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">path1</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">connected</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="c1"># Open two devices by path</span>
-    <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open_by_path</span><span class="p">(</span><span class="n">path0</span><span class="p">,</span> <span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">)</span> <span class="k">as</span> <span class="n">left_hand</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open_by_path</span><span class="p">(</span>
-            <span class="n">path1</span><span class="p">,</span> <span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">right_hand</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Left hand:  </span><span class="si">{</span><span class="n">left_hand</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Right hand: </span><span class="si">{</span><span class="n">right_hand</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">()</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"Move both devices (Ctrl+C to exit)"</span><span class="p">)</span>
-
-            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">left</span> <span class="o">=</span> <span class="n">left_hand</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                <span class="n">right</span> <span class="o">=</span> <span class="n">right_hand</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="n">left</span><span class="o">.</span><span class="n">has_motion</span><span class="p">()</span> <span class="ow">or</span> <span class="n">right</span><span class="o">.</span><span class="n">has_motion</span><span class="p">():</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">"Left: x=</span><span class="si">{</span><span class="n">left</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">left</span><span class="o">.</span><span class="n">y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">left</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">  |  "</span>
-                        <span class="sa">f</span><span class="s2">"Right: x=</span><span class="si">{</span><span class="n">right</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">right</span><span class="o">.</span><span class="n">y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">right</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span>
-                    <span class="p">)</span>
-
-                <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<div class="highlight"><span class="filename">examples/03_multi_device.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/03_multi_device.py"</span>
 </code></pre></div>
 <h2 id="04-open-by-path">04. Open By Path</h2>
 <ul>
@@ -1727,59 +1603,7 @@
 <li>Summary: Open by path example: Connect to a specific HID device by filesystem path.</li>
 <li>Run: <code>python examples/04_open_by_path.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/04_open_by_path.py</span><pre><span></span><code><span class="sd">"""Open by path example: Connect to a specific HID device by filesystem path.</span>
-
-<span class="sd">This is useful when you need to ensure you always connect to the same</span>
-<span class="sd">physical device, regardless of enumeration order.</span>
-
-<span class="sd">Note: Device paths vary by OS:</span>
-<span class="sd">- Linux: /dev/hidraw0, /dev/hidraw1, etc.</span>
-<span class="sd">- macOS: /dev/hidraw0 or similar (may require special setup)</span>
-<span class="sd">- Windows: Uses different path format</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-    <span class="c1"># First, list all HID devices to find the path you need</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"All HID devices:"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">product</span><span class="p">,</span> <span class="n">manufacturer</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_all_hid_devices</span><span class="p">():</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">product</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'Unknown'</span><span class="si">}</span><span class="s2"> by </span><span class="si">{</span><span class="n">manufacturer</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">'Unknown'</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"    VID: </span><span class="si">{</span><span class="n">vid</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">, PID: </span><span class="si">{</span><span class="n">pid</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="c1"># Example: Open by specific path (Linux example)</span>
-    <span class="c1"># Replace with actual path from your system</span>
-    <span class="n">device_path</span> <span class="o">=</span> <span class="s2">"/dev/hidraw0"</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open_by_path</span><span class="p">(</span>
-            <span class="n">device_path</span><span class="p">,</span>
-            <span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">,</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="n">device_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">"Move the device (Ctrl+C to exit)"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">()</span>
-
-            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-                <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">has_motion</span><span class="p">():</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">"x=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> "</span>
-                        <span class="sa">f</span><span class="s2">"r=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> p=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span>
-                    <span class="p">)</span>
-
-    <span class="k">except</span> <span class="ne">FileNotFoundError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device path not found: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Try running with a valid device path for your system."</span><span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device not supported: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<div class="highlight"><span class="filename">examples/04_open_by_path.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/04_open_by_path.py"</span>
 </code></pre></div>
 <h2 id="05-discovery">05. Discovery</h2>
 <ul>
@@ -1787,69 +1611,7 @@
 <li>Summary: Device discovery example: List and inspect available devices.</li>
 <li>Run: <code>python examples/05_discovery.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/05_discovery.py</span><pre><span></span><code><span class="sd">"""Device discovery example: List and inspect available devices.</span>
-
-<span class="sd">This example shows how to discover what SpaceMouse devices are</span>
-<span class="sd">connected and what device types are supported.</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"PySpaceMouse Device Discovery"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="c1"># 1. List connected SpaceMouse devices</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Connected SpaceMouse devices:"</span><span class="p">)</span>
-    <span class="n">connected</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_connected_devices_by_path</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">connected</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">connected</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  ✓ </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"  (none found)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="c1"># 2. List all supported device types</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Supported device types:"</span><span class="p">)</span>
-    <span class="n">supported</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_supported_devices</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">supported_name</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">supported</span><span class="p">:</span>
-        <span class="c1"># Check if this device type is connected</span>
-        <span class="n">status</span> <span class="o">=</span> <span class="s2">" "</span>
-        <span class="n">path_if_connected</span> <span class="o">=</span> <span class="s2">""</span>
-        <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">connected</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">supported_name</span><span class="p">:</span>
-                <span class="n">status</span> <span class="o">=</span> <span class="s2">"✓"</span>
-                <span class="n">path_if_connected</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"   (path: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">)"</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"  [</span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">supported_name</span><span class="si">}</span><span class="s2"> (VID: </span><span class="si">{</span><span class="n">vid</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">, PID: </span><span class="si">{</span><span class="n">pid</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">)</span><span class="si">{</span><span class="n">path_if_connected</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="c1"># 3. List ALL HID devices (for debugging)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"All HID devices on system:"</span><span class="p">)</span>
-    <span class="n">all_hid</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_all_hid_devices</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">all_hid</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">product</span><span class="p">,</span> <span class="n">manufacturer</span><span class="p">,</span> <span class="n">vid</span><span class="p">,</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">all_hid</span><span class="p">:</span>
-            <span class="n">product</span> <span class="o">=</span> <span class="n">product</span> <span class="ow">or</span> <span class="s2">"Unknown"</span>
-            <span class="n">manufacturer</span> <span class="o">=</span> <span class="n">manufacturer</span> <span class="ow">or</span> <span class="s2">"Unknown"</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">product</span><span class="si">}</span><span class="s2"> by </span><span class="si">{</span><span class="n">manufacturer</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"      VID: </span><span class="si">{</span><span class="n">vid</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">, PID: </span><span class="si">{</span><span class="n">pid</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"  (none found - is hidapi installed?)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="c1"># 4. Show device specs (advanced)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Device specifications loaded from TOML:"</span><span class="p">)</span>
-    <span class="n">specs</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_device_specs</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">specs</span><span class="p">)</span><span class="si">}</span><span class="s2"> device types configured"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<div class="highlight"><span class="filename">examples/05_discovery.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/05_discovery.py"</span>
 </code></pre></div>
 <h2 id="06-axis-callbacks">06. Axis Callbacks</h2>
 <ul>
@@ -1857,67 +1619,7 @@
 <li>Summary: Axis callbacks example: React to specific axis movements.</li>
 <li>Run: <code>python examples/06_axis_callbacks.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/06_axis_callbacks.py</span><pre><span></span><code><span class="sd">"""Axis callbacks example: React to specific axis movements.</span>
-
-<span class="sd">This example shows DofCallback for per-axis handling with:</span>
-<span class="sd">- Positive/negative direction callbacks</span>
-<span class="sd">- Filtering (deadzone)</span>
-<span class="sd">- Rate limiting (sleep)</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">on_x_positive</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Called when X axis moves positive (right)."""</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"→ X positive: </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">on_x_negative</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Called when X axis moves negative (left)."""</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"← X negative: </span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">on_z_move</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Called when Z axis moves (up/down)."""</span>
-    <span class="n">direction</span> <span class="o">=</span> <span class="s2">"↑ UP"</span> <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">"↓ DOWN"</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">direction</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="c1"># Configure per-axis callbacks</span>
-<span class="n">dof_callbacks</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="c1"># X axis with separate callbacks for positive/negative</span>
-    <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">DofCallback</span><span class="p">(</span>
-        <span class="n">axis</span><span class="o">=</span><span class="s2">"x"</span><span class="p">,</span>
-        <span class="n">callback</span><span class="o">=</span><span class="n">on_x_positive</span><span class="p">,</span>
-        <span class="n">callback_minus</span><span class="o">=</span><span class="n">on_x_negative</span><span class="p">,</span>
-        <span class="nb">filter</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Deadzone: ignore values &lt; 0.1</span>
-        <span class="n">sleep</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>  <span class="c1"># Rate limit: max 10 calls/second</span>
-    <span class="p">),</span>
-    <span class="c1"># Z axis with single callback for both directions</span>
-    <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">DofCallback</span><span class="p">(</span>
-        <span class="n">axis</span><span class="o">=</span><span class="s2">"z"</span><span class="p">,</span>
-        <span class="n">callback</span><span class="o">=</span><span class="n">on_z_move</span><span class="p">,</span>
-        <span class="nb">filter</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span>
-        <span class="n">sleep</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-    <span class="p">),</span>
-<span class="p">]</span>
-
-<span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-    <span class="n">dof_callbacks</span><span class="o">=</span><span class="n">dof_callbacks</span><span class="p">,</span>
-    <span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">,</span>
-<span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Move X axis (left/right) or Z axis (up/down)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Ctrl+C to exit"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<div class="highlight"><span class="filename">examples/06_axis_callbacks.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/06_axis_callbacks.py"</span>
 </code></pre></div>
 <h2 id="07-led">07. Led</h2>
 <ul>
@@ -1925,30 +1627,7 @@
 <li>Summary: LED control example: Blink the SpaceMouse LED.</li>
 <li>Run: <code>python examples/07_led.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/07_led.py</span><pre><span></span><code><span class="sd">"""LED control example: Blink the SpaceMouse LED.</span>
-
-<span class="sd">This example demonstrates how to control the LED on SpaceMouse devices.</span>
-<span class="sd">The LED will toggle on and off every 0.5 seconds.</span>
-
-<span class="sd">Note: Not all devices have controllable LEDs.</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-<span class="c1"># Using context manager (recommended)</span>
-<span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"LED will blink every 0.5 seconds (Ctrl+C to exit)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="n">led_state</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">device</span><span class="o">.</span><span class="n">set_led</span><span class="p">(</span><span class="n">led_state</span><span class="p">)</span>
-        <span class="n">led_state</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">led_state</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<div class="highlight"><span class="filename">examples/07_led.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/07_led.py"</span>
 </code></pre></div>
 <h2 id="08-buttons">08. Buttons</h2>
 <ul>
@@ -1956,45 +1635,7 @@
 <li>Summary: Button names example: Show button names when pressed.</li>
 <li>Run: <code>python examples/08_buttons.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/08_buttons.py</span><pre><span></span><code><span class="sd">"""Button names example: Show button names when pressed.</span>
-
-<span class="sd">This example demonstrates how to get the configured button names</span>
-<span class="sd">from devices.toml when buttons are pressed.</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">on_button_change</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">buttons</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Print names of all currently pressed buttons."""</span>
-    <span class="c1"># Find indices of pressed buttons</span>
-    <span class="n">pressed_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">buttons</span><span class="p">)</span> <span class="k">if</span> <span class="n">b</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">pressed_indices</span><span class="p">:</span>
-        <span class="c1"># Get button names from device</span>
-        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">device</span><span class="o">.</span><span class="n">get_button_name</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pressed_indices</span><span class="p">]</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pressed: </span><span class="si">{</span><span class="s1">', '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">names</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-
-<span class="c1"># Open device</span>
-<span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span>
-    <span class="n">button_callback</span><span class="o">=</span><span class="n">on_button_change</span><span class="p">,</span>
-    <span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">,</span>
-<span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Device has </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">button_names</span><span class="p">)</span><span class="si">}</span><span class="s2"> buttons:"</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">device</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">button_names</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  [</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Press buttons to see their names (Ctrl+C to exit)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">()</span>
-
-    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-        <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+<div class="highlight"><span class="filename">examples/08_buttons.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/08_buttons.py"</span>
 </code></pre></div>
 <h2 id="09-invert-rotations">09. Invert Rotations</h2>
 <ul>
@@ -2002,61 +1643,7 @@
 <li>Summary: Example: Invert rotation axes</li>
 <li>Run: <code>python examples/09_invert_rotations.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/09_invert_rotations.py</span><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
-<span class="sd">"""Example: Inverting rotations</span>
-
-<span class="sd">This example shows how to invert axes, in this case the rotation axes (roll, pitch, yaw).</span>
-<span class="sd">Just for demonstration purposes, this would be pretty weird :)</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">example_invert_rotations</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">"""Show how to invert rotation axes"""</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Invert rotations"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-
-    <span class="n">connected</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_connected_devices</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">connected</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"No devices connected!"</span><span class="p">)</span>
-        <span class="k">return</span>
-
-    <span class="n">specs</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_device_specs</span><span class="p">()</span>
-    <span class="n">base_spec_legacy</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="n">connected</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
-    <span class="n">base_spec</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">apply_axis_convention</span><span class="p">(</span><span class="n">base_spec_legacy</span><span class="p">,</span> <span class="n">AxisConvention</span><span class="o">.</span><span class="n">HID_Z_UP</span><span class="p">)</span>
-
-    <span class="c1"># Invert roll, pitch, and yaw</span>
-    <span class="n">fixed_spec</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">modify_device_info</span><span class="p">(</span>
-        <span class="n">base_spec</span><span class="p">,</span>
-        <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">connected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> (Fixed Rotations)"</span><span class="p">,</span>
-        <span class="c1"># Translation axes (x, y, z) can also be inverted here</span>
-        <span class="n">invert_axes</span><span class="o">=</span><span class="p">[</span><span class="s2">"roll"</span><span class="p">,</span> <span class="s2">"pitch"</span><span class="p">,</span> <span class="s2">"yaw"</span><span class="p">],</span>
-    <span class="p">)</span>
-
-    <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">device_spec</span><span class="o">=</span><span class="n">fixed_spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"Rotations are now inverted!</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="p">]):</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"x=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> "</span>
-                    <span class="sa">f</span><span class="s2">"roll=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> pitch=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> yaw=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span>
-                <span class="p">)</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">example_invert_rotations</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Exiting..."</span><span class="p">)</span>
+<div class="highlight"><span class="filename">examples/09_invert_rotations.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/09_invert_rotations.py"</span>
 </code></pre></div>
 <h2 id="10-custom-config-unity">10. Custom Config Unity</h2>
 <ul>
@@ -2064,70 +1651,7 @@
 <li>Summary: Example: Custom device configuration with axis remapping.</li>
 <li>Run: <code>python examples/10_custom_config_unity.py</code></li>
 </ul>
-<div class="highlight"><span class="filename">examples/10_custom_config_unity.py</span><pre><span></span><code><span class="ch">#!/usr/bin/env python3</span>
-<span class="sd">"""Example: Custom device configuration</span>
-
-<span class="sd">This example shows how to create entirely custom device configurations,</span>
-<span class="sd">In this case for a "Spacemouse Wireless New", following the left-handed Unity convention (Z forward, X right, Y up).</span>
-<span class="sd">If you have a totally custom HID device, you just need to know the byte layout of the device and you can create a custom configuration for it.</span>
-<span class="sd">"""</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">example_unity_convention</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">"""Create entirely custom device configuration with the Unity convention."""</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"Create custom device spec (Unity convention)"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"="</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
-
-    <span class="c1"># This shows how to create a completely custom device spec</span>
-    <span class="c1"># Useful for unsupported devices or complete remapping</span>
-    <span class="n">custom_spec</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">create_device_info</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s2">"CustomSpaceMouse"</span><span class="p">,</span>
-        <span class="n">vendor_id</span><span class="o">=</span><span class="mh">0x256F</span><span class="p">,</span>  <span class="c1"># 3Dconnexion</span>
-        <span class="n">product_id</span><span class="o">=</span><span class="mh">0xC63A</span><span class="p">,</span>  <span class="c1"># SpaceMouse Wireless New</span>
-        <span class="n">mappings</span><span class="o">=</span><span class="p">{</span>
-            <span class="c1"># Each mapping: (channel, byte1, byte2, scale)</span>
-            <span class="c1"># Scale: 1 = normal direction, -1 = inverted</span>
-            <span class="s2">"x"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="s2">"y"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-            <span class="s2">"z"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-            <span class="s2">"yaw"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="s2">"pitch"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="s2">"roll"</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span>
-        <span class="p">},</span>
-        <span class="n">buttons</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">"LEFT"</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="s2">"RIGHT"</span><span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="p">},</span>
-    <span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Created custom Unity spec: </span><span class="si">{</span><span class="n">custom_spec</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  VID/PID: </span><span class="si">{</span><span class="n">custom_spec</span><span class="o">.</span><span class="n">vendor_id</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">custom_spec</span><span class="o">.</span><span class="n">product_id</span><span class="si">:</span><span class="s2">#06x</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Axes: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">custom_spec</span><span class="o">.</span><span class="n">mappings</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Buttons: </span><span class="si">{</span><span class="n">custom_spec</span><span class="o">.</span><span class="n">button_names</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-    <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">device_spec</span><span class="o">=</span><span class="n">custom_spec</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Connected to: </span><span class="si">{</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> with custom spec"</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5000</span><span class="p">):</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="p">]):</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">"x=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">x</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> y=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">y</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> z=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">z</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> "</span>
-                    <span class="sa">f</span><span class="s2">"roll=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">roll</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> pitch=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">pitch</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2"> yaw=</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">yaw</span><span class="si">:</span><span class="s2">+.2f</span><span class="si">}</span><span class="s2">"</span>
-                <span class="p">)</span>
-            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
-
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">example_unity_convention</span><span class="p">()</span>
-    <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Exiting..."</span><span class="p">)</span>
+<div class="highlight"><span class="filename">examples/10_custom_config_unity.py</span><pre><span></span><code><span class="o">--</span><span class="mi">8</span> <span class="o">&lt;</span> <span class="o">--</span><span class="s2">"examples/10_custom_config_unity.py"</span>
 </code></pre></div>
 
 
@@ -2149,7 +1673,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 20, 2026 14:49:55 UTC">June 20, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 5, 2026 02:10:41 UTC">August 5, 2026</span>
   </span>
 
     
