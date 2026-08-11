@@ -263,17 +263,23 @@ or Windows.
 
 ## Developing / Contributing
 
-This project includes a `Makefile` with commands for creating a virtual environment (using hatch), and publishing to pypi.
+This project uses [Pixi](https://pixi.sh/latest/) tasks for local development, testing, docs, and publishing.
 
-You will need `hatch` and `pre-commit` for this.
-You can get these by using
+Install Pixi and initialize the environment:
 
 ```bash
-# Most recently tested with hatch 1.17.0
-pipx install hatch pre-commit
+curl -fsSL https://pixi.sh/install.sh | sh
+pixi install
+pixi run pre-commit install
 ```
 
-If you're not familiar with pipx, it lets you install python tools into isolated environments in `~/.local`.
+Common tasks:
+
+```bash
+pixi run lint
+pixi run test
+pixi run docs-serve
+```
 
 For building the documentation locally, you will also need `doxygen` installed and on the path.
 

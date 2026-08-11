@@ -22,7 +22,7 @@ Basic usage:
 
 from __future__ import annotations
 
-# Version handling for dynamic versioning with hatch-vcs
+# Version handling for dynamic versioning from package metadata
 try:
     from importlib.metadata import PackageNotFoundError, version
 except ImportError:
