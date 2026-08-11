@@ -8,7 +8,6 @@ import re
 import subprocess
 import sys
 
-
 SEMVER_RE = re.compile(r"^(?P<prefix>v?)(?P<major>\d+)\.(?P<minor>\d+)\.(?P<patch>\d+)$")
 
 
