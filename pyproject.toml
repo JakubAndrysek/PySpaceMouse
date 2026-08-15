@@ -73,7 +73,7 @@ include-package-data = true
 include = ["pyspacemouse*"]
 
 [tool.setuptools_scm]
-tag_regex = "^(?P<version>.*)$"
+tag_regex = "^(?P<version>\\d+\\.\\d+\\.\\d+)$"
 local_scheme = "no-local-version"
 fallback_version = "0.0.0.dev0"
 
