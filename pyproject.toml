@@ -11,7 +11,7 @@ authors = [
     { name = "Jakub Andrýsek", email = "email@kubaandrysek.cz" },
     { name = "Peter Mitrano", email = "mitranopeter@gmail.com" }
 ]
-license = "MIT"
+license = { file = "LICENSE" }
 keywords = [
     "pyspacemouse",
     "3d",
