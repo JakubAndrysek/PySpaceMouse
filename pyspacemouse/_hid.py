@@ -73,7 +73,7 @@ def _import_hid() -> Any:
     # actual problem instead of failing later with an AttributeError.
     if not hasattr(module, "device"):
         raise ImportError(
-            f"The `hid` module at {getattr(module, '__file__', '<unknown>')} is not "
+            f"The `hid` module at {getattr(module, '__file__', '<unknown>')} is not from "
             f"cython-hidapi. {_INSTALL_HINT}"
         )
 
