@@ -184,7 +184,7 @@ class SpaceMouseDevice:
         try:
             device.open_path(self._hid_info["path"])
         except OSError as e:
-            raise RuntimeError("Failed to open device") from e
+            raise RuntimeError(f"Failed to open device: {self._hid_info['path']}") from e
 
         device.set_nonblocking(1 if self._nonblocking else 0)
         self._device = device
