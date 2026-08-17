@@ -247,10 +247,14 @@ or Windows.
 
 ### Linux permissions
 
+Use `lsusb` to find your device's vendor ID (`256f` is 3Dconnexion's):
+
 ```bash
-echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
-sudo usermod -aG plugdev $USER
-newgrp plugdev
+echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0664", GROUP="input", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/99-spacemouse.rules
+echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="256f", MODE="0664", GROUP="input", TAG+="uaccess"' | sudo tee -a /etc/udev/rules.d/99-spacemouse.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo usermod -aG input $USER
+newgrp input
 ```
 
 ## Troubleshooting

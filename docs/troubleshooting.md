@@ -140,8 +140,8 @@ RuntimeError: Failed to open device
 
 3. **Add the following rules** (replace `046d` and `c62b` with your Vendor ID and Product ID):
    ```bash
-   SUBSYSTEM=="input", GROUP="input", MODE="0660"
-   KERNEL=="hidraw*", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c62b", MODE="0666"
+   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c62b", MODE="0664", GROUP="input", TAG+="uaccess"
+   SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="046d", ATTR{idProduct}=="c62b", MODE="0664", GROUP="input", TAG+="uaccess"
    ```
 
    Common SpaceMouse IDs:
