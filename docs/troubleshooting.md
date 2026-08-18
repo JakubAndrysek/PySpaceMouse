@@ -132,16 +132,18 @@ RuntimeError: Failed to open device
    Here, `256f` is the Vendor ID and `c652` is the Product ID.
 
 2. **Create udev rules to grant permissions:**
+   > Rules that use `TAG+="uaccess"` must have a priority number below `73` (e.g. `50-`) so they are evaluated before systemd seat rules.
+
    ```bash
    cd /etc/udev/rules.d
-   sudo touch 99-spacemouse.rules
-   sudo nano 99-spacemouse.rules
+   sudo touch 50-spacemouse.rules
+   sudo nano 50-spacemouse.rules
    ```
 
-3. **Add the following rules** (replace `046d` and `c62b` with your Vendor ID and Product ID):
-   ```bash
-   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c62b", MODE="0664", GROUP="input", TAG+="uaccess"
-   SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="046d", ATTR{idProduct}=="c62b", MODE="0664", GROUP="input", TAG+="uaccess"
+3. **Add the following rules:**
+   ```udev
+   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+   SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
    ```
 
    Common SpaceMouse IDs:
@@ -156,12 +158,16 @@ RuntimeError: Failed to open device
    sudo udevadm trigger
    ```
 
-5. **Add your user to the input group:**
-   ```bash
-   sudo usermod -a -G input $USER
-   ```
+5. **Disconnect and reconnect your SpaceMouse.**
 
-6. **Disconnect and reconnect your SpaceMouse**, then log out and log back in to Ubuntu (or restart your computer).
+   With `TAG+="uaccess"`, the active desktop user is granted dynamic access automatically without needing to join groups or log out.
+
+   *(Optional)* **For headless remote access:** If you need access when not logged in locally at the desktop, create and assign a dedicated `spacemouse` group:
+   ```bash
+   sudo groupadd -f spacemouse
+   sudo usermod -aG spacemouse $USER
+   ```
+   and add `GROUP="spacemouse"` to the udev rules above.
 
 After these steps, your SpaceMouse should work correctly without permission errors.
 

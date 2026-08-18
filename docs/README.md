@@ -250,11 +250,9 @@ or Windows.
 Use `lsusb` to find your device's vendor ID (`256f` is 3Dconnexion's):
 
 ```bash
-echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0664", GROUP="input", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/99-spacemouse.rules
-echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="256f", MODE="0664", GROUP="input", TAG+="uaccess"' | sudo tee -a /etc/udev/rules.d/99-spacemouse.rules
+echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/50-spacemouse.rules
+echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee -a /etc/udev/rules.d/50-spacemouse.rules
 sudo udevadm control --reload-rules && sudo udevadm trigger
-sudo usermod -aG input $USER
-newgrp input
 ```
 
 ## Troubleshooting
