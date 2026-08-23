@@ -13,7 +13,6 @@ pyspacemouse = { path = ".", editable = true }
 build = ">=1.2"
 ruff = ">=0.12.0"
 pytest = ">=7.0"
-pytest-cov = ">=4.0"
 mkdocs = "*"
 mkdocs-material = "*"
 mkdocs-glightbox = "*"
@@ -38,13 +37,12 @@ lint = "ruff check ."
 format = "ruff format ."
 format-check = "ruff format --check ."
 test = "pytest"
-test-cov = "pytest --cov-report=html"
 run-demo = "python ./examples/01_basic.py"
 sync-doc-links = "sed 's/\\.\\/docs/\\./g' README.md > docs/README.md && sed 's/\\.\\/docs/\\./g' CONTRIBUTING.md > docs/CONTRIBUTING.md && sed 's/\\.\\/docs/\\./g' troubleshooting.md > docs/troubleshooting.md"
 doxygen-check = "doxygen --version"
 
 [tasks.clean]
-cmd = "rm -rf dist build pyspacemouse.egg-info .ruff_cache htmlcov site .mkdoxy && find . -type d -name '__pycache__' -exec rm -rf {} + && find . -type f \\( -name '*.pyc' -o -name '*.pyo' \\) -delete && rm -f .coverage coverage.xml"
+cmd = "rm -rf dist build pyspacemouse.egg-info .ruff_cache site .mkdoxy && find . -type d -name '__pycache__' -exec rm -rf {} + && find . -type f \\( -name '*.pyc' -o -name '*.pyo' \\) -delete"
 
 [tasks.build-clean]
 depends-on = ["clean"]
