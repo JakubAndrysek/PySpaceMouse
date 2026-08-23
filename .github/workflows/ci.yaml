@@ -39,4 +39,4 @@ jobs:
           cache: true
           environments: ${{ matrix.environment }}
       - name: Run tests
-        run: pixi run test
+        run: pixi run -e ${{ matrix.environment }} test
