@@ -144,7 +144,7 @@ RuntimeError: Failed to open device
    ```udev
    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
-    ```
+   ```
 
    Common SpaceMouse IDs:
    - SpaceMouse Compact: `256f:c635`

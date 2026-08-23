@@ -40,6 +40,31 @@ It interfaces with the controller directly with `hidapi`, via the [`hidapi`](htt
 pip install pyspacemouse
 ```
 
+## CLI
+
+```bash
+pyspacemouse --list-connected    # Show connected devices
+pyspacemouse --list-supported    # Show all supported types
+pyspacemouse --list-hid          # Show all HID devices
+pyspacemouse --test              # Test connection
+pyspacemouse --version           # Show version
+```
+### Linux permissions
+
+On linux, you may not have permission to read from the device.
+To fix this, you can create a udev rule based on the device's Vendor ID (`256f` for 3Dconnexion's):
+
+```bash
+echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/50-spacemouse.rules
+echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee -a /etc/udev/rules.d/50-spacemouse.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+## Troubleshooting
+
+See [troubleshooting.md](./troubleshooting.md) for help with common issues.
+
+
 ## Quick Start
 
 Here we use `has_motion()` to check if any of the spatial axes have non-zero values.
@@ -212,15 +237,6 @@ with pyspacemouse.open(device_spec=custom) as device:
 
 See [Custom Device Configuration](./docs/mouseApi/index.md#custom-device-configuration) for full API.
 
-## CLI
-
-```bash
-pyspacemouse --list-connected    # Show connected devices
-pyspacemouse --list-supported    # Show all supported types
-pyspacemouse --list-hid          # Show all HID devices
-pyspacemouse --test              # Test connection
-pyspacemouse --version           # Show version
-```
 
 ## Examples
 
@@ -244,20 +260,6 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 `pip install pyspacemouse` pulls in the [`hidapi`](https://pypi.org/project/hidapi/) package,
 whose wheels bundle the hidapi C library. There is nothing else to install on Linux, macOS
 or Windows.
-
-### Linux permissions
-
-Use `lsusb` to find your device's vendor ID (`256f` is 3Dconnexion's):
-
-```bash
-echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/50-spacemouse.rules
-echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee -a /etc/udev/rules.d/50-spacemouse.rules
-sudo udevadm control --reload-rules && sudo udevadm trigger
-```
-
-## Troubleshooting
-
-See [troubleshooting.md](./troubleshooting.md) for help with common issues.
 
 ## Developing / Contributing
 

@@ -27,17 +27,6 @@ pyspacemouse --list-hid
 # Example: - SpaceMouse Compact by 3Dconnexion [VID: 0x256f, PID: 0xc635]
 ```
 
-**Using [hidapitester](https://github.com/todbot/hidapitester):**
-```bash
-./hidapitester --list
-# Example: 046D/C626: 3Dconnexion - SpaceNavigator
-```
-
-Note that hidapitester links its own copy of hidapi, while pyspacemouse uses the one bundled
-in the `hidapi` wheel - and on Linux it uses the `hidraw` backend rather than libusb. The
-two can therefore report devices differently; `pyspacemouse --list-hid` is what the library
-actually sees.
-
 ### 2. Analyze HID Data
 
 Use `hidapitester` to read raw data from your device:
