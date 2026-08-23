@@ -4,7 +4,7 @@
 
 3Dconnexion Space Mouse in Python using raw HID.
 Note: you **don't** need to install or use any of the drivers or 3Dconnexion software to use this package.
-It interfaces with the controller directly with `hidapi` and python wrapper library `easyhid`.
+It interfaces with the controller directly with `hidapi`, via the [`hidapi`](https://pypi.org/project/hidapi/) Python bindings.
 
 <p align="center">
 <a href="https://hit.kubaandrysek.cz/?url=https%3A%2F%2Fgithub.com%2FJakubAndrysek%2Fpyspacemouse&chart=true"><img src="https://hit.kubaandrysek.cz/?url=https%3A%2F%2Fgithub.com%2FJakubAndrysek%2Fpyspacemouse"/></a>
@@ -39,6 +39,31 @@ It interfaces with the controller directly with `hidapi` and python wrapper libr
 ```bash
 pip install pyspacemouse
 ```
+
+## CLI
+
+```bash
+pyspacemouse --list-connected    # Show connected devices
+pyspacemouse --list-supported    # Show all supported types
+pyspacemouse --list-hid          # Show all HID devices
+pyspacemouse --test              # Test connection
+pyspacemouse --version           # Show version
+```
+### Linux permissions
+
+On linux, you may not have permission to read from the device.
+To fix this, you can create a udev rule based on the device's Vendor ID (`256f` for 3Dconnexion's):
+
+```bash
+echo 'SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/50-spacemouse.rules
+echo 'SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"' | sudo tee -a /etc/udev/rules.d/50-spacemouse.rules
+sudo udevadm control --reload-rules && sudo udevadm trigger
+```
+
+## Troubleshooting
+
+See [troubleshooting.md](./troubleshooting.md) for help with common issues.
+
 
 ## Quick Start
 
@@ -212,15 +237,6 @@ with pyspacemouse.open(device_spec=custom) as device:
 
 See [Custom Device Configuration](./mouseApi/index.md#custom-device-configuration) for full API.
 
-## CLI
-
-```bash
-pyspacemouse --list-connected    # Show connected devices
-pyspacemouse --list-supported    # Show all supported types
-pyspacemouse --list-hid          # Show all HID devices
-pyspacemouse --test              # Test connection
-pyspacemouse --version           # Show version
-```
 
 ## Examples
 
@@ -241,29 +257,9 @@ See the [examples/](https://github.com/JakubAndrysek/PySpaceMouse/tree/master/ex
 
 ## Dependencies
 
-### hidapi (C library)
-
-- **Linux**: `sudo apt-get install libhidapi-dev`
-- **macOS**: `brew install hidapi`
-- **Windows**: Download from [hidapi releases](https://github.com/libusb/hidapi/releases)
-
-### Linux permissions
-
-```bash
-echo 'KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/99-hidraw-permissions.rules
-sudo usermod -aG plugdev $USER
-newgrp plugdev
-```
-
-### macOS PATH
-
-```bash
-export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/<VERSION>/lib:$DYLD_LIBRARY_PATH
-```
-
-## Troubleshooting
-
-See [troubleshooting.md](./troubleshooting.md) for help with common issues.
+`pip install pyspacemouse` pulls in the [`hidapi`](https://pypi.org/project/hidapi/) package,
+whose wheels bundle the hidapi C library. There is nothing else to install on Linux, macOS
+or Windows.
 
 ## Developing / Contributing
 

@@ -42,89 +42,58 @@ See [Custom Device Configuration](https://spacemouse.kubaandrysek.cz/mouseApi#cu
 
 ## Common issues
 
-### ModuleNotFoundError: No module named 'easyhid'
+### ModuleNotFoundError: No module named 'hid'
 
-- Install `easyhid` by `pip install easyhid`.
+- The [`hidapi`](https://pypi.org/project/hidapi/) package is missing. It is installed
+  automatically with `pyspacemouse`, so this usually means you are in a different
+  environment than you think. Install it with `pip install hidapi`.
 
-### AttributeError: function/symbol 'hid_enumerate' not found in library '<None>': python3: undefined symbol: hid_enumerate
+### ImportError: The `hid` module ... is not cython-hidapi
 
-- HID C library is not installed or not found in PATH.
-- Follow the instructions in [requirements](./README.md#dependencies).
+- The [`hid`](https://pypi.org/project/hid/) package (pyhidapi) is installed and is
+  shadowing the module `hidapi` provides. Both distributions install a top-level module
+  called `hid`, so only one of them can be imported at a time.
+- Remove the other one and reinstall:
 
-<hr>
+  ```bash
+  pip uninstall hid
+  pip install --force-reinstall hidapi
+  ```
 
-## Mac OS (M1)
-
-!!! info "External dependencies"
-    You don't have to install original 3Dconnexion driver `3DxWare 10`. This library works directly with `hidapi` device interface.
-
-If you are using a Mac with an M1 chip or newer, you may encounter issues when installing the dependencies.
-Required dependency is `hidapi` which you can install using Homebrew `brew install hidapi`.
-
-By default, the `hidapi` library is installed in `/opt/homebrew/Cellar/hidapi/<VERSION>/lib` directory, and you need to add it to your `DYLD_LIBRARY_PATH` environment variable.
-It is possible to add it to your `.bashrc` or `.zshrc` file, but you can also add it directly in the terminal (only for the current session).
-
-Replace `<VERSION>` with the version you have installed on your system (`brew info hidapi`).
-```bash
-export DYLD_LIBRARY_PATH=/opt/homebrew/Cellar/hidapi/<VERSION>/lib:$DYLD_LIBRARY_PATH
-```
-
-After this setup everything works correctly.
-Tested on:
-
-- MacBook Pro 14 (M1 Pro, 2021)
-- ... add your device and feedback
 
 <hr>
 
-## Testing Hidapi
+## Checking your device is visible
 
-If you are not sure if `hidapi` is installed correctly, you can test it with the console tool [hidapitester](https://github.com/todbot/hidapitester).
-This tool provides a simple interface to test the communication with HID devices.
-On GitHub, you can find the source code and precompiled binaries for Windows, Linux, and Mac OS.
+The hidapi C library ships inside the `hidapi` wheel, so there is nothing to install or
+verify. When something is wrong it is almost always the device or its permissions.
 
-Just download the binary for your system and run it in the terminal.
+The CLI goes through the same backend the library does, so trust it over external tools:
 
-List connected devices:
 ```bash
-./hidapitester --list
-```
-??? note "My output"
-    ```bash
-    046D/C626: 3Dconnexion - SpaceNavigator
-    045E/07A5: Microsoft - Microsoft 2.4GHz Transceiver v9.0
-    ...
-    ```
-Read data from the device (replace `<VID/PID>` with the VID/PID of your device):
-```bash
-./hidapitester --vidpid <VID/PID> --open --read-input
+pyspacemouse --list-hid         # every HID device the system exposes
+pyspacemouse --list-connected   # the ones recognised as SpaceMice
+pyspacemouse --test             # open the first one and print live axis values
 ```
 
 ??? note "My output"
     ```bash
-    ./hidapitester --vidpid 046D/C626 --open --read-input
-    Opening device, vid/pid: 0x046D/0xC626
-    Reading 64-byte input report 0, 250 msec timeout...read 7 bytes:
-    01 76 00 00 00 FA FF 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-    Closing device
+    $ pyspacemouse --list-connected
+    Connected SpaceMouse devices:
+      - SpaceMouseCompact (/dev/hidraw5)
     ```
 
-Read descriptor from the device (replace `<VID/PID>` with the VID/PID of your device):
-```bash
-./hidapitester --vidpid <VID/PID> --open --get-report-descriptor
-```
+Work down from the top:
 
-??? note "My output"
-    ```bash
-    ./hidapitester --vidpid 046D/C626 --open --get-report-descriptor
-    Opening device, vid/pid: 0x046D/0xC626
-    Report Descriptor:
-    05 01 09 08 A1 01 A1 00 85 01 16 A2 FE 26 5E 01 36 88 FA 46 78 05 55 0C 65 11 09 30 09 31 09 32
-    75 10 95 03 81 06 C0 A1 00 85 02 09 33 09 34 09 35 75 10 95 03 81 06 C0 A1 02 85 03 05 01 05 09
-    ...
-    Closing device
-    ```
+- **Nothing in `--list-hid`** - the OS isn't seeing the device at all. Check the cable, try
+  another port, and on a wireless model check the receiver.
+- **In `--list-hid` but not `--list-connected`** - the device is visible but its VID/PID
+  isn't in the device table. Compare against `pyspacemouse --list-supported`, then open an
+  issue with the IDs or supply your own `device_spec`.
+- **In `--list-connected` but `--test` won't open** - permissions; see the Linux section
+  below. If you have 3DxWare installed, try quitting it first.
+- **Opens, but the axes do nothing** - the device is being read but its report layout
+  doesn't match the spec. See [Adding a new device](./CONTRIBUTING.md#adding-a-new-device).
 
 <hr>
 
@@ -137,115 +106,74 @@ If you encounter an error like `Failed to open device` or `Permission denied` wh
 **Error example:**
 ```bash
 Traceback (most recent call last):
-  File "/home/user/.local/lib/python3.8/site-packages/pyspacemouse/pyspacemouse.py", line 183, in open
-    self.device.open()
-  File "/home/user/.local/lib/python3.8/site-packages/easyhid/easyhid.py", line 134, in open
-    raise HIDException("Failed to open device")
-easyhid.easyhid.HIDException: Failed to open device
+  File "/home/user/.local/lib/python3.12/site-packages/pyspacemouse/device.py", line 185, in open
+    device.open_path(self._hid_info["path"])
+  File "hidraw.pyx", line 158, in hidraw.device.open_path
+OSError: open failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/user/.local/lib/python3.12/site-packages/pyspacemouse/device.py", line 187, in open
+    raise RuntimeError("Failed to open device") from e
+RuntimeError: Failed to open device
 ```
 
 **Solution:**
 
 1. **Find your device's Vendor ID and Product ID:**
-   ```bash
-   lsusb
-   ```
-   Look for your SpaceMouse device. Example output:
-   ```
-   Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver
-   ```
-   Here, `256f` is the Vendor ID and `c652` is the Product ID.
+
+    ```bash
+    lsusb
+    ```
+    Look for your SpaceMouse device. Example output:
+    ```
+    Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver
+    ```
+    Here, `256f` is the Vendor ID and `c652` is the Product ID.
 
 2. **Create udev rules to grant permissions:**
-   ```bash
-   cd /etc/udev/rules.d
-   sudo touch 99-spacemouse.rules
-   sudo nano 99-spacemouse.rules
-   ```
 
-3. **Add the following rules** (replace `046d` and `c62b` with your Vendor ID and Product ID):
-   ```bash
-   SUBSYSTEM=="input", GROUP="input", MODE="0660"
-   KERNEL=="hidraw*", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c62b", MODE="0666"
-   ```
+    > Rules that use `TAG+="uaccess"` must have a priority number below `73` (e.g. `50-`) so they are evaluated before systemd seat rules.
 
-   Common SpaceMouse IDs:
-   - SpaceMouse Compact: `256f:c635`
-   - SpaceMouse Wireless: `256f:c62e`
-   - 3Dconnexion Universal Receiver: `256f:c652`
-   - SpaceNavigator: `046d:c626`
+    ```bash
+    cd /etc/udev/rules.d
+    sudo touch 50-spacemouse.rules
+    sudo nano 50-spacemouse.rules
+    ```
+
+3. **Add the following rules:**
+
+    ```udev
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+    ```
+
+    Common SpaceMouse IDs:
+
+    - SpaceMouse Compact: `256f:c635`
+    - SpaceMouse Wireless: `256f:c62e`
+    - 3Dconnexion Universal Receiver: `256f:c652`
+    - SpaceNavigator: `046d:c626`
 
 4. **Reload udev rules:**
-   ```bash
-   sudo udevadm control --reload-rules
-   sudo udevadm trigger
-   ```
 
-5. **Add your user to the input group:**
-   ```bash
-   sudo usermod -a -G input $USER
-   ```
+    ```bash
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    ```
 
-6. **Disconnect and reconnect your SpaceMouse**, then log out and log back in to Ubuntu (or restart your computer).
+5. **Disconnect and reconnect your SpaceMouse.**
+
+    With `TAG+="uaccess"`, the active desktop user is granted dynamic access automatically without needing to join groups or log out.
+
+    *(Optional)* **For headless remote access:** If you need access when not logged in locally at the desktop, create and assign a dedicated `spacemouse` group:
+    ```bash
+    sudo groupadd -f spacemouse
+    sudo usermod -aG spacemouse $USER
+    ```
+    and add `GROUP="spacemouse"` to the udev rules above.
 
 After these steps, your SpaceMouse should work correctly without permission errors.
 
 <hr>
-
-## Windows
-
-!!! info "Error message - OSError: cannot load library 'hidapi.dll'"
-    ```bash
-    Traceback (most recent call last):
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\easyhid.py", line 53, in <module>
-        hidapi = ffi.dlopen('hidapi.dll')
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 150, in dlopen
-        lib, function_cache = _make_ffi_library(self, name, flags)
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 832, in _make_ffi_library
-        backendlib = _load_backend_lib(backend, libname, flags)
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 827, in _load_backend_lib
-        raise OSError(msg)
-    OSError: cannot load library 'hidapi.dll': error 0x7e.  Additionally, ctypes.util.find_library() did not manage to locate a library called 'hidapi.dll
-    ```
-
-??? info "Other error message - OSError: dlopen(None) cannot work on Windows for Python 3"
-    ```bash
-    File "C:\Users\Student\Downloads\basicExample.py", line 1, in <module>
-        import pyspacemouse
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pyspacemouse\__init__.py", line 1, in <module>
-        from .pyspacemouse import *
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pyspacemouse\pyspacemouse.py", line 1, in <module>
-        from easyhid import Enumeration, HIDException
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\__init__.py", line 8, in <module>
-        from easyhid.easyhid import *
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\easyhid.py", line 55, in <module>
-        hidapi = ffi.dlopen(ctypes.util.find_library('hidapi.dll'))
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 150, in dlopen
-        lib, function_cache = _make_ffi_library(self, name, flags)
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 832, in _make_ffi_library
-        backendlib = _load_backend_lib(backend, libname, flags)
-    File "C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py", line 821, in _load_backend_lib
-        raise OSError("dlopen(None) cannot work on Windows for Python 3 "
-    OSError: dlopen(None) cannot work on Windows for Python 3 (see http://bugs.python.org/issue23606)
-    ```
-
-
-If you are using Windows, you may encounter issues with the `hidapi` library.
-The library is not included in the system, so you have to install it manually.
-
-Go to [hidapi GitHub](https://github.com/libusb/hidapi/releases/latest) and download the latest version of the library in zip format.
-Extract the zip file and copy the x64/x86 folder with `hidapi.dll` to the static location where will be found by the system.
-
-To make it work, you have to add the folder to the system `PATH` variable.
-
-Go to Windows settings and search for `enviroment`.
-![image](https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce7ba2b3-8e40-48bb-8348-5a1f932146c3)
-
-Click on the `Environment variables`.
-![image](https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce22bae7-a0c8-4f19-9204-7f1a12f28782)
-
-Append the path to the folder with `hidapi.dll` to the `Path` variable.
-![image](https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/0ddefada-b595-49f3-bf0f-d11567cf887f)
-
-After this setup, you have to restart (maybe log out) your computer to apply the changes.
-Let's start using this library in your Python code.

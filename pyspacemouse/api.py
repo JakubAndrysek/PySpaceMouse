@@ -16,12 +16,12 @@ Usage:
 
 from __future__ import annotations
 
+import os
 import warnings
 from pathlib import Path
 from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
-from easyhid import Enumeration
-
+from ._hid import get_hid
 from .callbacks import ButtonCallback, Config, DofCallback
 from .config_helpers import apply_axis_convention
 from .device import SpaceMouseDevice
@@ -37,21 +37,18 @@ def get_connected_devices() -> List[str]:
         Empty list if no supported devices are found.
 
     Raises:
-        RuntimeError: If HID API is not installed.
+        ImportError: If the hidapi bindings are not installed.
     """
-    try:
-        hid = Enumeration()
-    except AttributeError as e:
-        raise RuntimeError(
-            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
-        ) from e
-
+    hid = get_hid()
     device_specs = get_device_specs()
     devices = []
 
-    for hid_device in hid.find():
+    for hid_info in hid.enumerate():
         for name, spec in device_specs.items():
-            if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
+            if (
+                hid_info["vendor_id"] == spec.vendor_id
+                and hid_info["product_id"] == spec.product_id
+            ):
                 devices.append(name)
 
     return devices
@@ -73,29 +70,24 @@ def get_all_hid_devices() -> List[Tuple[str, str, int, int]]:
         List of tuples: (product_string, manufacturer_string, vendor_id, product_id)
 
     Raises:
-        RuntimeError: If HID API is not installed.
+        ImportError: If the hidapi bindings are not installed.
     """
-    try:
-        hid = Enumeration()
-    except AttributeError as e:
-        raise RuntimeError(
-            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
-        ) from e
+    hid = get_hid()
 
     return [
         (
-            dev.product_string or "",
-            dev.manufacturer_string or "",
-            dev.vendor_id,
-            dev.product_id,
+            hid_info["product_string"] or "",
+            hid_info["manufacturer_string"] or "",
+            hid_info["vendor_id"],
+            hid_info["product_id"],
         )
-        for dev in hid.find()
+        for hid_info in hid.enumerate()
     ]
 
 
 def _create_and_open_device(
     spec: DeviceInfo,
-    hid_device,
+    hid_info,
     callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
@@ -130,7 +122,7 @@ def _create_and_open_device(
             )
         spec = apply_axis_convention(spec, axis_convention)
 
-    mouse = SpaceMouseDevice(info=spec, device=hid_device)
+    mouse = SpaceMouseDevice(info=spec, hid_info=hid_info, nonblocking=nonblocking)
     mouse.configure(
         callback=callback,
         dof_callback=dof_callback,
@@ -139,12 +131,11 @@ def _create_and_open_device(
         button_callbacks=button_callbacks,
     )
     mouse.open()
-    hid_device.set_nonblocking(nonblocking)
     return mouse
 
 
 def open_by_path(
-    path: str | Path,
+    path: str | bytes | Path,
     callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callback: Optional[Callable[[SpaceMouseState], None]] = None,
     dof_callbacks: Optional[Sequence[DofCallback]] = None,
@@ -154,13 +145,21 @@ def open_by_path(
     device_spec: Optional[DeviceInfo] = None,
     axis_convention: Optional[AxisConvention] = None,
 ) -> SpaceMouseDevice:
-    """Open a SpaceMouse device by its filesystem path.
+    """Open a SpaceMouse device by its HID path.
 
     This is mutually exclusive with open() - use this when you know the
     exact device path, use open() for automatic device discovery.
 
+    Only Linux reports HID paths that are filesystem paths. macOS reports
+    opaque service IDs ("DevSrvsID:4296357093") and Windows reports device
+    interface paths ("\\\\?\\HID#VID_256F..."), so the value is matched against
+    hid.enumerate() as an opaque string first. Any path from
+    get_connected_devices_by_path() therefore works on every platform, while
+    on Linux symlinks and relative paths still resolve as before.
+
     Args:
-        path: Filesystem path to the HID device (e.g., "/dev/hidraw0")
+        path: HID path of the device, as reported by
+              get_connected_devices_by_path() (e.g., "/dev/hidraw0" on Linux)
         callback: Called on every state change
         dof_callback: Called on axis state changes
         dof_callbacks: List of per-axis callbacks
@@ -182,29 +181,36 @@ def open_by_path(
         SpaceMouseDevice instance (use as context manager for auto-cleanup)
 
     Raises:
-        FileNotFoundError: If the specified path does not exist
+        FileNotFoundError: If no connected HID device has that path
         ValueError: If the device at path is not a supported SpaceMouse
                     (unless device_spec is provided)
+        ImportError: If the hidapi bindings are not installed.
     """
-    path = Path(path)
+    hid = get_hid()
+    path = os.fsdecode(path) if isinstance(path, bytes) else str(path)
+    candidates = hid.enumerate()
+    hid_info = None
 
-    if not path.exists():
-        raise FileNotFoundError(f"Device path '{path}' does not exist.")
-
-    # Resolve path in case it's relative or a symlink
-    path = path.resolve()
-
-    # Find the HID device at this path
-    hid = Enumeration()
-    hid_device = None
-
-    for dev in hid.device_list:
-        dev_path = Path(dev.path).resolve()
-        if dev_path == path:
-            hid_device = dev
+    # A HID path is an opaque string, so try an exact match first - that is the
+    # only thing that works on macOS and Windows.
+    for candidate in candidates:
+        if os.fsdecode(candidate["path"]) == path:
+            hid_info = candidate
             break
 
-    if hid_device is None:
+    # Otherwise fall back to filesystem resolution, so Linux callers can pass a
+    # symlink or a relative path to a /dev/hidrawN node.
+    if hid_info is None and Path(path).exists():
+        resolved = Path(path).resolve()
+        for candidate in candidates:
+            try:
+                if Path(os.fsdecode(candidate["path"])).resolve() == resolved:
+                    hid_info = candidate
+                    break
+            except Exception:
+                continue  # Not a path the filesystem can make sense of.
+
+    if hid_info is None:
         raise FileNotFoundError(f"No HID device found at path '{path}'.")
 
     # Use provided spec or find matching device specification
@@ -217,16 +223,16 @@ def open_by_path(
 
         for device_s in all_specs.values():
             if (
-                hid_device.vendor_id == device_s.vendor_id
-                and hid_device.product_id == device_s.product_id
+                hid_info["vendor_id"] == device_s.vendor_id
+                and hid_info["product_id"] == device_s.product_id
             ):
                 spec = device_s
                 break
 
         if spec is None:
             raise ValueError(
-                f"Device at '{path}' (VID={hid_device.vendor_id:#06x}, "
-                f"PID={hid_device.product_id:#06x}) is not a supported SpaceMouse. "
+                f"Device at '{path}' (VID={hid_info['vendor_id']:#06x}, "
+                f"PID={hid_info['product_id']:#06x}) is not a supported SpaceMouse. "
                 f"Use device_spec parameter for custom/unsupported devices."
             )
 
@@ -234,7 +240,7 @@ def open_by_path(
 
     return _create_and_open_device(
         spec=spec,
-        hid_device=hid_device,
+        hid_info=hid_info,
         callback=callback,
         dof_callback=dof_callback,
         dof_callbacks=dof_callbacks,
@@ -294,7 +300,9 @@ def open(
     Raises:
         RuntimeError: If no device is found
         ValueError: If the specified device name is not recognized
+        ImportError: If the hidapi bindings are not installed.
     """
+    hid = get_hid()
     device_specs = get_device_specs()
 
     # Auto-detect device if not specified
@@ -312,12 +320,11 @@ def open(
     spec = device_spec if is_custom_spec else device_specs[device]
 
     # Find matching HID devices
-    hid = Enumeration()
     found = []
 
-    for hid_dev in hid.find():
-        if hid_dev.vendor_id == spec.vendor_id and hid_dev.product_id == spec.product_id:
-            found.append(hid_dev)
+    for hid_info in hid.enumerate():
+        if hid_info["vendor_id"] == spec.vendor_id and hid_info["product_id"] == spec.product_id:
+            found.append(hid_info)
 
     if not found:
         raise RuntimeError(f"Device '{device}' not found.")
@@ -326,12 +333,11 @@ def open(
     if device_index >= len(found):
         device_index = 0
 
-    hid_dev = found[device_index]
     print(f"{device} found")
 
     return _create_and_open_device(
         spec=spec,
-        hid_device=hid_dev,
+        hid_info=found[device_index],
         callback=callback,
         dof_callback=dof_callback,
         dof_callbacks=dof_callbacks,
@@ -382,23 +388,20 @@ def get_connected_devices_by_path() -> Dict[str, str]:
         Dict of paths: device names (e.g., {"/dev/hidraw0": "SpaceMouse Pro"}).
 
     Raises:
-        RuntimeError: If HID API is not installed.
+        ImportError: If the hidapi bindings are not installed.
     """
-    try:
-        hid = Enumeration()
-    except AttributeError as e:
-        raise RuntimeError(
-            "HID API is probably not installed. See https://spacemouse.kubaandrysek.cz for details."
-        ) from e
-
+    hid = get_hid()
     device_specs = get_device_specs()
     devices_by_path = {}
 
-    # hid.find() is all connected HID devices,
+    # hid.enumerate() is all connected HID devices,
     # device_specs is all supported Spacemouse devices.
-    for hid_device in hid.find():
+    for hid_info in hid.enumerate():
         for name, spec in device_specs.items():
-            if hid_device.vendor_id == spec.vendor_id and hid_device.product_id == spec.product_id:
-                devices_by_path[hid_device.path] = name
+            if (
+                hid_info["vendor_id"] == spec.vendor_id
+                and hid_info["product_id"] == spec.product_id
+            ):
+                devices_by_path[os.fsdecode(hid_info["path"])] = name
 
     return devices_by_path
