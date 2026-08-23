@@ -122,52 +122,57 @@ RuntimeError: Failed to open device
 **Solution:**
 
 1. **Find your device's Vendor ID and Product ID:**
-   ```bash
-   lsusb
-   ```
-   Look for your SpaceMouse device. Example output:
-   ```
-   Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver
-   ```
-   Here, `256f` is the Vendor ID and `c652` is the Product ID.
+
+    ```bash
+    lsusb
+    ```
+    Look for your SpaceMouse device. Example output:
+    ```
+    Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver
+    ```
+    Here, `256f` is the Vendor ID and `c652` is the Product ID.
 
 2. **Create udev rules to grant permissions:**
-   > Rules that use `TAG+="uaccess"` must have a priority number below `73` (e.g. `50-`) so they are evaluated before systemd seat rules.
 
-   ```bash
-   cd /etc/udev/rules.d
-   sudo touch 50-spacemouse.rules
-   sudo nano 50-spacemouse.rules
-   ```
+    > Rules that use `TAG+="uaccess"` must have a priority number below `73` (e.g. `50-`) so they are evaluated before systemd seat rules.
+
+    ```bash
+    cd /etc/udev/rules.d
+    sudo touch 50-spacemouse.rules
+    sudo nano 50-spacemouse.rules
+    ```
 
 3. **Add the following rules:**
-   ```udev
-   SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
-   SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
-   ```
 
-   Common SpaceMouse IDs:
-   - SpaceMouse Compact: `256f:c635`
-   - SpaceMouse Wireless: `256f:c62e`
-   - 3Dconnexion Universal Receiver: `256f:c652`
-   - SpaceNavigator: `046d:c626`
+    ```udev
+    SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+    SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+    ```
+
+    Common SpaceMouse IDs:
+
+    - SpaceMouse Compact: `256f:c635`
+    - SpaceMouse Wireless: `256f:c62e`
+    - 3Dconnexion Universal Receiver: `256f:c652`
+    - SpaceNavigator: `046d:c626`
 
 4. **Reload udev rules:**
-   ```bash
-   sudo udevadm control --reload-rules
-   sudo udevadm trigger
-   ```
+
+    ```bash
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    ```
 
 5. **Disconnect and reconnect your SpaceMouse.**
 
-   With `TAG+="uaccess"`, the active desktop user is granted dynamic access automatically without needing to join groups or log out.
+    With `TAG+="uaccess"`, the active desktop user is granted dynamic access automatically without needing to join groups or log out.
 
-   *(Optional)* **For headless remote access:** If you need access when not logged in locally at the desktop, create and assign a dedicated `spacemouse` group:
-   ```bash
-   sudo groupadd -f spacemouse
-   sudo usermod -aG spacemouse $USER
-   ```
-   and add `GROUP="spacemouse"` to the udev rules above.
+    *(Optional)* **For headless remote access:** If you need access when not logged in locally at the desktop, create and assign a dedicated `spacemouse` group:
+    ```bash
+    sudo groupadd -f spacemouse
+    sudo usermod -aG spacemouse $USER
+    ```
+    and add `GROUP="spacemouse"` to the udev rules above.
 
 After these steps, your SpaceMouse should work correctly without permission errors.
 
