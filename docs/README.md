@@ -270,7 +270,7 @@ Install Pixi and initialize the environment:
 ```bash
 curl -fsSL https://pixi.sh/install.sh | sh
 pixi install
-pre-commit install
+pixi run pre-commit install
 ```
 
 Common tasks:

@@ -15,19 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for git-revision-date-localized-plugin
-      - uses: prefix-dev/setup-pixi@v0.8.13
+          fetch-depth: 0 # Required for git-revision-date-localized-plugin
+      - uses: prefix-dev/setup-pixi@v0.10.1
         with:
           cache: true
       - uses: actions/cache@v4
         with:
           key: mkdocs-${{ github.ref }}
           path: .cache
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y doxygen
-      - name: Install project environment
-        run: pixi install
       - name: Deploy docs
         run: pixi run docs-deploy

@@ -4,9 +4,10 @@ channels = ["conda-forge"]
 platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
 
 [dependencies]
-python = ">=3.8,<3.14"
+python = "*"
 pip = "*"
 pre-commit = "*"
+doxygen = "*"
 
 [pypi-dependencies]
 pyspacemouse = { path = ".", editable = true }
@@ -23,6 +24,27 @@ mkdocs-git-revision-date-localized-plugin = "*"
 twine = "*"
 setuptools = ">=69"
 setuptools-scm = { version = ">=8", extras = ["toml"] }
+
+[environments.py38.dependencies]
+python = "3.8.*"
+
+[environments.py39.dependencies]
+python = "3.9.*"
+
+[environments.py310.dependencies]
+python = "3.10.*"
+
+[environments.py311.dependencies]
+python = "3.11.*"
+
+[environments.py312.dependencies]
+python = "3.12.*"
+
+[environments.py313.dependencies]
+python = "3.13.*"
+
+[environments.py314.dependencies]
+python = "3.14.*"
 
 [tasks]
 build = "python -m build"
