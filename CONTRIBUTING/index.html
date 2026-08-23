@@ -1654,9 +1654,9 @@
 <span class="c1"># Example output: Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver</span>
 <span class="c1"># VID = 256f, PID = c652</span>
 </code></pre></div><p></p>
-<p><strong>Using <a href="https://github.com/todbot/hidapitester">hidapitester</a>:</strong>
-</p><div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--list
-<span class="c1"># Example: 046D/C626: 3Dconnexion - SpaceNavigator</span>
+<p><strong>Using pyspacemouse itself:</strong>
+</p><div class="highlight"><pre><span></span><code>pyspacemouse<span class="w"> </span>--list-hid
+<span class="c1"># Example: - SpaceMouse Compact by 3Dconnexion [VID: 0x256f, PID: 0xc635]</span>
 </code></pre></div><p></p>
 <h3 id="2-analyze-hid-data">2. Analyze HID Data</h3>
 <p>Use <code>hidapitester</code> to read raw data from your device:</p>
@@ -1669,6 +1669,20 @@
 <li><strong>Channel 3</strong>: Button data</li>
 </ul>
 <p>Each axis is typically a signed 16-bit value (2 bytes, little-endian).</p>
+<p>The report descriptor is useful when the layout isn't obvious from the input reports:</p>
+<div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--vidpid<span class="w"> </span>&lt;VID/PID&gt;<span class="w"> </span>--open<span class="w"> </span>--get-report-descriptor
+</code></pre></div>
+<details class="note">
+<summary>My output</summary>
+<div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--vidpid<span class="w"> </span>046D/C626<span class="w"> </span>--open<span class="w"> </span>--get-report-descriptor
+Opening<span class="w"> </span>device,<span class="w"> </span>vid/pid:<span class="w"> </span>0x046D/0xC626
+Report<span class="w"> </span>Descriptor:
+<span class="m">05</span><span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">08</span><span class="w"> </span>A1<span class="w"> </span><span class="m">01</span><span class="w"> </span>A1<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">85</span><span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">16</span><span class="w"> </span>A2<span class="w"> </span>FE<span class="w"> </span><span class="m">26</span><span class="w"> </span>5E<span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">36</span><span class="w"> </span><span class="m">88</span><span class="w"> </span>FA<span class="w"> </span><span class="m">46</span><span class="w"> </span><span class="m">78</span><span class="w"> </span><span class="m">05</span><span class="w"> </span><span class="m">55</span><span class="w"> </span>0C<span class="w"> </span><span class="m">65</span><span class="w"> </span><span class="m">11</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">31</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">32</span>
+<span class="m">75</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">95</span><span class="w"> </span><span class="m">03</span><span class="w"> </span><span class="m">81</span><span class="w"> </span><span class="m">06</span><span class="w"> </span>C0<span class="w"> </span>A1<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">85</span><span class="w"> </span><span class="m">02</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">33</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">34</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">35</span><span class="w"> </span><span class="m">75</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">95</span><span class="w"> </span><span class="m">03</span><span class="w"> </span><span class="m">81</span><span class="w"> </span><span class="m">06</span><span class="w"> </span>C0<span class="w"> </span>A1<span class="w"> </span><span class="m">02</span><span class="w"> </span><span class="m">85</span><span class="w"> </span><span class="m">03</span><span class="w"> </span><span class="m">05</span><span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">05</span><span class="w"> </span><span class="m">09</span>
+...
+Closing<span class="w"> </span>device
+</code></pre></div>
+</details>
 <h3 id="3-add-device-to-devicestoml">3. Add Device to <code>devices.toml</code></h3>
 <p>Edit <code>pyspacemouse/devices.toml</code> and add your device:</p>
 <div class="highlight"><pre><span></span><code><span class="k">[YourDeviceName]</span>
@@ -1800,7 +1814,7 @@ To update documentation from root to <code>/docs</code>, use <code>make docs-bui
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 5, 2026 02:10:41 UTC">August 5, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 23, 2026 10:11:37 UTC">August 23, 2026</span>
   </span>
 
     

@@ -1306,15 +1306,14 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">timeit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">easyhid</span><span class="w"> </span><span class="kn">import</span> <span class="n">HIDException</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">._hid</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_hid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ButtonCallback</span><span class="p">,</span> <span class="n">Config</span><span class="p">,</span> <span class="n">DofCallback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">AXIS_NAMES</span><span class="p">,</span> <span class="n">ButtonState</span><span class="p">,</span> <span class="n">DeviceInfo</span><span class="p">,</span> <span class="n">SpaceMouseState</span>
 
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">easyhid</span><span class="w"> </span><span class="kn">import</span> <span class="n">Device</span> <span class="k">as</span> <span class="n">HIDDevice</span>
+<span class="c1"># One entry from hid.enumerate(): device metadata, not an open connection.</span>
+<span class="n">HIDInfo</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 
 <span class="c1"># High-accuracy clock for timing</span>
 <span class="n">high_acc_clock</span> <span class="o">=</span> <span class="n">timeit</span><span class="o">.</span><span class="n">default_timer</span>
@@ -1346,6 +1345,7 @@
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
         <span class="s2">"_info"</span><span class="p">,</span>
+        <span class="s2">"_hid_info"</span><span class="p">,</span>
         <span class="s2">"_device"</span><span class="p">,</span>
         <span class="s2">"_state"</span><span class="p">,</span>
         <span class="s2">"_last_axis_time"</span><span class="p">,</span>
@@ -1361,15 +1361,24 @@
         <span class="s2">"_serial_number"</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">DeviceInfo</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HIDDevice</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">info</span><span class="p">:</span> <span class="n">DeviceInfo</span><span class="p">,</span>
+        <span class="n">hid_info</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HIDInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">nonblocking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Initialize the SpaceMouseDevice.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            info: Device specification from loader</span>
-<span class="sd">            device: Optional HID device instance</span>
+<span class="sd">            hid_info: Optional HID device metadata (one entry from</span>
+<span class="sd">                      hid.enumerate()), used by open() to connect</span>
+<span class="sd">            nonblocking: If True, reads return immediately when no report is</span>
+<span class="sd">                         pending. Applied when the connection is opened.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_info</span> <span class="o">=</span> <span class="n">info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span> <span class="o">=</span> <span class="n">hid_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># Initialize state</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="n">SpaceMouseState</span><span class="p">(</span><span class="n">buttons</span><span class="o">=</span><span class="n">ButtonState</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">button_specs</span><span class="p">)))</span>
@@ -1381,7 +1390,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_dof_callbacks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">DofCallback</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_button_callback</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">SpaceMouseState</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_button_callbacks</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="n">ButtonCallback</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_nonblocking</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nonblocking</span> <span class="o">=</span> <span class="n">nonblocking</span>
 
         <span class="c1"># Connection details (populated on open)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_product_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span>
@@ -1460,21 +1469,26 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Open the connection to the device."""</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"No HID device assigned to this SpaceMouseDevice"</span><span class="p">)</span>
 
+        <span class="n">hid</span> <span class="o">=</span> <span class="n">get_hid</span><span class="p">()</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">hid</span><span class="o">.</span><span class="n">device</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">open</span><span class="p">()</span>
-        <span class="k">except</span> <span class="n">HIDException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Failed to open device"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+            <span class="n">device</span><span class="o">.</span><span class="n">open_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span><span class="p">[</span><span class="s2">"path"</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to open device: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span><span class="p">[</span><span class="s1">'path'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
-        <span class="c1"># Copy product details</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_product_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">product_string</span> <span class="ow">or</span> <span class="s2">""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_vendor_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">manufacturer_string</span> <span class="ow">or</span> <span class="s2">""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_version_number</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">release_number</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
+        <span class="n">device</span><span class="o">.</span><span class="n">set_nonblocking</span><span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nonblocking</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+
+        <span class="c1"># Copy product details.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_product_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"product_string"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vendor_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"manufacturer_string"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_version_number</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"release_number"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span><span class="p">)</span>
 
         <span class="c1"># Convert serial number to hex</span>
-        <span class="n">serial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="o">.</span><span class="n">serial_number</span> <span class="ow">or</span> <span class="s2">""</span>
+        <span class="n">serial</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hid_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"serial_number"</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_serial_number</span> <span class="o">=</span> <span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">serial</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1660,7 +1674,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 10, 2026 16:17:52 UTC">August 10, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 23, 2026 10:26:03 UTC">August 23, 2026</span>
   </span>
 
     

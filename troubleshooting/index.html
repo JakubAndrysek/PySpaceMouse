@@ -504,10 +504,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#modulenotfounderror-no-module-named-easyhid" class="md-nav__link">
+  <a href="#modulenotfounderror-no-module-named-hid" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ModuleNotFoundError: No module named 'easyhid'
+        ModuleNotFoundError: No module named 'hid'
       
     </span>
   </a>
@@ -515,10 +515,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#attributeerror-functionsymbol-hid_enumerate-not-found-in-library-python3-undefined-symbol-hid_enumerate" class="md-nav__link">
+  <a href="#importerror-the-hid-module-is-not-cython-hidapi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AttributeError: function/symbol 'hid_enumerate' not found in library '': python3: undefined symbol: hid_enumerate
+        ImportError: The hid module ... is not cython-hidapi
       
     </span>
   </a>
@@ -531,21 +531,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mac-os-m1" class="md-nav__link">
+  <a href="#checking-your-device-is-visible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mac OS (M1)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing-hidapi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing Hidapi
+        Checking your device is visible
       
     </span>
   </a>
@@ -577,17 +566,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#windows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Windows
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1451,10 +1429,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#modulenotfounderror-no-module-named-easyhid" class="md-nav__link">
+  <a href="#modulenotfounderror-no-module-named-hid" class="md-nav__link">
     <span class="md-ellipsis">
       
-        ModuleNotFoundError: No module named 'easyhid'
+        ModuleNotFoundError: No module named 'hid'
       
     </span>
   </a>
@@ -1462,10 +1440,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#attributeerror-functionsymbol-hid_enumerate-not-found-in-library-python3-undefined-symbol-hid_enumerate" class="md-nav__link">
+  <a href="#importerror-the-hid-module-is-not-cython-hidapi" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AttributeError: function/symbol 'hid_enumerate' not found in library '': python3: undefined symbol: hid_enumerate
+        ImportError: The hid module ... is not cython-hidapi
       
     </span>
   </a>
@@ -1478,21 +1456,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mac-os-m1" class="md-nav__link">
+  <a href="#checking-your-device-is-visible" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Mac OS (M1)
-      
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing-hidapi" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Testing Hidapi
+        Checking your device is visible
       
     </span>
   </a>
@@ -1524,17 +1491,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#windows" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Windows
-      
-    </span>
-  </a>
   
 </li>
       
@@ -1580,16 +1536,22 @@
 <li><strong>Y axis</strong>: Inverted for common conventions</li>
 <li><strong>Rotations</strong>: pitch/roll inverted from HID spec</li>
 </ul>
-<p>If your application needs different conventions (e.g., ROS, OpenGL), use the <code>modify_device_info()</code> function:</p>
+<p>If your application needs a common coordinate convention, pass it when opening the device:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspacemouse</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxisConvention</span>
+
+<span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">axis_convention</span><span class="o">=</span><span class="n">AxisConvention</span><span class="o">.</span><span class="n">ROS</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</code></pre></div>
+<p>For custom conventions, use <code>modify_device_info()</code> to remap or invert axes:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pyspacemouse</span>
 
 <span class="n">specs</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">get_device_specs</span><span class="p">()</span>
 <span class="n">base</span> <span class="o">=</span> <span class="n">specs</span><span class="p">[</span><span class="s2">"SpaceNavigator"</span><span class="p">]</span>
 
-<span class="c1"># Customize axes for your application</span>
 <span class="n">custom</span> <span class="o">=</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">modify_device_info</span><span class="p">(</span>
     <span class="n">base</span><span class="p">,</span>
-    <span class="n">invert_axes</span><span class="o">=</span><span class="p">[</span><span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">,</span> <span class="s2">"roll"</span><span class="p">,</span> <span class="s2">"yaw"</span><span class="p">],</span>  <span class="c1"># Axes to flip</span>
+    <span class="n">remap_axes</span><span class="o">=</span><span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="s2">"yaw"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"yaw"</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)},</span>
 <span class="p">)</span>
 
 <span class="k">with</span> <span class="n">pyspacemouse</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">device_spec</span><span class="o">=</span><span class="n">custom</span><span class="p">)</span> <span class="k">as</span> <span class="n">device</span><span class="p">:</span>
@@ -1597,79 +1559,51 @@
 </code></pre></div>
 <p>See <a href="https://spacemouse.kubaandrysek.cz/mouseApi#custom-device-configuration">Custom Device Configuration</a> for full details.</p>
 <h2 id="common-issues">Common issues</h2>
-<h3 id="modulenotfounderror-no-module-named-easyhid">ModuleNotFoundError: No module named 'easyhid'</h3>
+<h3 id="modulenotfounderror-no-module-named-hid">ModuleNotFoundError: No module named 'hid'</h3>
 <ul>
-<li>Install <code>easyhid</code> by <code>pip install easyhid</code>.</li>
+<li>The <a href="https://pypi.org/project/hidapi/"><code>hidapi</code></a> package is missing. It is installed
+  automatically with <code>pyspacemouse</code>, so this usually means you are in a different
+  environment than you think. Install it with <code>pip install hidapi</code>.</li>
 </ul>
-<h3 id="attributeerror-functionsymbol-hid_enumerate-not-found-in-library-python3-undefined-symbol-hid_enumerate">AttributeError: function/symbol 'hid_enumerate' not found in library '<none>': python3: undefined symbol: hid_enumerate</none></h3>
+<h3 id="importerror-the-hid-module-is-not-cython-hidapi">ImportError: The <code>hid</code> module ... is not cython-hidapi</h3>
 <ul>
-<li>HID C library is not installed or not found in PATH.</li>
-<li>Follow the instructions in <a href="../#dependencies">requirements</a>.</li>
+<li>The <a href="https://pypi.org/project/hid/"><code>hid</code></a> package (pyhidapi) is installed and is
+  shadowing the module <code>hidapi</code> provides. Both distributions install a top-level module
+  called <code>hid</code>, so only one of them can be imported at a time.</li>
+<li>Remove the other one and reinstall:</li>
 </ul>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>uninstall<span class="w"> </span>hid
+pip<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span>hidapi
+</code></pre></div>
 <hr>
 
-<h2 id="mac-os-m1">Mac OS (M1)</h2>
-<div class="admonition info">
-<p class="admonition-title">External dependencies</p>
-<p>You don't have to install original 3Dconnexion driver <code>3DxWare 10</code>. This library works directly with <code>hidapi</code> device interface.</p>
-</div>
-<p>If you are using a Mac with an M1 chip or newer, you may encounter issues when installing the dependencies.
-Required dependency is <code>hidapi</code> which you can install using Homebrew <code>brew install hidapi</code>.</p>
-<p>By default, the <code>hidapi</code> library is installed in <code>/opt/homebrew/Cellar/hidapi/&lt;VERSION&gt;/lib</code> directory, and you need to add it to your <code>DYLD_LIBRARY_PATH</code> environment variable.
-It is possible to add it to your <code>.bashrc</code> or <code>.zshrc</code> file, but you can also add it directly in the terminal (only for the current session).</p>
-<p>Replace <code>&lt;VERSION&gt;</code> with the version you have installed on your system (<code>brew info hidapi</code>).
-</p><div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">DYLD_LIBRARY_PATH</span><span class="o">=</span>/opt/homebrew/Cellar/hidapi/&lt;VERSION&gt;/lib:<span class="nv">$DYLD_LIBRARY_PATH</span>
-</code></pre></div><p></p>
-<p>After this setup everything works correctly.
-Tested on:</p>
+<h2 id="checking-your-device-is-visible">Checking your device is visible</h2>
+<p>The hidapi C library ships inside the <code>hidapi</code> wheel, so there is nothing to install or
+verify. When something is wrong it is almost always the device or its permissions.</p>
+<p>The CLI goes through the same backend the library does, so trust it over external tools:</p>
+<div class="highlight"><pre><span></span><code>pyspacemouse<span class="w"> </span>--list-hid<span class="w">         </span><span class="c1"># every HID device the system exposes</span>
+pyspacemouse<span class="w"> </span>--list-connected<span class="w">   </span><span class="c1"># the ones recognised as SpaceMice</span>
+pyspacemouse<span class="w"> </span>--test<span class="w">             </span><span class="c1"># open the first one and print live axis values</span>
+</code></pre></div>
+<details class="note">
+<summary>My output</summary>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>pyspacemouse<span class="w"> </span>--list-connected
+Connected<span class="w"> </span>SpaceMouse<span class="w"> </span>devices:
+<span class="w">  </span>-<span class="w"> </span>SpaceMouseCompact<span class="w"> </span><span class="o">(</span>/dev/hidraw5<span class="o">)</span>
+</code></pre></div>
+</details>
+<p>Work down from the top:</p>
 <ul>
-<li>MacBook Pro 14 (M1 Pro, 2021)</li>
-<li>... add your device and feedback</li>
+<li><strong>Nothing in <code>--list-hid</code></strong> - the OS isn't seeing the device at all. Check the cable, try
+  another port, and on a wireless model check the receiver.</li>
+<li><strong>In <code>--list-hid</code> but not <code>--list-connected</code></strong> - the device is visible but its VID/PID
+  isn't in the device table. Compare against <code>pyspacemouse --list-supported</code>, then open an
+  issue with the IDs or supply your own <code>device_spec</code>.</li>
+<li><strong>In <code>--list-connected</code> but <code>--test</code> won't open</strong> - permissions; see the Linux section
+  below. If you have 3DxWare installed, try quitting it first.</li>
+<li><strong>Opens, but the axes do nothing</strong> - the device is being read but its report layout
+  doesn't match the spec. See <a href="../CONTRIBUTING/#adding-a-new-device">Adding a new device</a>.</li>
 </ul>
-<hr>
-
-<h2 id="testing-hidapi">Testing Hidapi</h2>
-<p>If you are not sure if <code>hidapi</code> is installed correctly, you can test it with the console tool <a href="https://github.com/todbot/hidapitester">hidapitester</a>.
-This tool provides a simple interface to test the communication with HID devices.
-On GitHub, you can find the source code and precompiled binaries for Windows, Linux, and Mac OS.</p>
-<p>Just download the binary for your system and run it in the terminal.</p>
-<p>List connected devices:
-</p><div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--list
-</code></pre></div><p></p>
-<details class="note">
-<summary>My output</summary>
-<div class="highlight"><pre><span></span><code>046D/C626:<span class="w"> </span>3Dconnexion<span class="w"> </span>-<span class="w"> </span>SpaceNavigator
-045E/07A5:<span class="w"> </span>Microsoft<span class="w"> </span>-<span class="w"> </span>Microsoft<span class="w"> </span><span class="m">2</span>.4GHz<span class="w"> </span>Transceiver<span class="w"> </span>v9.0
-...
-</code></pre></div>
-</details>
-<p>Read data from the device (replace <code>&lt;VID/PID&gt;</code> with the VID/PID of your device):
-</p><div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--vidpid<span class="w"> </span>&lt;VID/PID&gt;<span class="w"> </span>--open<span class="w"> </span>--read-input
-</code></pre></div><p></p>
-<details class="note">
-<summary>My output</summary>
-<div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--vidpid<span class="w"> </span>046D/C626<span class="w"> </span>--open<span class="w"> </span>--read-input
-Opening<span class="w"> </span>device,<span class="w"> </span>vid/pid:<span class="w"> </span>0x046D/0xC626
-Reading<span class="w"> </span><span class="m">64</span>-byte<span class="w"> </span>input<span class="w"> </span>report<span class="w"> </span><span class="m">0</span>,<span class="w"> </span><span class="m">250</span><span class="w"> </span>msec<span class="w"> </span>timeout...read<span class="w"> </span><span class="m">7</span><span class="w"> </span>bytes:
-<span class="m">01</span><span class="w"> </span><span class="m">76</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span>FA<span class="w"> </span>FF<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span>
-<span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">00</span>
-Closing<span class="w"> </span>device
-</code></pre></div>
-</details>
-<p>Read descriptor from the device (replace <code>&lt;VID/PID&gt;</code> with the VID/PID of your device):
-</p><div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--vidpid<span class="w"> </span>&lt;VID/PID&gt;<span class="w"> </span>--open<span class="w"> </span>--get-report-descriptor
-</code></pre></div><p></p>
-<details class="note">
-<summary>My output</summary>
-<div class="highlight"><pre><span></span><code>./hidapitester<span class="w"> </span>--vidpid<span class="w"> </span>046D/C626<span class="w"> </span>--open<span class="w"> </span>--get-report-descriptor
-Opening<span class="w"> </span>device,<span class="w"> </span>vid/pid:<span class="w"> </span>0x046D/0xC626
-Report<span class="w"> </span>Descriptor:
-<span class="m">05</span><span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">08</span><span class="w"> </span>A1<span class="w"> </span><span class="m">01</span><span class="w"> </span>A1<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">85</span><span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">16</span><span class="w"> </span>A2<span class="w"> </span>FE<span class="w"> </span><span class="m">26</span><span class="w"> </span>5E<span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">36</span><span class="w"> </span><span class="m">88</span><span class="w"> </span>FA<span class="w"> </span><span class="m">46</span><span class="w"> </span><span class="m">78</span><span class="w"> </span><span class="m">05</span><span class="w"> </span><span class="m">55</span><span class="w"> </span>0C<span class="w"> </span><span class="m">65</span><span class="w"> </span><span class="m">11</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">31</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">32</span>
-<span class="m">75</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">95</span><span class="w"> </span><span class="m">03</span><span class="w"> </span><span class="m">81</span><span class="w"> </span><span class="m">06</span><span class="w"> </span>C0<span class="w"> </span>A1<span class="w"> </span><span class="m">00</span><span class="w"> </span><span class="m">85</span><span class="w"> </span><span class="m">02</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">33</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">34</span><span class="w"> </span><span class="m">09</span><span class="w"> </span><span class="m">35</span><span class="w"> </span><span class="m">75</span><span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">95</span><span class="w"> </span><span class="m">03</span><span class="w"> </span><span class="m">81</span><span class="w"> </span><span class="m">06</span><span class="w"> </span>C0<span class="w"> </span>A1<span class="w"> </span><span class="m">02</span><span class="w"> </span><span class="m">85</span><span class="w"> </span><span class="m">03</span><span class="w"> </span><span class="m">05</span><span class="w"> </span><span class="m">01</span><span class="w"> </span><span class="m">05</span><span class="w"> </span><span class="m">09</span>
-...
-Closing<span class="w"> </span>device
-</code></pre></div>
-</details>
 <hr>
 
 <h2 id="linux">Linux</h2>
@@ -1677,110 +1611,70 @@ Closing<span class="w"> </span>device
 <p>If you encounter an error like <code>Failed to open device</code> or <code>Permission denied</code> when trying to use your SpaceMouse on Linux, this is typically a permissions issue. Normal users don't have permission to access HID devices by default.</p>
 <p><strong>Error example:</strong>
 </p><div class="highlight"><pre><span></span><code>Traceback<span class="w"> </span><span class="o">(</span>most<span class="w"> </span>recent<span class="w"> </span>call<span class="w"> </span>last<span class="o">)</span>:
-<span class="w">  </span>File<span class="w"> </span><span class="s2">"/home/user/.local/lib/python3.8/site-packages/pyspacemouse/pyspacemouse.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">183</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>open
-<span class="w">    </span>self.device.open<span class="o">()</span>
-<span class="w">  </span>File<span class="w"> </span><span class="s2">"/home/user/.local/lib/python3.8/site-packages/easyhid/easyhid.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">134</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>open
-<span class="w">    </span>raise<span class="w"> </span>HIDException<span class="o">(</span><span class="s2">"Failed to open device"</span><span class="o">)</span>
-easyhid.easyhid.HIDException:<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>open<span class="w"> </span>device
+<span class="w">  </span>File<span class="w"> </span><span class="s2">"/home/user/.local/lib/python3.12/site-packages/pyspacemouse/device.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">185</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>open
+<span class="w">    </span>device.open_path<span class="o">(</span>self._hid_info<span class="o">[</span><span class="s2">"path"</span><span class="o">])</span>
+<span class="w">  </span>File<span class="w"> </span><span class="s2">"hidraw.pyx"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">158</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>hidraw.device.open_path
+OSError:<span class="w"> </span>open<span class="w"> </span>failed
+
+The<span class="w"> </span>above<span class="w"> </span>exception<span class="w"> </span>was<span class="w"> </span>the<span class="w"> </span>direct<span class="w"> </span>cause<span class="w"> </span>of<span class="w"> </span>the<span class="w"> </span>following<span class="w"> </span>exception:
+
+Traceback<span class="w"> </span><span class="o">(</span>most<span class="w"> </span>recent<span class="w"> </span>call<span class="w"> </span>last<span class="o">)</span>:
+<span class="w">  </span>File<span class="w"> </span><span class="s2">"/home/user/.local/lib/python3.12/site-packages/pyspacemouse/device.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">187</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>open
+<span class="w">    </span>raise<span class="w"> </span>RuntimeError<span class="o">(</span><span class="s2">"Failed to open device"</span><span class="o">)</span><span class="w"> </span>from<span class="w"> </span>e
+RuntimeError:<span class="w"> </span>Failed<span class="w"> </span>to<span class="w"> </span>open<span class="w"> </span>device
 </code></pre></div><p></p>
 <p><strong>Solution:</strong></p>
 <ol>
 <li>
-<p><strong>Find your device's Vendor ID and Product ID:</strong>
-   </p><div class="highlight"><pre><span></span><code>lsusb
+<p><strong>Find your device's Vendor ID and Product ID:</strong></p>
+<p></p><div class="highlight"><pre><span></span><code>lsusb
 </code></pre></div>
-   Look for your SpaceMouse device. Example output:
-   <div class="highlight"><pre><span></span><code>Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver
+Look for your SpaceMouse device. Example output:
+<div class="highlight"><pre><span></span><code>Bus 001 Device 013: ID 256f:c652 3Dconnexion Universal Receiver
 </code></pre></div>
-   Here, <code>256f</code> is the Vendor ID and <code>c652</code> is the Product ID.<p></p>
+Here, <code>256f</code> is the Vendor ID and <code>c652</code> is the Product ID.<p></p>
 </li>
 <li>
-<p><strong>Create udev rules to grant permissions:</strong>
-   </p><div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/etc/udev/rules.d
-sudo<span class="w"> </span>touch<span class="w"> </span><span class="m">99</span>-spacemouse.rules
-sudo<span class="w"> </span>nano<span class="w"> </span><span class="m">99</span>-spacemouse.rules
-</code></pre></div><p></p>
+<p><strong>Create udev rules to grant permissions:</strong></p>
+<blockquote>
+<p>Rules that use <code>TAG+="uaccess"</code> must have a priority number below <code>73</code> (e.g. <code>50-</code>) so they are evaluated before systemd seat rules.</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/etc/udev/rules.d
+sudo<span class="w"> </span>touch<span class="w"> </span><span class="m">50</span>-spacemouse.rules
+sudo<span class="w"> </span>nano<span class="w"> </span><span class="m">50</span>-spacemouse.rules
+</code></pre></div>
 </li>
 <li>
-<p><strong>Add the following rules</strong> (replace <code>046d</code> and <code>c62b</code> with your Vendor ID and Product ID):
-   </p><div class="highlight"><pre><span></span><code><span class="nv">SUBSYSTEM</span><span class="o">==</span><span class="s2">"input"</span>,<span class="w"> </span><span class="nv">GROUP</span><span class="o">=</span><span class="s2">"input"</span>,<span class="w"> </span><span class="nv">MODE</span><span class="o">=</span><span class="s2">"0660"</span>
-<span class="nv">KERNEL</span><span class="o">==</span><span class="s2">"hidraw*"</span>,<span class="w"> </span>ATTRS<span class="o">{</span>idVendor<span class="o">}==</span><span class="s2">"046d"</span>,<span class="w"> </span>ATTRS<span class="o">{</span>idProduct<span class="o">}==</span><span class="s2">"c62b"</span>,<span class="w"> </span><span class="nv">MODE</span><span class="o">=</span><span class="s2">"0666"</span>
-</code></pre></div><p></p>
+<p><strong>Add the following rules:</strong></p>
+<div class="highlight"><pre><span></span><code>SUBSYSTEM=="hidraw", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTRS{idVendor}=="256f", MODE="0660", TAG+="uaccess"
+</code></pre></div>
+<p>Common SpaceMouse IDs:</p>
+<ul>
+<li>SpaceMouse Compact: <code>256f:c635</code></li>
+<li>SpaceMouse Wireless: <code>256f:c62e</code></li>
+<li>3Dconnexion Universal Receiver: <code>256f:c652</code></li>
+<li>SpaceNavigator: <code>046d:c626</code></li>
+</ul>
 </li>
-</ol>
-<p>Common SpaceMouse IDs:
-   - SpaceMouse Compact: <code>256f:c635</code>
-   - SpaceMouse Wireless: <code>256f:c62e</code>
-   - 3Dconnexion Universal Receiver: <code>256f:c652</code>
-   - SpaceNavigator: <code>046d:c626</code></p>
-<ol>
 <li>
-<p><strong>Reload udev rules:</strong>
-   </p><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>udevadm<span class="w"> </span>control<span class="w"> </span>--reload-rules
+<p><strong>Reload udev rules:</strong></p>
+<div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>udevadm<span class="w"> </span>control<span class="w"> </span>--reload-rules
 sudo<span class="w"> </span>udevadm<span class="w"> </span>trigger
-</code></pre></div><p></p>
+</code></pre></div>
 </li>
 <li>
-<p><strong>Add your user to the input group:</strong>
-   </p><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>usermod<span class="w"> </span>-a<span class="w"> </span>-G<span class="w"> </span>input<span class="w"> </span><span class="nv">$USER</span>
-</code></pre></div><p></p>
-</li>
-<li>
-<p><strong>Disconnect and reconnect your SpaceMouse</strong>, then log out and log back in to Ubuntu (or restart your computer).</p>
+<p><strong>Disconnect and reconnect your SpaceMouse.</strong></p>
+<p>With <code>TAG+="uaccess"</code>, the active desktop user is granted dynamic access automatically without needing to join groups or log out.</p>
+<p><em>(Optional)</em> <strong>For headless remote access:</strong> If you need access when not logged in locally at the desktop, create and assign a dedicated <code>spacemouse</code> group:
+</p><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>groupadd<span class="w"> </span>-f<span class="w"> </span>spacemouse
+sudo<span class="w"> </span>usermod<span class="w"> </span>-aG<span class="w"> </span>spacemouse<span class="w"> </span><span class="nv">$USER</span>
+</code></pre></div>
+and add <code>GROUP="spacemouse"</code> to the udev rules above.<p></p>
 </li>
 </ol>
 <p>After these steps, your SpaceMouse should work correctly without permission errors.</p>
 <hr>
-
-<h2 id="windows">Windows</h2>
-<div class="admonition info">
-<p class="admonition-title">Error message - OSError: cannot load library 'hidapi.dll'</p>
-<div class="highlight"><pre><span></span><code>Traceback<span class="w"> </span><span class="o">(</span>most<span class="w"> </span>recent<span class="w"> </span>call<span class="w"> </span>last<span class="o">)</span>:
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\easyhid.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">53</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span><span class="nv">hidapi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ffi.dlopen<span class="o">(</span><span class="s1">'hidapi.dll'</span><span class="o">)</span>
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">150</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>dlopen
-<span class="w">    </span>lib,<span class="w"> </span><span class="nv">function_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>_make_ffi_library<span class="o">(</span>self,<span class="w"> </span>name,<span class="w"> </span>flags<span class="o">)</span>
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">832</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>_make_ffi_library
-<span class="w">    </span><span class="nv">backendlib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>_load_backend_lib<span class="o">(</span>backend,<span class="w"> </span>libname,<span class="w"> </span>flags<span class="o">)</span>
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">827</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>_load_backend_lib
-<span class="w">    </span>raise<span class="w"> </span>OSError<span class="o">(</span>msg<span class="o">)</span>
-OSError:<span class="w"> </span>cannot<span class="w"> </span>load<span class="w"> </span>library<span class="w"> </span><span class="s1">'hidapi.dll'</span>:<span class="w"> </span>error<span class="w"> </span>0x7e.<span class="w">  </span>Additionally,<span class="w"> </span>ctypes.util.find_library<span class="o">()</span><span class="w"> </span>did<span class="w"> </span>not<span class="w"> </span>manage<span class="w"> </span>to<span class="w"> </span>locate<span class="w"> </span>a<span class="w"> </span>library<span class="w"> </span>called<span class="w"> </span><span class="err">'</span>hidapi.dll
-</code></pre></div>
-</div>
-<details class="info">
-<summary>Other error message - OSError: dlopen(None) cannot work on Windows for Python 3</summary>
-<div class="highlight"><pre><span></span><code>File<span class="w"> </span><span class="s2">"C:\Users\Student\Downloads\basicExample.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span>import<span class="w"> </span>pyspacemouse
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pyspacemouse\__init__.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span>from<span class="w"> </span>.pyspacemouse<span class="w"> </span>import<span class="w"> </span>*
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pyspacemouse\pyspacemouse.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">1</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span>from<span class="w"> </span>easyhid<span class="w"> </span>import<span class="w"> </span>Enumeration,<span class="w"> </span>HIDException
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\__init__.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">8</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span>from<span class="w"> </span>easyhid.easyhid<span class="w"> </span>import<span class="w"> </span>*
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\easyhid\easyhid.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">55</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>&lt;module&gt;
-<span class="w">    </span><span class="nv">hidapi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>ffi.dlopen<span class="o">(</span>ctypes.util.find_library<span class="o">(</span><span class="s1">'hidapi.dll'</span><span class="o">))</span>
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">150</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>dlopen
-<span class="w">    </span>lib,<span class="w"> </span><span class="nv">function_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>_make_ffi_library<span class="o">(</span>self,<span class="w"> </span>name,<span class="w"> </span>flags<span class="o">)</span>
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">832</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>_make_ffi_library
-<span class="w">    </span><span class="nv">backendlib</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>_load_backend_lib<span class="o">(</span>backend,<span class="w"> </span>libname,<span class="w"> </span>flags<span class="o">)</span>
-File<span class="w"> </span><span class="s2">"C:\Users\Student\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\cffi\api.py"</span>,<span class="w"> </span>line<span class="w"> </span><span class="m">821</span>,<span class="w"> </span><span class="k">in</span><span class="w"> </span>_load_backend_lib
-<span class="w">    </span>raise<span class="w"> </span>OSError<span class="o">(</span><span class="s2">"dlopen(None) cannot work on Windows for Python 3 "</span>
-OSError:<span class="w"> </span>dlopen<span class="o">(</span>None<span class="o">)</span><span class="w"> </span>cannot<span class="w"> </span>work<span class="w"> </span>on<span class="w"> </span>Windows<span class="w"> </span><span class="k">for</span><span class="w"> </span>Python<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">(</span>see<span class="w"> </span>http://bugs.python.org/issue23606<span class="o">)</span>
-</code></pre></div>
-</details>
-<p>If you are using Windows, you may encounter issues with the <code>hidapi</code> library.
-The library is not included in the system, so you have to install it manually.</p>
-<p>Go to <a href="https://github.com/libusb/hidapi/releases/latest">hidapi GitHub</a> and download the latest version of the library in zip format.
-Extract the zip file and copy the x64/x86 folder with <code>hidapi.dll</code> to the static location where will be found by the system.</p>
-<p>To make it work, you have to add the folder to the system <code>PATH</code> variable.</p>
-<p>Go to Windows settings and search for <code>enviroment</code>.
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce7ba2b3-8e40-48bb-8348-5a1f932146c3" data-desc-position="bottom"><img alt="image" src="https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce7ba2b3-8e40-48bb-8348-5a1f932146c3"></a></p>
-<p>Click on the <code>Environment variables</code>.
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce22bae7-a0c8-4f19-9204-7f1a12f28782" data-desc-position="bottom"><img alt="image" src="https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/ce22bae7-a0c8-4f19-9204-7f1a12f28782"></a></p>
-<p>Append the path to the folder with <code>hidapi.dll</code> to the <code>Path</code> variable.
-<a class="glightbox" data-type="image" data-width="auto" data-height="auto" href="https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/0ddefada-b595-49f3-bf0f-d11567cf887f" data-desc-position="bottom"><img alt="image" src="https://github.com/JakubAndrysek/PySpaceMouse/assets/33494544/0ddefada-b595-49f3-bf0f-d11567cf887f"></a></p>
-<p>After this setup, you have to restart (maybe log out) your computer to apply the changes.
-Let's start using this library in your Python code.</p>
 
 
 
@@ -1801,7 +1695,7 @@ Let's start using this library in your Python code.</p>
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"></path></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="June 27, 2026 21:00:11 UTC">June 27, 2026</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="August 23, 2026 10:23:23 UTC">August 23, 2026</span>
   </span>
 
     
