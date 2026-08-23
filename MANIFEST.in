@@ -1,0 +1,14 @@
+prune .github
+prune docs
+prune html
+prune media
+prune site
+prune tests
+
+exclude .gitignore
+exclude .pre-commit-config.yaml
+exclude Doxyfile
+exclude mkdocs.yml
+exclude CONTRIBUTING.md
+exclude troubleshooting.md
+exclude release.md

@@ -68,3 +68,6 @@ site/
 
 # JetBrains IDE
 .idea/
+
+# Pixi
+.pixi/

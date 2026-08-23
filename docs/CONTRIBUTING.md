@@ -161,13 +161,13 @@ with pyspacemouse.open(device_spec=device_spec) as device:
 See [Custom Device Configuration](https://spacemouse.kubaandrysek.cz/mouseApi/#custom-device-configuration) for more details.
 
 ## How to write documentation
-To install the required dependencies, run `make install-dev`, and please also install `doxygen` manually.
+Install [Pixi](https://pixi.sh/latest/) first, then run `pixi install` to create the development environment. Please also install `doxygen` manually.
 
 Edit `README.md` only in the root folder. The documentation is automatically generated from `README.md` and `docs/` folder.
-To update documentation from root to `/docs`, use `make docs-build`.
+To sync root docs into `/docs`, use `pixi run sync-doc-links`.
 
 ### Building the documentation
-The documentation is built using [mkdocs](https://www.mkdocs.org/). To test the documentation locally, run `make docs-serve` and open [http://localhost:8000](http://localhost:8000) in your browser.
+The documentation is built using [mkdocs](https://www.mkdocs.org/). To test the documentation locally, run `pixi run docs-serve` and open [http://localhost:8000](http://localhost:8000) in your browser.
 
 ### Deploying the documentation
 The documentation is deployed automatically using GitHub Actions. Just push to the `master` branch and the documentation will be updated automatically.

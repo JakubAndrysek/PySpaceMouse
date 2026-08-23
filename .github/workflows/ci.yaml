@@ -1,74 +1,42 @@
 name: CI
 
 on:
-    push:
-    pull_request:
-        branches:
-            - master
-            - main
-    workflow_dispatch:
+  push:
+  pull_request:
+    branches:
+      - master
+      - main
+  workflow_dispatch:
 
 jobs:
-    lint:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: "3.12"
-            - name: Install Hatch
-              run: pip install hatch
-            - name: Run Ruff format check
-              run: hatch run ruff format --check .
-            - name: Run Ruff linting
-              run: hatch run ruff check .
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.10.1
+        with:
+          cache: true
+      - name: Install project environment
+        run: pixi install
+      - name: Run Ruff format check
+        run: pixi run format-check
+      - name: Run Ruff linting
+        run: pixi run lint
 
-    test:
-        needs: lint
-        strategy:
-            fail-fast: false
-            matrix:
-                python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14"]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0  # Required for hatch-vcs to determine version
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Install system dependencies
-              run: |
-                  sudo apt-get update
-                  sudo apt-get install -y libhidapi-dev
-            - name: Install test dependencies
-              run: python -m pip install -e . pytest pytest-cov
-            - name: Run axis convention tests
-              run: python -m pytest tests/test_axis_conventions.py
-
-    # test:
-    #     needs: lint
-    #     strategy:
-    #         fail-fast: false
-    #         matrix:
-    #             os: [ubuntu-latest, macos-latest, windows-latest]
-    #             py: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
-
-    #     runs-on: ${{ matrix.os }}
-    #     steps:
-    #         - uses: actions/checkout@v4
-    #           with:
-    #               fetch-depth: 0  # Required for hatch-vcs to determine version
-    #         - uses: actions/setup-python@v5
-    #           with:
-    #               python-version: ${{ matrix.py }}
-    #         - name: Install Hatch
-    #           run: pip install hatch
-    #         - name: Run tests
-    #           run: hatch run test:pytest
-    #         - name: Upload coverage to Codecov
-    #           if: matrix.os == 'ubuntu-latest' && matrix.py == '3.12'
-    #           uses: codecov/codecov-action@v4
-    #           with:
-    #               file: ./coverage.xml
-    #               fail_ci_if_error: false
+  test:
+    needs: lint
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [py38, py39, py310, py311, py312, py313, py314]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for setuptools-scm to determine version
+      - uses: prefix-dev/setup-pixi@v0.10.1
+        with:
+          cache: true
+          environments: ${{ matrix.environment }}
+      - name: Run tests
+        run: pixi run -e ${{ matrix.environment }} test

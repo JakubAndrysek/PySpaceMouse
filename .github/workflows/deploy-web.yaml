@@ -15,19 +15,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for git-revision-date-localized-plugin
-      - uses: actions/setup-python@v5
+          fetch-depth: 0 # Required for git-revision-date-localized-plugin
+      - uses: prefix-dev/setup-pixi@v0.10.1
         with:
-          python-version: "3.12"
-      - name: Install Hatch
-        run: pip install hatch
+          cache: true
       - uses: actions/cache@v4
         with:
           key: mkdocs-${{ github.ref }}
           path: .cache
-      - name: Install dependencies
-        run: |
-          pip install -e ".[docs]"
-          sudo apt-get install -y doxygen
       - name: Deploy docs
-        run: make docs-deploy
+        run: pixi run docs-deploy

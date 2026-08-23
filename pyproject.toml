@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling>=1.25", "hatch-vcs>=0.4"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=69", "setuptools-scm[toml]>=8", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyspacemouse"
@@ -11,7 +11,7 @@ authors = [
     { name = "Jakub Andrýsek", email = "email@kubaandrysek.cz" },
     { name = "Peter Mitrano", email = "mitranopeter@gmail.com" }
 ]
-license = "MIT"
+license = { file = "LICENSE" }
 keywords = [
     "pyspacemouse",
     "3d",
@@ -27,7 +27,6 @@ keywords = [
 requires-python = ">=3.8"
 classifiers = [
     "Development Status :: 4 - Beta",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3.8",
@@ -67,33 +66,16 @@ docs = [
 [project.scripts]
 pyspacemouse = "pyspacemouse.pyspacemouse_cli:main"
 
-[tool.hatch.version]
-source = "vcs"
-tag-pattern = "(?P<version>.*)"
+[tool.setuptools]
+include-package-data = true
 
-[tool.hatch.version.raw-options]
-local_scheme = "no-local-version"  # Remove local version identifier for PyPI compatibility
+[tool.setuptools.packages.find]
+include = ["pyspacemouse*"]
 
-[tool.hatch.build.targets.sdist]
-exclude = [
-    "/.github",
-    "/docs",
-    "/html",
-    "/media",
-    "/site",
-    "/tests",
-    "/.gitignore",
-    "/.pre-commit-config.yaml",
-    "/Doxyfile",
-    "/mkdocs.yml",
-    "/Makefile",
-    "/CONTRIBUTING.md",
-    "/troubleshooting.md",
-    "/release.md",
-]
-
-[tool.hatch.build.targets.wheel]
-packages = ["pyspacemouse"]
+[tool.setuptools_scm]
+tag_regex = "^(\\d+\\.\\d+\\.\\d+)$"
+local_scheme = "no-local-version"
+fallback_version = "0.0.0.dev0"
 
 # Ruff configuration
 [tool.ruff]
@@ -130,35 +112,4 @@ indent-style = "space"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
-addopts = "--strict-markers --cov=pyspacemouse --cov-report=term-missing --cov-report=xml"
-
-[tool.coverage.run]
-source_pkgs = ["pyspacemouse"]
-branch = true
-omit = ["*/tests/*", "*/__pycache__/*"]
-
-[tool.coverage.report]
-exclude_lines = [
-    "no cov",
-    "if __name__ == .__main__.:",
-    "if TYPE_CHECKING:",
-    "pragma: no cover",
-]
-
-[tool.hatch.envs.default]
-dependencies = [
-    "ruff>=0.12.0",
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-]
-
-[tool.hatch.envs.dev]
-template = "default"
-features = ["dev", "docs"]
-
-[tool.hatch.envs.test]
-template = "default"
-dependencies = [
-    "pytest>=7.0",
-    "pytest-cov>=4.0",
-]
+addopts = "--strict-markers"

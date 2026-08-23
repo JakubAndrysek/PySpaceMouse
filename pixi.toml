@@ -1,0 +1,81 @@
+[workspace]
+name = "pyspacemouse"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "osx-arm64", "win-64"]
+
+[dependencies]
+python = "*"
+pip = "*"
+pre-commit = "*"
+doxygen = "*"
+
+[pypi-dependencies]
+pyspacemouse = { path = ".", editable = true }
+build = ">=1.2"
+ruff = ">=0.12.0"
+pytest = ">=7.0"
+mkdocs = "*"
+mkdocs-material = "*"
+mkdocs-glightbox = "*"
+mkdocs-redirects = "*"
+mkdoxy = "*"
+mkdocs-open-in-new-tab = "*"
+mkdocs-git-revision-date-localized-plugin = "*"
+twine = "*"
+setuptools = ">=69"
+setuptools-scm = { version = ">=8", extras = ["toml"] }
+
+[environments.py38.dependencies]
+python = "3.8.*"
+
+[environments.py39.dependencies]
+python = "3.9.*"
+
+[environments.py310.dependencies]
+python = "3.10.*"
+
+[environments.py311.dependencies]
+python = "3.11.*"
+
+[environments.py312.dependencies]
+python = "3.12.*"
+
+[environments.py313.dependencies]
+python = "3.13.*"
+
+[environments.py314.dependencies]
+python = "3.14.*"
+
+[tasks]
+build = "python -m build"
+publish = "python -m twine upload dist/*"
+publish-test = "python -m twine upload --repository testpypi dist/*"
+version = "python -m setuptools_scm"
+version-patch = "python scripts/bump_version.py patch --create"
+version-minor = "python scripts/bump_version.py minor --create"
+version-major = "python scripts/bump_version.py major --create"
+lint = "ruff check ."
+format = "ruff format ."
+format-check = "ruff format --check ."
+test = "pytest"
+sync-doc-links = "sed 's/\\.\\/docs/\\./g' README.md > docs/README.md && sed 's/\\.\\/docs/\\./g' CONTRIBUTING.md > docs/CONTRIBUTING.md && sed 's/\\.\\/docs/\\./g' troubleshooting.md > docs/troubleshooting.md"
+doxygen-check = "doxygen --version"
+
+[tasks.clean]
+cmd = "rm -rf dist build pyspacemouse.egg-info .ruff_cache site .mkdoxy && find . -type d -name '__pycache__' -exec rm -rf {} + && find . -type f \\( -name '*.pyc' -o -name '*.pyo' \\) -delete"
+
+[tasks.build-clean]
+depends-on = ["clean"]
+cmd = "python -m build"
+
+[tasks.docs-build]
+depends-on = ["doxygen-check", "sync-doc-links"]
+cmd = "mkdocs build"
+
+[tasks.docs-serve]
+depends-on = ["doxygen-check", "sync-doc-links"]
+cmd = "mkdocs serve"
+
+[tasks.docs-deploy]
+depends-on = ["doxygen-check", "sync-doc-links"]
+cmd = "mkdocs gh-deploy"
